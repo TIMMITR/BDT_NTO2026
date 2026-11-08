@@ -5,6 +5,7 @@ namespace Scenes.MainMenu
 {
     public class MainMenuStartUp : MonoBehaviour
     {
+        [SerializeField] private GlobalContext globalContext;
         [SerializeField] private MainMenuContext context;
 
         private World _world;

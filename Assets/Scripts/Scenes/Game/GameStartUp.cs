@@ -1,4 +1,5 @@
 using Features.InputPack;
+using Features.TargetPack;
 using Scellecs.Morpeh;
 using UnityEngine;
 
@@ -6,7 +7,9 @@ namespace Scenes.Game
 {
     public class GameStartUp : MonoBehaviour
     {
-        [SerializeField] private GameContext context;
+        [SerializeField] private GlobalContext globalContext;
+        [SerializeField] private GameContext gameContext;
+        
 
         private World _world;
         private SystemsGroup _updateGroup;
@@ -23,6 +26,8 @@ namespace Scenes.Game
             _updateGroup = _world.CreateSystemsGroup();
             _updateGroup.Initialize();
             _updateGroup.AddSystem(new InputSystem(_playerInputActions));
+            _updateGroup.AddSystem(new TargetSystem());
+            
             _world.AddSystemsGroup(order: 0, _updateGroup);
 
             _fixedGroup = _world.CreateSystemsGroup();
