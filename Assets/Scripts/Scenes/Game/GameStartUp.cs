@@ -1,3 +1,4 @@
+using Features.InputPack;
 using Scellecs.Morpeh;
 using UnityEngine;
 
@@ -10,13 +11,18 @@ namespace Scenes.Game
         private World _world;
         private SystemsGroup _updateGroup;
         private SystemsGroup _fixedGroup;
+        private PlayerInputActions _playerInputActions;
 
         private void Awake()
         {
             _world = World.Default;
-
+            
+            _playerInputActions =  new PlayerInputActions();
+            _playerInputActions.Enable();
+            
             _updateGroup = _world.CreateSystemsGroup();
             _updateGroup.Initialize();
+            _updateGroup.AddSystem(new InputSystem(_playerInputActions));
             _world.AddSystemsGroup(order: 0, _updateGroup);
 
             _fixedGroup = _world.CreateSystemsGroup();
