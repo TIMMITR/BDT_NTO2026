@@ -1,4 +1,3 @@
-using Features.InputPack.Requests;
 using Global;
 using Scellecs.Morpeh;
 using UnityEngine;
@@ -13,12 +12,9 @@ namespace Features.InputPack
         private Filter _filter;
         private Stash<InputComponent> _inputStash;
         
-        private Request<JumpStartRequest> _jumpStartRequest;
-        private Request<JumpEndRequest> _jumpEndRequest;
 
         private readonly PlayerInputActions _playerInputActions;
         
-        private InputAction _moveAction;
         private InputAction _lookAction;
         private InputAction _jumpAction;
 
@@ -30,12 +26,7 @@ namespace Features.InputPack
             _filter = World.Filter.With<InputComponent>().With<PlayerTag>().Build();
             _inputStash = World.GetStash<InputComponent>();
             
-            _jumpStartRequest = World.GetRequest<JumpStartRequest>();
-            _jumpEndRequest = World.GetRequest<JumpEndRequest>();
-            
-            _moveAction = _playerInputActions.Gameplay.Move;
             _lookAction = _playerInputActions.Gameplay.Look;
-            _jumpAction = _playerInputActions.Gameplay.Jump;
         }
 
         public void OnUpdate(float deltaTime)
@@ -45,14 +36,8 @@ namespace Features.InputPack
             
             ref var component = ref _inputStash.Get(playerEntity);
             
-            component.moveVector = _moveAction.ReadValue<Vector2>();
             component.lookVector = _lookAction.ReadValue<Vector2>();
 
-            if (_jumpAction.WasPressedThisFrame())
-                _jumpStartRequest.Publish(new JumpStartRequest { entity = playerEntity });
-
-            if (_jumpAction.WasReleasedThisFrame())
-                _jumpEndRequest.Publish(new JumpEndRequest { entity = playerEntity });
         }
 
         public void Dispose() { }

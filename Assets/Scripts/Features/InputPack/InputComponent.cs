@@ -5,7 +5,6 @@ namespace Features.InputPack
 {
     public struct InputComponent : IComponent
     {
-        public float2 moveVector;
         public float2 lookVector;
     }
 }
