@@ -1,3 +1,4 @@
+using Features.HexGridPack;
 using Features.InputPack;
 using Features.TargetPack;
 using Scellecs.Morpeh;
@@ -12,6 +13,8 @@ namespace Scenes.Game
         
 
         private World _world;
+        private SystemsGroup _initGroup;
+        
         private SystemsGroup _updateGroup;
         private SystemsGroup _fixedGroup;
         private PlayerInputActions _playerInputActions;
@@ -22,6 +25,10 @@ namespace Scenes.Game
             
             _playerInputActions =  new PlayerInputActions();
             _playerInputActions.Enable();
+            
+            _initGroup = _world.CreateSystemsGroup();
+            _initGroup.AddInitializer(new HexGridSystem(gameContext.boardGameObject)); 
+            _initGroup.Initialize();
             
             _updateGroup = _world.CreateSystemsGroup();
             _updateGroup.Initialize();
