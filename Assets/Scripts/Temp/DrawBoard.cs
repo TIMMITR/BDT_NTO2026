@@ -8,7 +8,7 @@ namespace Temp
         {
             Gizmos.color = Color.white;
             const int radius = 5;
-            const float hexRadius = 2f;
+            const float hexRadius = 0.25f;
 
             for (int q = -radius; q <= radius; q++)
             {
@@ -19,7 +19,7 @@ namespace Temp
                 {
                     var center = transform.position + new Vector3(
                         hexRadius * 1.5f * q,
-                        0.55f,
+                        0.2f,
                         hexRadius * Mathf.Sqrt(3f) * (r + q * 0.5f)
                     );
 
