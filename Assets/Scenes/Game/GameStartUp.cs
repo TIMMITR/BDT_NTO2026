@@ -33,6 +33,7 @@ namespace Scenes.Game
             _updateGroup = _world.CreateSystemsGroup();
             _updateGroup.Initialize();
             _updateGroup.AddSystem(new InputSystem(_playerInputActions));
+            _updateGroup.AddSystem(new RaycastSystem());
             _updateGroup.AddSystem(new TargetSystem());
             
             _world.AddSystemsGroup(order: 0, _updateGroup);
