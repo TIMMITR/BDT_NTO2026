@@ -1580,6 +1580,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   boardGameObject: {fileID: 0}
+  characters:
+  - {fileID: 11400000, guid: 841627d705e172347b32ced7bd0af6e9, type: 2}
 --- !u!4 &1593132932
 Transform:
   m_ObjectHideFlags: 0

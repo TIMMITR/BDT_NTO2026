@@ -1,3 +1,4 @@
+using Features.CharacterPack.Systems;
 using Features.HexGridPack;
 using Features.InputPack;
 using Features.RaycastPack;
@@ -27,6 +28,7 @@ namespace Scenes.Game
             
             _initGroup = _world.CreateSystemsGroup();
             _initGroup.AddInitializer(new HexGridSystem(gameContext.boardGameObject)); 
+            _initGroup.AddInitializer(new CharactersInitSystem(gameContext.characters));
             _initGroup.Initialize();
             
             _updateGroup = _world.CreateSystemsGroup();
