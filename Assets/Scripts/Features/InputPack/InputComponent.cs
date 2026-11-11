@@ -5,6 +5,6 @@ namespace Features.InputPack
 {
     public struct InputComponent : IComponent
     {
-        public float2 lookVector;
+        public float2 mousePos;
     }
 }

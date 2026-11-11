@@ -21,7 +21,6 @@ namespace Features.InputPack
         private Request<RmbStartRequest> _rmbStartRequest;
         private Request<RmbEndRequest> _rmbEndRequest;
         
-        private InputAction _lookAction;
         private InputAction _escAction;
         
         private InputAction _lmbAction;
@@ -45,9 +44,7 @@ namespace Features.InputPack
             _rmbStartRequest = World.GetRequest<RmbStartRequest>();
             _rmbEndRequest = World.GetRequest<RmbEndRequest>();
             
-            _lookAction = _playerInputActions.Gameplay.Look;
             _escAction = _playerInputActions.Gameplay.Esc;
-            
             _lmbAction = _playerInputActions.Gameplay.LMB;
             _rmbAction = _playerInputActions.Gameplay.RMB;
         }
@@ -59,23 +56,23 @@ namespace Features.InputPack
             
             ref var component = ref _inputStash.Get(playerEntity);
             
-            component.lookVector = _lookAction.ReadValue<Vector2>();
+            if (Mouse.current != null)
+                component.mousePos = Mouse.current.position.ReadValue();
             
             if (_escAction.WasPerformedThisFrame())
-                _escRequest.Publish(new EscRequest{ entity = playerEntity });
+                _escRequest.Publish(new EscRequest());
             
             if (_lmbAction.WasPressedThisFrame())
-                _lmbStartRequest.Publish(new LmbStartRequest{ entity = playerEntity });
+                _lmbStartRequest.Publish(new LmbStartRequest());
 
             if (_lmbAction.WasReleasedThisFrame())
-                _lmbEndRequest.Publish(new LmbEndRequest{ entity = playerEntity });
+                _lmbEndRequest.Publish(new LmbEndRequest());
 
             if (_rmbAction.WasPressedThisFrame())
-                _rmbStartRequest.Publish(new RmbStartRequest{ entity = playerEntity });
+                _rmbStartRequest.Publish(new RmbStartRequest());
 
             if (_rmbAction.WasReleasedThisFrame())
-                _rmbEndRequest.Publish(new RmbEndRequest{ entity = playerEntity });
-            
+                _rmbEndRequest.Publish(new RmbEndRequest());
         }
 
         public void Dispose() { }

@@ -1,5 +1,4 @@
 ﻿using Scellecs.Morpeh;
-using Unity.Mathematics;
 
 namespace Features.HexGridPack.Components
 {

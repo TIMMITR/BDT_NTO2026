@@ -1,7 +1,6 @@
 using Features.HexGridPack.Components;
 using Features.HexGridPack.Views;
 using Scellecs.Morpeh;
-using Unity.Mathematics;
 using UnityEngine;
 
 namespace Features.HexGridPack
@@ -10,7 +9,7 @@ namespace Features.HexGridPack
     {
         public World World { get; set; }
         
-        private const int GridRadius = 4; // todo вынести в настройки
+        private const int GridRadius = 5; // todo вынести в настройки
         private const float HexRadius = 2f;
 
         private Stash<HexGridComponent> _hexGridStash;

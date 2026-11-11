@@ -7,7 +7,7 @@
             "id": "6d2bfb4a-d06d-4a4c-8b42-28b13e32b738",
             "actions": [
                 {
-                    "name": "Look",
+                    "name": "MousePosition",
                     "type": "Value",
                     "id": "ee561653-4536-44aa-b0fd-243171d2f492",
                     "expectedControlType": "Vector2",
@@ -47,11 +47,11 @@
                 {
                     "name": "",
                     "id": "59186116-db81-4e4f-a882-9f1ae0fb0967",
-                    "path": "<Pointer>/delta",
+                    "path": "<Mouse>/position",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Look",
+                    "action": "MousePosition",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
