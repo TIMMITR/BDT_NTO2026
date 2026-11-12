@@ -49,7 +49,7 @@ namespace Features.RaycastPack
 
             ref var camComp = ref _cameraStash.Get(_cameraFilter.First());
             var cam = camComp.value;
-            if (!cam) return;
+            if (cam == null) return;
             
             ref var inputComp = ref _inputStash.Get(_playerFilter.First());
             
