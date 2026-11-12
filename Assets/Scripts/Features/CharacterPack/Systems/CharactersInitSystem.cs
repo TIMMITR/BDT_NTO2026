@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using Features.CharacterPack.Components;
 using Features.CharacterPack.SO;
 using Scellecs.Morpeh;
+using UnityEngine;
 
 namespace Features.CharacterPack.Systems
 {
@@ -28,13 +29,19 @@ namespace Features.CharacterPack.Systems
         private void CreateCharacters()
         {
             if (_characterTemplates == null)
+            {
+                Debug.Log("[CHARACTER_INIT_SYSTEM] Character templates has not been initialized.");
                 return;
- 
+            }
+
             foreach (var template in _characterTemplates)
             {
                 if (!template)
+                {
+                    Debug.Log("[CHARACTER_INIT_SYSTEM] Character template is null.");
                     continue;
- 
+                }
+
                 var entity = World.CreateEntity();
                 
                 ref var characterComp = ref _characterStatsStash.Add(entity);

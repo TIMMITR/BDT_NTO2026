@@ -27,7 +27,7 @@ namespace Scenes.Game
             _playerInputActions.Enable();
             
             _initGroup = _world.CreateSystemsGroup();
-            _initGroup.AddInitializer(new HexGridSystem(gameContext.boardGameObject)); 
+            _initGroup.AddInitializer(new HexGridSystem(gameContext.boardGameObject, gameContext.levelConfig)); 
             _initGroup.AddInitializer(new CharactersInitSystem(gameContext.characters));
             _initGroup.Initialize();
             

@@ -6,5 +6,6 @@ namespace Features.HexGridPack.Components
     {
         public int q;
         public int r;
+        public int moveCost;
     }
 }
