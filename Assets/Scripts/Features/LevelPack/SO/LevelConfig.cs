@@ -7,12 +7,12 @@ namespace Features.LevelPack.SO
     public sealed class LevelConfig : ScriptableObject
     {
         [SerializeField] private int gridRadius = 5;
-        [SerializeField] private float hexRadius = 2f;
+        [SerializeField] private float cellRadius = 2f;
         [SerializeField] private int defaultMoveCost = 1;
         [SerializeField] private List<LevelCellData> customCells = new();
         
         public int GridRadius => gridRadius;
-        public float HexRadius => hexRadius;
+        public float CellRadius => cellRadius;
         public int DefaultMoveCost => defaultMoveCost;
         public IReadOnlyList<LevelCellData> CustomCells => customCells;
     }

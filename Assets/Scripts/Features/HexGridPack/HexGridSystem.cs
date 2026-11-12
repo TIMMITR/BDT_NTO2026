@@ -55,7 +55,7 @@ namespace Features.HexGridPack
             }
             
             int gridRadius = _levelConfig.GridRadius;
-            float hexRadius = _levelConfig.HexRadius;
+            float hexRadius = _levelConfig.CellRadius;
 
             var gridEntity = World.CreateEntity();
             

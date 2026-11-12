@@ -1583,6 +1583,7 @@ MonoBehaviour:
   levelConfig: {fileID: 11400000, guid: 3c0186cdd0f65394b9b9a288dc13994d, type: 2}
   characters:
   - {fileID: 11400000, guid: 841627d705e172347b32ced7bd0af6e9, type: 2}
+  camera: {fileID: 1719698358}
 --- !u!4 &1593132932
 Transform:
   m_ObjectHideFlags: 0

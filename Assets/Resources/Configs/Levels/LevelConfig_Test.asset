@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: LevelConfig_Test
   m_EditorClassIdentifier: 
   gridRadius: 5
-  hexRadius: 2
+  hexRadius: 0.2
   defaultMoveCost: 1
   customCells: []
