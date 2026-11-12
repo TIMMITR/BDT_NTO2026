@@ -1,4 +1,6 @@
+using Configs;
 using Features.CameraPack.Components;
+using Features.TargetPack.Views;
 using Global;
 using Scellecs.Morpeh;
 using UnityEngine;
@@ -9,20 +11,31 @@ namespace Features.CameraPack.Systems
     {
         public World World { get; set; }
 
-        private readonly Camera _camera;
+        private readonly PrefabSettingsSo _prefabSettings;
         
-        public CameraSpawnSystem(Camera camera)
+        public CameraSpawnSystem(PrefabSettingsSo prefabSettings)
         {
-            _camera = camera;
+            _prefabSettings = prefabSettings;
         }
         
         public void OnAwake()
         {
-            var camera = World.CreateEntity();
-            World.GetStash<CameraTag>().Add(camera);
+            var cameraGameObject = Object.Instantiate(_prefabSettings.Get(PrefabType.Camera));
             
-            ref var cameraComp = ref World.GetStash<CameraComponent>().Add(camera);
-            cameraComp.value = _camera;
+            var camera = cameraGameObject.GetComponentInChildren<Camera>();
+            var target = cameraGameObject.GetComponentInChildren<CameraTargetView>();
+            
+            var cameraEntity = World.CreateEntity();
+            ref var cameraComponent = ref World.GetStash<CameraComponent>().Add(cameraEntity);
+            cameraComponent.value = camera;
+            World.GetStash<CameraTag>().Add(cameraEntity);
+            
+            var cameraTargetEntity = World.CreateEntity();
+            ref var transformComponent = ref World.GetStash<TransformComponent>().Add(cameraTargetEntity);
+            transformComponent.value = target.gameObject.transform;
+            
+            World.GetStash<CameraTargetTag>().Add(cameraTargetEntity);
+            
         }
         
         public void Dispose() { }

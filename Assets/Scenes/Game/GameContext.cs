@@ -7,9 +7,9 @@ namespace Scenes.Game
 {
     public class GameContext : MonoBehaviour
     {
+        public Transform playerSpawnPoint;
         public GameObject boardGameObject;
         public LevelConfig levelConfig;
         public List<CharacterTemplate> characters;
-        public Camera camera;
     }
 }
