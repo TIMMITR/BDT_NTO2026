@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using Features.HexGridPack.Components;
+using Features.HexGridPack.Data;
 using Features.HexGridPack.Views;
+using Features.LevelPack.Components;
 using Features.LevelPack.SO;
 using Scellecs.Morpeh;
 using UnityEngine;
@@ -14,6 +16,7 @@ namespace Features.HexGridPack
         private Stash<HexGridComponent> _hexGridStash;
         private Stash<HexTileComponent> _hexTileStash;
         private Stash<BlockedTag> _blockedCellStash;
+        private Stash<ChosenCellComponent> _chosenCellStash;
 
         private readonly Transform _gridStartPoint;
         private readonly GameObject _boardGameObject;
@@ -30,6 +33,7 @@ namespace Features.HexGridPack
             _hexGridStash = World.GetStash<HexGridComponent>();
             _hexTileStash = World.GetStash<HexTileComponent>();
             _blockedCellStash = World.GetStash<BlockedTag>();
+            _chosenCellStash = World.GetStash<ChosenCellComponent>();
 
             CreateGrid();
         }
@@ -54,12 +58,13 @@ namespace Features.HexGridPack
             float hexRadius = _levelConfig.HexRadius;
 
             var gridEntity = World.CreateEntity();
+            _chosenCellStash.Add(gridEntity);
             ref var gridComp = ref _hexGridStash.Add(gridEntity);
             gridComp.root = startPoint.transform;
             gridComp.gridRadius = gridRadius;
             gridComp.hexRadius = hexRadius;
-            
-            var tiles = new Dictionary<(int q, int r), Entity>();
+            gridComp.cells = new Dictionary<CellCoord, Entity>();
+            gridComp.takenCells = new Dictionary<CellCoord, Entity>(); // todo возможно стоит вынести в скрипт с генерацией персонажей
 
             for (int q = -gridRadius; q <= gridRadius; q++)
             {
@@ -74,30 +79,22 @@ namespace Features.HexGridPack
                     tileComp.r = r;
                     tileComp.moveCost = _levelConfig.DefaultMoveCost;
                     
-                    tiles.Add((q, r), tileEntity);
+                    gridComp.cells.Add(new CellCoord(q, r), tileEntity);
                 }
             }
             
-            ActivateCustomCells(tiles);
+            ActivateCustomCells(gridComp.cells);
         }
 
-        private void ActivateCustomCells(Dictionary<(int q, int r), Entity> tiles)
+        private void ActivateCustomCells(Dictionary<CellCoord, Entity> tiles)
         {
-            var applied = new HashSet<(int q, int r)>();
- 
             foreach (var cell in _levelConfig.CustomCells)
             {
-                var key = (cell.q, cell.r);
- 
-                if (!tiles.TryGetValue(key, out var tileEntity))
+                var coord = new CellCoord(cell.q, cell.r);
+    
+                if (!tiles.TryGetValue(coord, out var tileEntity))
                 {
-                    Debug.Log($"[HEX_GRID_SYSTEM] Cell ({cell.q}, {cell.r}) is outside the grid", _levelConfig);
-                    continue;
-                }
- 
-                if (!applied.Add(key))
-                {
-                    Debug.LogWarning($"[HEX_GRID_SYSTEM] Cell ({cell.q}, {cell.r}) is listed more than once", _levelConfig);
+                    Debug.Log($"[HEX_GRID_SYSTEM] Cell:{cell.q}, {cell.r} is not initted.", _levelConfig);
                     continue;
                 }
 
@@ -113,10 +110,6 @@ namespace Features.HexGridPack
             }
         }
 
-        public void Dispose()
-        {
-            _hexGridStash = null;
-            _hexTileStash = null;
-        }
+        public void Dispose() { }
     }
 }

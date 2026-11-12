@@ -1,6 +1,6 @@
 using Scellecs.Morpeh;
 
-namespace Features.HexGridPack.Components
+namespace Features.HexGridPack.Data
 {
     public struct BlockedTag : IComponent {}
 }

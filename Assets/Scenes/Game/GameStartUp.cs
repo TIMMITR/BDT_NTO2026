@@ -1,6 +1,7 @@
 using Features.CharacterPack.Systems;
 using Features.HexGridPack;
 using Features.InputPack;
+using Features.LevelPack.Systems;
 using Features.RaycastPack;
 using Features.TargetPack;
 using Scellecs.Morpeh;
@@ -36,6 +37,7 @@ namespace Scenes.Game
             _updateGroup.AddSystem(new InputSystem(_playerInputActions));
             _updateGroup.AddSystem(new RaycastSystem());
             _updateGroup.AddSystem(new TargetSystem());
+            _updateGroup.AddSystem(new ChooseCellSystem());
             
             _world.AddSystemsGroup(order: 0, _updateGroup);
 
