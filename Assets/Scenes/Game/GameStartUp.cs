@@ -1,7 +1,9 @@
+using Features.CameraPack.Systems;
 using Features.CharacterPack.Systems;
 using Features.HexGridPack;
 using Features.InputPack;
 using Features.LevelPack.Systems;
+using Features.PlayerPack.Systems;
 using Features.RaycastPack;
 using Features.TargetPack;
 using Scellecs.Morpeh;
@@ -28,6 +30,8 @@ namespace Scenes.Game
             _playerInputActions.Enable();
             
             _initGroup = _world.CreateSystemsGroup();
+            _initGroup.AddInitializer(new PlayerSpawnSystem());
+            _initGroup.AddInitializer(new CameraSpawnSystem(gameContext.camera));
             _initGroup.AddInitializer(new HexGridSystem(gameContext.boardGameObject, gameContext.levelConfig)); 
             _initGroup.AddInitializer(new CharactersInitSystem(gameContext.characters));
             _initGroup.Initialize();
@@ -38,6 +42,7 @@ namespace Scenes.Game
             _updateGroup.AddSystem(new RaycastSystem());
             _updateGroup.AddSystem(new TargetSystem());
             _updateGroup.AddSystem(new ChooseCellSystem());
+            _updateGroup.Initialize();
             
             _world.AddSystemsGroup(order: 0, _updateGroup);
 

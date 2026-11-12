@@ -33,7 +33,7 @@ namespace Features.LevelPack.Systems
 
         public void OnUpdate(float deltaTime)
         {
-            if (_raycastFilter.IsEmpty()) 
+            if (_raycastFilter.IsEmpty() || _gridFilter.IsEmpty()) 
             {
                 Debug.Log("[CHOOSE_CELL_SYSTEM] Can not find one of filter.");
                 return;
@@ -49,6 +49,9 @@ namespace Features.LevelPack.Systems
 
             if (gridComp.cells.TryGetValue(transCoord, out var cellEntity))
             {
+                Debug.DrawRay(raycastComp.hitPoint, Vector3.up * 2f, Color.green);
+                Debug.DrawRay(gridComp.ToWorldCoord(transCoord), Vector3.up * 2f, Color.red);
+                
                 ref var chosenCellComp = ref _chosenCellStash.Get(gridEntity);
                 chosenCellComp.cellEntity = cellEntity;
                 
@@ -56,7 +59,7 @@ namespace Features.LevelPack.Systems
             }
             else
             {
-                Debug.Log("[CHOOSE_CELL_SYSTEM] Cell not found.");
+                //Debug.Log("[CHOOSE_CELL_SYSTEM] Cell not found.");
             }
         }
         

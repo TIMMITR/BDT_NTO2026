@@ -10,5 +10,6 @@ namespace Scenes.Game
         public GameObject boardGameObject;
         public LevelConfig levelConfig;
         public List<CharacterTemplate> characters;
+        public Camera camera;
     }
 }

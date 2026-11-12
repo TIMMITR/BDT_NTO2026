@@ -58,6 +58,7 @@ namespace Features.HexGridPack
             float hexRadius = _levelConfig.HexRadius;
 
             var gridEntity = World.CreateEntity();
+            
             _chosenCellStash.Add(gridEntity);
             ref var gridComp = ref _hexGridStash.Add(gridEntity);
             gridComp.root = startPoint.transform;

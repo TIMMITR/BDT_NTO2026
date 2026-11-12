@@ -5,7 +5,7 @@ namespace Features.HexGridPack.Data
 {
     // Замена кортежам, т.к. кортежи не очень читаемы,
     // Этот класс также включает методы перевода координат из мировых в локальные
-    public class CellCoord
+    public struct CellCoord
     {
         public int q => _q;
         public int r => _r;
@@ -68,5 +68,7 @@ namespace Features.HexGridPack.Data
  
             return new CellCoord(rq, rr);
         }
+        
+        public bool Equals(CellCoord other) => q == other.q && r == other.r;
     }
 }
