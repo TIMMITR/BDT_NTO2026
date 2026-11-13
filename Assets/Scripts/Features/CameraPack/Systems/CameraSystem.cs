@@ -1,6 +1,6 @@
 using Scellecs.Morpeh;
 
-namespace Features.CameraPack
+namespace Features.CameraPack.Systems
 {
     public sealed class CameraSystem : ISystem
     {
