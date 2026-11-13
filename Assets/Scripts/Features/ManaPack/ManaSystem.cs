@@ -34,9 +34,9 @@ namespace Features.ManaPack
                 
                 ref var manaComponent = ref _manaStash.Get(giveRequest.entity);
 
-                manaComponent.currantMana = Math.Min(manaComponent.currantMana + giveRequest.amount, manaComponent.maxMana);
+                manaComponent.currentMana = Math.Min(manaComponent.currentMana + giveRequest.amount, manaComponent.maxMana);
                 
-                _manaChangeSuccessEvent.NextFrame(new ManaChangeSuccessEvent{newAmount = manaComponent.currantMana});
+                _manaChangeSuccessEvent.NextFrame(new ManaChangeSuccessEvent{newAmount = manaComponent.currentMana});
                 
             }
             
@@ -46,10 +46,10 @@ namespace Features.ManaPack
                 
                 ref var manaComponent = ref _manaStash.Get(takeRequest.entity);
                 
-                if (manaComponent.currantMana >= takeRequest.amount)
+                if (manaComponent.currentMana >= takeRequest.amount)
                 {
-                    manaComponent.currantMana -= takeRequest.amount;
-                    _manaChangeSuccessEvent.NextFrame(new ManaChangeSuccessEvent{newAmount = manaComponent.currantMana});
+                    manaComponent.currentMana -= takeRequest.amount;
+                    _manaChangeSuccessEvent.NextFrame(new ManaChangeSuccessEvent{newAmount = manaComponent.currentMana});
                 }
                 else
                 {
