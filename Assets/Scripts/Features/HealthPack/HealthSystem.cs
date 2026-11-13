@@ -3,60 +3,55 @@ using Scellecs.Morpeh;
 
 namespace Features.HealthPack
 {
-    public class HealthSystem : ISystem
+    public sealed class HealthSystem : ISystem
     {
         public World World { get; set; }
 
         private Stash<HealthComponent> _healthStash;
-        
-        private Request<HealthGiveRequest> _healthGiveRequest;
-        private Request<HealthTakeRequest> _healthTakeRequest;
-        
-        private Event<HealthChangeEvent> _healthChangeEvent;
+        private Stash<DefenceComponent> _defenceStash;
+
+        private Request<HealthRequest> _healthChangeRequest;
+
+        private Event<HealthEvent> _healthChangeEvent;
  
         public void OnAwake()
         {
-            foreach (var giveRequest in _healthGiveRequest.Consume())
+            _healthStash = World.GetStash<HealthComponent>();
+            _defenceStash = World.GetStash<DefenceComponent>();
+
+            _healthChangeRequest = World.GetRequest<HealthRequest>();
+
+            _healthChangeEvent = World.GetEvent<HealthEvent>();
+        }
+
+        public void OnUpdate(float deltaTime)
+        {
+            foreach (var request in _healthChangeRequest.Consume())
             {
-                if (!_healthStash.Has(giveRequest.entity)) return;
-                
-                ref var healthComponent = ref _healthStash.Get(giveRequest.entity);
+                if (!_healthStash.Has(request.entity)) continue;
 
-                healthComponent.currentHealth = Math.Min(healthComponent.currentHealth + giveRequest.amount,
-                    healthComponent.maxHealth);
-                
-                _healthChangeEvent.NextFrame(new HealthChangeEvent
-                {
-                    entity = giveRequest.entity, newAmount =  healthComponent.currentHealth
-                });
-            }
+                ref var healthComponent = ref _healthStash.Get(request.entity);
 
-            foreach (var takeRequest in _healthTakeRequest.Consume())
-            {
-                if (!_healthStash.Has(takeRequest.entity)) return;
-                ref var healthComponent = ref _healthStash.Get(takeRequest.entity);
-
-                if (healthComponent.currentHealth > takeRequest.amount)
+                var amount = request.amount;
+                if (amount < 0 && _defenceStash.Has(request.entity))
                 {
-                    healthComponent.currentHealth -= takeRequest.amount;
-                }
-                else
-                {
-                    healthComponent.currentHealth = 0;
+                    ref var defenceComponent = ref _defenceStash.Get(request.entity);
+                    amount = -Math.Max(1, -amount - defenceComponent.currentDefence);
                 }
 
-                _healthChangeEvent.NextFrame(new HealthChangeEvent
+                var newHealth = Math.Clamp(healthComponent.currentHealth + amount, 0, healthComponent.maxHealth);
+                var delta = newHealth - healthComponent.currentHealth;
+                healthComponent.currentHealth = newHealth;
+
+                _healthChangeEvent.NextFrame(new HealthEvent
                 {
-                    entity = takeRequest.entity, newAmount = healthComponent.currentHealth
+                    entity = request.entity,
+                    newAmount = newHealth,
+                    delta = delta
                 });
             }
         }
- 
-    
-        public void OnUpdate(float deltaTime){
 
-        }
-
-        public void Dispose() {}
+        public void Dispose() { }
     }
 }

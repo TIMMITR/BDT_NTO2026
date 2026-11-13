@@ -1,4 +1,3 @@
-using System;
 using Features.HealthPack;
 using Scellecs.Morpeh;
 
@@ -9,33 +8,31 @@ namespace Features.DamagePack
         public World World { get; set; }
 
         private Stash<DamageComponent> _damageStash;
-        private Stash<DefenceComponent> _defenceStash;
-        
+
         private Request<DamageRequest> _damageRequest;
+        private Request<HealthRequest> _healthChangeRequest;
 
         public void OnAwake()
         {
             _damageStash = World.GetStash<DamageComponent>();
-            _defenceStash = World.GetStash<DefenceComponent>();
+
             _damageRequest = World.GetRequest<DamageRequest>();
-            
+            _healthChangeRequest = World.GetRequest<HealthRequest>();
         }
 
         public void OnUpdate(float deltaTime)
         {
             foreach (var request in _damageRequest.Consume())
             {
-                if (!_damageStash.Has(request.entity)) return;
-                ref var damageComponent = ref _damageStash.Get(request.entity);
-                var defence = 0;
-                if (_defenceStash.Has(request.entity))
+                if (!_damageStash.Has(request.source)) continue;
+
+                ref var damageComponent = ref _damageStash.Get(request.source);
+
+                _healthChangeRequest.Publish(new HealthRequest
                 {
-                    ref var defenceComponent = ref _defenceStash.Get(request.entity);
-                    defence = defenceComponent.currentDefence;
-                }
-
-                var damage = Math.Max(1, damageComponent.baseDamage - defence);
-
+                    entity = request.target,
+                    amount = -damageComponent.baseDamage
+                });
             }
         }
 

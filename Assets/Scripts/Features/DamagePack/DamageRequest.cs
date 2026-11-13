@@ -4,7 +4,7 @@ namespace Features.DamagePack
 {
     public struct DamageRequest : IRequestData
     {
-        public int amount;
-        public Entity entity;
+        public Entity source; // может быть пригодится
+        public Entity target;
     }
 }

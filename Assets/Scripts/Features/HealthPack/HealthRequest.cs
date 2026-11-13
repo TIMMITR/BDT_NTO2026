@@ -2,9 +2,9 @@ using Scellecs.Morpeh;
 
 namespace Features.HealthPack
 {
-    public struct HealthChangeEvent : IEventData
+    public struct HealthRequest : IRequestData
     {
+        public int amount;
         public Entity entity;
-        public int newAmount;
     }
 }

@@ -8,54 +8,43 @@ namespace Features.ManaPack
         public World World { get; set; }
 
         private Stash<ManaComponent> _manaStash;
-        
-        private Request<ManaGiveRequest> _manaGiveRequest;
-        private Request<ManaTakeRequest> _manaTakeRequest;
-        
+
+        private Request<ManaChangeRequest> _manaChangeRequest;
+
         private Event<ManaChangeSuccessEvent> _manaChangeSuccessEvent;
         private Event<ManaChangeFailedEvent> _manaChangeFailedEvent;
 
         public void OnAwake()
         {
             _manaStash = World.GetStash<ManaComponent>();
-            
-            _manaGiveRequest = World.GetRequest<ManaGiveRequest>();
-            _manaTakeRequest = World.GetRequest<ManaTakeRequest>();
-            
+
+            _manaChangeRequest = World.GetRequest<ManaChangeRequest>();
+
             _manaChangeSuccessEvent = World.GetEvent<ManaChangeSuccessEvent>();
             _manaChangeFailedEvent = World.GetEvent<ManaChangeFailedEvent>();
         }
 
         public void OnUpdate(float deltaTime)
         {
-            foreach (var giveRequest in _manaGiveRequest.Consume())
+            foreach (var request in _manaChangeRequest.Consume())
             {
-                if (!_manaStash.Has(giveRequest.entity)) return;
-                
-                ref var manaComponent = ref _manaStash.Get(giveRequest.entity);
+                if (!_manaStash.Has(request.entity)) continue;
 
-                manaComponent.currentMana = Math.Min(manaComponent.currentMana + giveRequest.amount, manaComponent.maxMana);
-                
-                _manaChangeSuccessEvent.NextFrame(new ManaChangeSuccessEvent{newAmount = manaComponent.currentMana});
-                
-            }
-            
-            foreach (var takeRequest in _manaTakeRequest.Consume())
-            {
-                if (!_manaStash.Has(takeRequest.entity)) return;
-                
-                ref var manaComponent = ref _manaStash.Get(takeRequest.entity);
-                
-                if (manaComponent.currentMana >= takeRequest.amount)
+                ref var manaComponent = ref _manaStash.Get(request.entity);
+
+                if (request.amount < 0 && manaComponent.currentMana < -request.amount)
                 {
-                    manaComponent.currentMana -= takeRequest.amount;
-                    _manaChangeSuccessEvent.NextFrame(new ManaChangeSuccessEvent{newAmount = manaComponent.currentMana});
+                    _manaChangeFailedEvent.NextFrame(new ManaChangeFailedEvent { entity = request.entity });
+                    continue;
                 }
-                else
+
+                manaComponent.currentMana = Math.Clamp(manaComponent.currentMana + request.amount, 0, manaComponent.maxMana);
+
+                _manaChangeSuccessEvent.NextFrame(new ManaChangeSuccessEvent
                 {
-                    _manaChangeFailedEvent.NextFrame(new ManaChangeFailedEvent());
-                }
-                
+                    entity = request.entity,
+                    newAmount = manaComponent.currentMana
+                });
             }
         }
 
