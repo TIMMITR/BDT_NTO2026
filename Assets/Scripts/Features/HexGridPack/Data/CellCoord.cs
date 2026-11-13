@@ -5,7 +5,7 @@ namespace Features.HexGridPack.Data
 {
     // Замена кортежам, т.к. кортежи не очень читаемы,
     // Этот класс также включает методы перевода координат из мировых в локальные
-    public struct CellCoord
+    public struct CellCoord : IEquatable<CellCoord>
     {
         public int q => _q;
         public int r => _r;
@@ -73,5 +73,11 @@ namespace Features.HexGridPack.Data
         }
         
         public bool Equals(CellCoord other) => q == other.q && r == other.r;
+        public override bool Equals(object obj) => obj is CellCoord other && Equals(other);
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(_q, _r);
+        }
     }
 }

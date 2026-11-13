@@ -1,5 +1,6 @@
 using Features.HexGridPack.Components;
 using Features.LevelPack.Components;
+using Features.LevelPack.Requests;
 using Features.RaycastPack;
 using Scellecs.Morpeh;
 using UnityEngine;
@@ -16,6 +17,9 @@ namespace Features.LevelPack.Systems
         private Stash<RaycastComponent> _raycastStash;
         private Stash<HexGridComponent> _gridStash;
         private Stash<ChosenCellComponent> _chosenCellStash;
+        
+        private Request<ColorCellRequest> _colorCellRequest;
+        private Request<ClearColorsRequest> _clearRequest;
     
         public void OnAwake()
         {
@@ -29,6 +33,9 @@ namespace Features.LevelPack.Systems
             _raycastStash = World.GetStash<RaycastComponent>();
             _gridStash = World.GetStash<HexGridComponent>();
             _chosenCellStash = World.GetStash<ChosenCellComponent>();
+            
+            _colorCellRequest = World.GetRequest<ColorCellRequest>();
+            _clearRequest = World.GetRequest<ClearColorsRequest>();
         }
 
         public void OnUpdate(float deltaTime)
@@ -53,7 +60,13 @@ namespace Features.LevelPack.Systems
                 Debug.DrawRay(gridComp.ToWorldCoord(transCoord), Vector3.up * 2f, Color.red);
                 
                 ref var chosenCellComp = ref _chosenCellStash.Get(gridEntity);
+                
+                if(chosenCellComp.cellEntity != cellEntity)
+                    _clearRequest.Publish(new ClearColorsRequest());
+                
                 chosenCellComp.cellEntity = cellEntity;
+                
+                _colorCellRequest.Publish(new ColorCellRequest {cellCoord = transCoord});
                 
                 Debug.Log($"Picked cell: {transCoord.q}, {transCoord.r}");
             }
