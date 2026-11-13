@@ -4,7 +4,7 @@ namespace Features.ManaPack
 {
     public struct ManaComponent : IComponent
     {
-        public int currantMana;
+        public int currentMana;
         public int maxMana;
     }
 }

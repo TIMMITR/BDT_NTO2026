@@ -39,7 +39,7 @@ namespace Features.LevelPack.Systems
                 return;
             }
             
-            var raycastEntity =  _raycastFilter.First();
+            var raycastEntity = _raycastFilter.First();
             ref var raycastComp = ref _raycastStash.Get(raycastEntity);
             var raycastCoord = raycastComp.hitPoint;
 

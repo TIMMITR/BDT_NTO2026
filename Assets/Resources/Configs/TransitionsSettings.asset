@@ -1,0 +1,39 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 228e151152694b5b90ef9c1c9fa6ae94, type: 3}
+  m_Name: TransitionsSettings
+  m_EditorClassIdentifier: 
+  transitions:
+  - type: 0
+    settings: {fileID: 11400000, guid: b577ec7af0d48c34a9d31ce17f830a8d, type: 2}
+  - type: 1
+    settings: {fileID: 11400000, guid: 057babd6f13132c449650d99e3c4e99c, type: 2}
+  - type: 2
+    settings: {fileID: 11400000, guid: 5d42ad7319df4a8439d74d82f30a60cc, type: 2}
+  - type: 3
+    settings: {fileID: 11400000, guid: 2eec88d4ca6df24419aab2fd6b04c543, type: 2}
+  - type: 4
+    settings: {fileID: 11400000, guid: 013263c83b6a84c4d95beaa8bd163ac8, type: 2}
+  - type: 5
+    settings: {fileID: 11400000, guid: d641980330b54c243a644222c797e582, type: 2}
+  - type: 6
+    settings: {fileID: 11400000, guid: c9f7b34f761c5c342ada8a4b2ab7a716, type: 2}
+  - type: 7
+    settings: {fileID: 11400000, guid: 06fa0ad2bc756f44ab258bc74947381d, type: 2}
+  - type: 8
+    settings: {fileID: 11400000, guid: 57d2dee28715fc6499379ee5905b3caf, type: 2}
+  - type: 9
+    settings: {fileID: 11400000, guid: b0126e1e0c6c2a04895d564bd230dfb9, type: 2}
+  - type: 10
+    settings: {fileID: 11400000, guid: 9710edcf009d00943af961dd2a7ca7d3, type: 2}
+  - type: 11
+    settings: {fileID: 11400000, guid: 3ad3e86dc386e60458fda4c93a2c3d62, type: 2}

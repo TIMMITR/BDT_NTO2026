@@ -27,7 +27,7 @@ namespace Plugins.EasyTransitions.Scripts
 
         private void Awake()
         {
-            if (_instance && _instance != this)
+            if (_instance != null && _instance != this)
             {
                 Destroy(gameObject);
                 return;
@@ -39,7 +39,7 @@ namespace Plugins.EasyTransitions.Scripts
 
         public static TransitionManager Instance()
         {
-            if (_instance) return _instance;
+            if (_instance == null) return _instance;
             Debug.LogError("[TransitionManager] Экземпляр отсутствует на сцене! Убедитесь, что префаб добавлен.");
             return null;
         }
@@ -56,13 +56,13 @@ namespace Plugins.EasyTransitions.Scripts
 
         private void StartTransitionInternal(TransitionSettings transition, float startDelay, Func<AsyncOperation> loadSceneAction)
         {
-            if (!transition)
+            if (transition != null)
             {
                 Debug.LogError("[TransitionManager] TransitionSettings не могут быть null!");
                 return;
             }
 
-            if (!transitionTemplate)
+            if (transitionTemplate  != null)
             {
                 Debug.LogError("[TransitionManager] transitionTemplate не назначен в инспекторе!");
                 return;

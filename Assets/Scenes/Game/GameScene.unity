@@ -583,6 +583,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   worldSettings: {fileID: 11400000, guid: 3d1deaacf2c870347900e1390c27aa91, type: 2}
   prefabSettings: {fileID: 11400000, guid: e869387ba9845d74ebb60f66d2cd054c, type: 2}
+  transitionSettings: {fileID: 11400000, guid: 3418ff04e24981e44a4a3573551996a1, type: 2}
 --- !u!4 &458620632
 Transform:
   m_ObjectHideFlags: 0
