@@ -40,7 +40,10 @@ namespace Features.HexGridPack.Data
             return (Mathf.Abs(deltaQ) + Mathf.Abs(deltaR) + Mathf.Abs(deltaQ + deltaR)) / 2;
         }
         
-        public Vector3 ToLocalPosition(float cellRadius) => new(cellRadius * CELL_TRANS_MULTIPLIER_1 * _q, 0f, cellRadius * Mathf.Sqrt(3f) * (_r + _q * CELL_TRANS_MULTIPLIER_2));
+        public Vector3 ToLocalPosition(float cellRadius) =>
+            new(cellRadius * CELL_TRANS_MULTIPLIER_1 * _q,
+                0f,
+                cellRadius * Mathf.Sqrt(3f) * (_r + _q * CELL_TRANS_MULTIPLIER_2));
         
         public static CellCoord FromLocalPosition(Vector3 local, float cellRadius)
         {

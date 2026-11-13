@@ -18,7 +18,6 @@ namespace Features.HexGridPack
         private Stash<BlockedTag> _blockedCellStash;
         private Stash<ChosenCellComponent> _chosenCellStash;
 
-        private readonly Transform _gridStartPoint;
         private readonly GameObject _boardGameObject;
         private readonly LevelConfig _levelConfig;
 
@@ -40,7 +39,7 @@ namespace Features.HexGridPack
 
         private void CreateGrid()
         {
-            if (!_levelConfig)
+            if (_levelConfig == null)
             {
                 Debug.Log("[HEX_GRID_SYSTEM] No level config found.");
                 return;
@@ -48,7 +47,7 @@ namespace Features.HexGridPack
             
             var startPoint = _boardGameObject.GetComponentInChildren<GridStartPointView>();
             
-            if (!startPoint)
+            if (startPoint == null)
             {
                 Debug.LogWarning("[HEX_GRID_SYSTEM] No GridStartPointView found on " + _boardGameObject.name);
                 return;

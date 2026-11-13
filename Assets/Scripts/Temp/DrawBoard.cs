@@ -20,7 +20,7 @@ namespace Temp
                     var center = transform.position + new Vector3(
                         hexRadius * 1.5f * q,
                         0.1f,
-                        hexRadius * 1.7f * (r + q * 0.5f)
+                        hexRadius * Mathf.Sqrt(3) * (r + q * 0.5f)
                     );
 
                     DrawHexWire(center, hexRadius);
