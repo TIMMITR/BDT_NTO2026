@@ -1,9 +1,8 @@
 using System.Collections.Generic;
+using Configs;
 using Features.HexGridPack.Components;
 using Features.HexGridPack.Data;
-using Features.HexGridPack.Views;
-using Features.LevelPack.Components;
-using Features.LevelPack.SO;
+using Features.PickCellPack;
 using Scellecs.Morpeh;
 using UnityEngine;
 
@@ -15,23 +14,21 @@ namespace Features.HexGridPack
 
         private Stash<HexGridComponent> _hexGridStash;
         private Stash<HexTileComponent> _hexTileStash;
-        private Stash<BlockedTag> _blockedCellStash;
         private Stash<ChosenCellComponent> _chosenCellStash;
 
         private readonly GameObject _boardGameObject;
-        private readonly LevelConfig _levelConfig;
+        private readonly WorldSettingsSo _worldSettings;
 
-        public HexGridSystem(GameObject boardGameObject, LevelConfig levelConfig)
+        public HexGridSystem(GameObject boardGameObject, WorldSettingsSo worldSettings)
         {
             _boardGameObject = boardGameObject;
-            _levelConfig = levelConfig;
+            _worldSettings = worldSettings;
         }
 
         public void OnAwake()
         {
             _hexGridStash = World.GetStash<HexGridComponent>();
             _hexTileStash = World.GetStash<HexTileComponent>();
-            _blockedCellStash = World.GetStash<BlockedTag>();
             _chosenCellStash = World.GetStash<ChosenCellComponent>();
 
             CreateGrid();
@@ -39,32 +36,25 @@ namespace Features.HexGridPack
 
         private void CreateGrid()
         {
-            if (_levelConfig == null)
-            {
-                Debug.Log("[HEX_GRID_SYSTEM] No level config found.");
-                return;
-            }
             
-            var startPoint = _boardGameObject.GetComponentInChildren<GridStartPointView>();
-            
-            if (startPoint == null)
+            if (_boardGameObject == null)
             {
                 Debug.LogWarning("[HEX_GRID_SYSTEM] No GridStartPointView found on " + _boardGameObject.name);
                 return;
             }
             
-            int gridRadius = _levelConfig.GridRadius;
-            float hexRadius = _levelConfig.CellRadius;
+            int gridRadius = _worldSettings.gridRadius;
+            float hexRadius = _worldSettings.cellRadius;
 
             var gridEntity = World.CreateEntity();
             
             _chosenCellStash.Add(gridEntity);
             ref var gridComp = ref _hexGridStash.Add(gridEntity);
-            gridComp.root = startPoint.transform;
+            gridComp.root = _boardGameObject.transform;
             gridComp.gridRadius = gridRadius;
             gridComp.hexRadius = hexRadius;
             gridComp.cells = new Dictionary<CellCoord, Entity>();
-            gridComp.takenCells = new Dictionary<CellCoord, Entity>(); // todo возможно стоит вынести в скрипт с генерацией персонажей
+            gridComp.takenCells = new Dictionary<CellCoord, Entity>();
 
             for (int q = -gridRadius; q <= gridRadius; q++)
             {
@@ -77,35 +67,9 @@ namespace Features.HexGridPack
                     ref var tileComp = ref _hexTileStash.Add(tileEntity);
                     tileComp.q = q;
                     tileComp.r = r;
-                    tileComp.moveCost = _levelConfig.DefaultMoveCost;
+                    tileComp.moveCost = _worldSettings.defaultMoveCost;
                     
                     gridComp.cells.Add(new CellCoord(q, r), tileEntity);
-                }
-            }
-            
-            ActivateCustomCells(gridComp.cells);
-        }
-
-        private void ActivateCustomCells(Dictionary<CellCoord, Entity> tiles)
-        {
-            foreach (var cell in _levelConfig.CustomCells)
-            {
-                var coord = new CellCoord(cell.q, cell.r);
-    
-                if (!tiles.TryGetValue(coord, out var tileEntity))
-                {
-                    Debug.Log($"[HEX_GRID_SYSTEM] Cell:{cell.q}, {cell.r} is not initted.", _levelConfig);
-                    continue;
-                }
-
-                if (cell.blocked)
-                {
-                    _blockedCellStash.Add(tileEntity); // todo Возможно стот хранить данные о блоке в компоненте клетки
-                }
-                else if (cell.moveCost > 1)
-                {
-                    ref var tileComp = ref _hexTileStash.Get(tileEntity);
-                    tileComp.moveCost = cell.moveCost;
                 }
             }
         }

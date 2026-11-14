@@ -1,12 +1,11 @@
 using Configs;
 using Features.CameraPack.Systems;
-using Features.CharacterPack.Systems;
 using Features.DamagePack;
 using Features.HealthPack;
 using Features.HexGridPack;
 using Features.InputPack;
-using Features.LevelPack.Systems;
 using Features.ManaPack;
+using Features.PickCellPack;
 using Features.PlayerPack.Systems;
 using Features.RaycastPack;
 using Features.ScenePack;
@@ -43,9 +42,7 @@ namespace Scenes.Game
                 globalContext.prefabSettings));
             _initGroup.AddInitializer(new HexGridSystem(
                 gameContext.boardGameObject,
-                gameContext.levelConfig)); 
-            _initGroup.AddInitializer(new CharactersInitSystem(
-                gameContext.characters));
+                globalContext.worldSettings)); 
             _initGroup.Initialize();
             
             _updateGroup = _world.CreateSystemsGroup();
@@ -58,6 +55,7 @@ namespace Scenes.Game
             _updateGroup.AddSystem(new ManaSystem());
             _updateGroup.AddSystem(new DamageSystem());
             _updateGroup.AddSystem(new HealthSystem());
+            
             
             _updateGroup.AddSystem(new SceneSystem(globalContext.transitionSettings));
                 

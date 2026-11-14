@@ -1,10 +1,9 @@
 using Features.HexGridPack.Components;
-using Features.LevelPack.Components;
 using Features.RaycastPack;
 using Scellecs.Morpeh;
 using UnityEngine;
 
-namespace Features.LevelPack.Systems
+namespace Features.PickCellPack
 {
     public class ChooseCellSystem : ISystem
     {
