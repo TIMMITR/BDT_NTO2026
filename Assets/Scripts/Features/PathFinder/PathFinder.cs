@@ -18,11 +18,16 @@ namespace Features.PathFinder
             new(0, 1),
         };
         
-        public static void GetPath(CellGridComponent grid, CellCoord from, CellCoord to, Stash<CellTileComponent> stash)
+        public static PassReady GetPath(CellGridComponent grid, CellCoord from, CellCoord to, Stash<CellTileComponent> stash)
         {
-            Dictionary<CellCoord, int> cellsCost = new();
+            PassReady result = new() 
+            {
+                path = new Dictionary < CellCoord, CellCoord>(),
+                cellsCost = new Dictionary<CellCoord, int>(),
+            };
 
-            cellsCost[from] = 0;
+            result.cellsCost[from] = 0;
+            result.path[from] = from;
             
             List<CostCoord> candidates = new()
             {
@@ -31,11 +36,11 @@ namespace Features.PathFinder
 
             while (candidates.Count > 0)
             {
-                var current = GetMin(candidates);
+                var currentCell = GetMin(candidates);
 
                 foreach (var dir in Directions)
                 {
-                    var next = new CellCoord(current.coord.Q + dir.Q, current.coord.R + dir.R);
+                    var next = new CellCoord(currentCell.coord.Q + dir.Q, currentCell.coord.R + dir.R);
 
                     if (!grid.cells.TryGetValue(next, out var cell))
                         continue;
@@ -51,15 +56,32 @@ namespace Features.PathFinder
                     if (grid.takenCells.ContainsKey(next))
                         continue;
                     
-                    int newCost = cellsCost[current.coord] + cost;
+                    int newCost = result.cellsCost[currentCell.coord] + cost;
                     
-                    if (cellsCost.TryGetValue(next, out var exist) && newCost >= exist)
+                    if (result.cellsCost.TryGetValue(next, out var exist) && newCost >= exist)
                         continue;
                     
-                    cellsCost[next] = newCost;
+                    result.cellsCost[next] = newCost;
+                    result.path[next] = currentCell.coord;
                     candidates.Add(new CostCoord(next, newCost));
                 }
             }
+            
+            return result;
+        }
+
+        public static List<CellCoord> ReconstructPath(PassReady pass, CellCoord from, CellCoord to)
+        {
+            List<CellCoord> result = new();
+
+            for (var i = to; i != from; i = pass.path[i])
+            {
+                result.Add(i);
+            }
+            
+            result.Reverse();
+            
+            return result;
         }
 
         private static int GetCost(Entity cell, Stash<CellTileComponent> stash) => stash.Get(cell).moveCost;
@@ -80,6 +102,12 @@ namespace Features.PathFinder
             candidates.RemoveAt(minIndex);
             return minCellCoord;
         }
+    }
+
+    public class PassReady
+    {
+        public Dictionary<CellCoord, CellCoord> path;
+        public Dictionary<CellCoord, int> cellsCost;
     }
     
     public class CostCoord // todo переименовать
