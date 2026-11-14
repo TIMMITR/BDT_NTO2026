@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Configs;
+using Features.QuickTalkPack.Data;
 //using Features.QuickTalkPack.Data;
 using UnityEngine;
 
@@ -21,10 +22,10 @@ namespace Features.BattlePack
             }
         };
 
-        //[SerializeField] private List<QuickTalkSet> quickTalks = new();
+        [SerializeField] private List<QuickTalkSet> quickTalks = new();
 
         public IReadOnlyList<BattleTileData> HexTiles => hexTiles;
-        //public IReadOnlyList<QuickTalkSet> QuickTalks => quickTalks;
+        public IReadOnlyList<QuickTalkSet> QuickTalks => quickTalks;
     
         [Serializable]
         public struct BattleTileData
