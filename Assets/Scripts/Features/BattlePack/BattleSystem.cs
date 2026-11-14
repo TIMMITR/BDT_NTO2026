@@ -33,7 +33,7 @@ namespace Features.BattlePack
             ref var battleComponent = ref _battleStash.Add(World.CreateEntity());
             battleComponent.currentBattleId = 0; // пока что без боя
             
-            _battleRequest.Publish(new BattleRequest{id = 0});
+            _battleRequest.Publish(new BattleRequest{id = 0}, allowNextFrame: true);
         }
 
         public void OnUpdate(float deltaTime)
