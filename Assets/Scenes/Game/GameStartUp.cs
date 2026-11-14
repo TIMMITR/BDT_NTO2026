@@ -51,6 +51,7 @@ namespace Scenes.Game
             _updateGroup.AddSystem(new TargetSystem());
             _updateGroup.AddSystem(new RaycastSystem());
             _updateGroup.AddSystem(new ChooseCellSystem());
+            _updateGroup.AddSystem(new ColorCellSystem(gameContext.highlightCellPool));
             
             _updateGroup.AddSystem(new ManaSystem());
             _updateGroup.AddSystem(new DamageSystem());
