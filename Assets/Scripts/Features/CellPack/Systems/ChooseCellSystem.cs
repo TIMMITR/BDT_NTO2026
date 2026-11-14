@@ -19,6 +19,7 @@ namespace Features.PickCellPack.Systems
         
         private Request<ColorCellRequest> _colorCellRequest;
         private Request<ClearColorsRequest> _clearRequest;
+        private Request<CellPickedRequest> _pickedRequest;
     
         public void OnAwake()
         {
@@ -35,6 +36,7 @@ namespace Features.PickCellPack.Systems
             
             _colorCellRequest = World.GetRequest<ColorCellRequest>();
             _clearRequest = World.GetRequest<ClearColorsRequest>();
+            _pickedRequest = World.GetRequest<CellPickedRequest>();
         }
 
         public void OnUpdate(float deltaTime)
@@ -59,13 +61,16 @@ namespace Features.PickCellPack.Systems
                 Debug.DrawRay(gridComp.ToWorldCoord(transCoord), Vector3.up * 2f, Color.red);
                 
                 ref var chosenCellComp = ref _chosenCellStash.Get(gridEntity);
-                
-                if(chosenCellComp.cellEntity != cellEntity)
+
+                if (chosenCellComp.cellEntity != cellEntity)
+                {
                     _clearRequest.Publish(new ClearColorsRequest());
-                
-                chosenCellComp.cellEntity = cellEntity;
-                
-                _colorCellRequest.Publish(new ColorCellRequest {cellCoord = transCoord});
+                    
+                    chosenCellComp.cellEntity = cellEntity;
+                    
+                    _colorCellRequest.Publish(new ColorCellRequest {cellCoord = transCoord});
+                    _pickedRequest.Publish(new CellPickedRequest {cellCoord = transCoord});
+                }
                 
                 //Debug.Log($"Picked cell: {transCoord.Q}, {transCoord.R}");
             }
