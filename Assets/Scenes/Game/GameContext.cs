@@ -1,5 +1,6 @@
 
 using Features.GamePack;
+using Features.StoryTalkPack.Data;
 using UnityEngine;
 
 namespace Scenes.Game
@@ -7,7 +8,10 @@ namespace Scenes.Game
     public class GameContext : MonoBehaviour
     {
         public Transform playerSpawnPoint;
-        
+
+        [Header("Dialogue Settings")]
+        public StoryTalk introTalk;
+
         [Header("Battle Settings")]
         public GamePlan gamePlan;
         

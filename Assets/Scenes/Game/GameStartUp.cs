@@ -2,11 +2,11 @@ using Features.BattlePack;
 using Features.CameraPack.Systems;
 using Features.CellGridPack;
 using Features.DamagePack;
+using Features.StoryTalkPack.Systems;
+using Features.TypingPack.Systems;
 using Features.HealthPack;
-using Features.HexGridPack;
 using Features.InputPack;
 using Features.ManaPack;
-using Features.PickCellPack;
 using Features.PickCellPack.Systems;
 using Features.PlayerPack.Systems;
 using Features.RaycastPack;
@@ -62,7 +62,11 @@ namespace Scenes.Game
             _updateGroup.AddSystem(new DamageSystem());
             _updateGroup.AddSystem(new HealthSystem());
             
+            _updateGroup.AddSystem(new StoryTalkPlayerSystem(gameContext.introTalk));
             
+            _updateGroup.AddSystem(new TypingSystem(globalContext.worldSettings));
+            //_updateGroup.AddSystem(new QuickTalkTriggerSystem(gameContext.gamePlan, globalContext.worldSettings));
+            //_updateGroup.AddSystem(new QuickTalkQueueSystem(globalContext.worldSettings));
             _updateGroup.AddSystem(new SceneSystem(globalContext.transitionSettings));
                 
             _updateGroup.Initialize();

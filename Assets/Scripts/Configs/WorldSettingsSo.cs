@@ -11,6 +11,12 @@ namespace Configs
         public int gridRadius = 5;
         public float cellRadius = 0.25f;
         public int defaultMoveCost = 1;
-        // todo тут хранить данные 
+
+        [Header("Dialogue")]
+        public float dialogueCharsPerSecond = 60f;
+        public float dialogueStayTime = 3f;
+        public float quickTalkGlobalCooldownSeconds = 15f; // минимум между любыми QuickTalk
+        public float quickTalkCandidateTtlSeconds = 5f;    // через сколько кандидат протухает
+        // todo тут хранить данные
     }
 }
