@@ -66,7 +66,19 @@ namespace Features.PathFinder
 
         private static CostCoord GetMin(List<CostCoord> candidates)
         {
-            return new CostCoord(new CellCoord(0, 0), 0);
+            int minIndex = 0;
+
+            for (int i = 1; i < candidates.Count; i++)
+            {
+                if(candidates[i].cost < candidates[minIndex].cost)
+                {
+                    minIndex = i;
+                }
+            }
+            
+            var minCellCoord = candidates[minIndex];
+            candidates.RemoveAt(minIndex);
+            return minCellCoord;
         }
     }
     
