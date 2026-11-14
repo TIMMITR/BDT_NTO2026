@@ -1,8 +1,8 @@
 ﻿using Scellecs.Morpeh;
 
-namespace Features.HexGridPack.Components
+namespace Features.CellGridPack.Components
 {
-    public struct HexTileComponent : IComponent
+    public struct CellTileComponent : IComponent
     {
         public int q;
         public int r;

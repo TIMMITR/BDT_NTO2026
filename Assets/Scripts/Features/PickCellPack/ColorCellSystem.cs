@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using Features.HexGridPack.Components;
+using Features.CellGridPack.Components;
 using Features.HexGridPack.Data;
 using Features.Requests;
 using Scellecs.Morpeh;
@@ -15,7 +15,7 @@ namespace Features.PickCellPack
         private Filter _gridFilter;
         
         //private Stash<ChosenCellComponent> _chosenCellStash;
-        private Stash<HexGridComponent> _gridStash;
+        private Stash<CellGridComponent> _gridStash;
         
         private Request<ColorCellRequest> _colorCellRequest;
         private Request<ClearColorsRequest> _clearRequest;
@@ -40,11 +40,11 @@ namespace Features.PickCellPack
                 Build();*/ 
             
             _gridFilter = World.Filter.
-                With<HexGridComponent>().
+                With<CellGridComponent>().
                 Build();
             
             //_chosenCellStash = World.GetStash<ChosenCellComponent>();
-            _gridStash = World.GetStash<HexGridComponent>();
+            _gridStash = World.GetStash<CellGridComponent>();
             
             _colorCellRequest = World.GetRequest<ColorCellRequest>();
             _clearRequest =  World.GetRequest<ClearColorsRequest>();

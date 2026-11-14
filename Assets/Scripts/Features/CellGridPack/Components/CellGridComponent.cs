@@ -3,16 +3,16 @@ using Features.HexGridPack.Data;
 using Scellecs.Morpeh;
 using UnityEngine;
 
-namespace Features.HexGridPack.Components
+namespace Features.CellGridPack.Components
 {
-    public struct HexGridComponent : IComponent
+    public struct CellGridComponent : IComponent
     {
         public Transform root;
         public float hexRadius;
         public int gridRadius;
         
         public Dictionary<CellCoord, Entity> cells;
-        public Dictionary<CellCoord, Entity> takenCells;
+        public Dictionary<CellCoord, Entity> takenCells; // todo можно будет попробовать разделить клетки занимаемые игроком и врагом
  
         public Vector3 ToWorldCoord(CellCoord coord) =>
             root.position + coord.ToLocalPosition(hexRadius);

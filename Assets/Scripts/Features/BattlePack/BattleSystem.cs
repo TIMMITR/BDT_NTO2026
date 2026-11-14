@@ -28,8 +28,12 @@ namespace Features.BattlePack
             _battleRequest = World.GetRequest<BattleRequest>();
             _unitSpawnRequest =  World.GetRequest<UnitSpawnRequest>();
             
+            _battleEvent = World.GetEvent<BattleEvent>();
+            
             ref var battleComponent = ref _battleStash.Add(World.CreateEntity());
-            battleComponent.currentBattleId = -1; // пока что без боя
+            battleComponent.currentBattleId = 0; // пока что без боя
+            
+            _battleRequest.Publish(new BattleRequest{id = 0});
         }
 
         public void OnUpdate(float deltaTime)
@@ -55,14 +59,10 @@ namespace Features.BattlePack
                             unitConfig = tile.unitConfig
                         });
                     }
-
-                    if (tile.blocked)
-                    {
-                        // todo чето делать с сеткой, это я оставлю тебе Кирилл
-                    }
                 }
                 
                 _battleEvent.NextFrame(new BattleEvent()); // начинается бой
+                
                 break;
             }
         }

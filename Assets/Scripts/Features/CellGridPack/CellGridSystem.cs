@@ -1,25 +1,25 @@
 using System.Collections.Generic;
 using Configs;
-using Features.HexGridPack.Components;
+using Features.CellGridPack.Components;
 using Features.HexGridPack.Data;
 using Features.LevelPack.Components;
 using Scellecs.Morpeh;
 using UnityEngine;
 
-namespace Features.HexGridPack
+namespace Features.CellGridPack
 {
-    public sealed class HexGridSystem : IInitializer
+    public sealed class CellGridSystem : IInitializer
     {
         public World World { get; set; }
 
-        private Stash<HexGridComponent> _hexGridStash;
-        private Stash<HexTileComponent> _hexTileStash;
+        private Stash<CellGridComponent> _hexGridStash;
+        private Stash<CellTileComponent> _hexTileStash;
         private Stash<ChosenCellComponent> _chosenCellStash;
 
         private readonly GameObject _boardGameObject;
         private readonly WorldSettingsSo _worldSettings;
 
-        public HexGridSystem(GameObject boardGameObject, WorldSettingsSo worldSettings)
+        public CellGridSystem(GameObject boardGameObject, WorldSettingsSo worldSettings)
         {
             _boardGameObject = boardGameObject;
             _worldSettings = worldSettings;
@@ -27,8 +27,8 @@ namespace Features.HexGridPack
 
         public void OnAwake()
         {
-            _hexGridStash = World.GetStash<HexGridComponent>();
-            _hexTileStash = World.GetStash<HexTileComponent>();
+            _hexGridStash = World.GetStash<CellGridComponent>();
+            _hexTileStash = World.GetStash<CellTileComponent>();
             _chosenCellStash = World.GetStash<ChosenCellComponent>();
 
             CreateGrid();
@@ -36,7 +36,6 @@ namespace Features.HexGridPack
 
         private void CreateGrid()
         {
-            
             if (_boardGameObject == null)
             {
                 Debug.LogWarning("[HEX_GRID_SYSTEM] No GridStartPointView found on " + _boardGameObject.name);

@@ -6,5 +6,11 @@ namespace Features.ManaPack
     {
         public int currentMana;
         public int maxMana;
+
+        public ManaComponent(int value)
+        {
+            maxMana = value;
+            currentMana = maxMana;
+        }
     }
 }

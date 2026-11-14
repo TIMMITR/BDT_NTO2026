@@ -1,4 +1,6 @@
+using Features.BattlePack;
 using Features.CameraPack.Systems;
+using Features.CellGridPack;
 using Features.DamagePack;
 using Features.HealthPack;
 using Features.HexGridPack;
@@ -9,6 +11,7 @@ using Features.PlayerPack.Systems;
 using Features.RaycastPack;
 using Features.ScenePack;
 using Features.TargetPack;
+using Features.UnitPack.Systems;
 using Scellecs.Morpeh;
 using UnityEngine;
 
@@ -39,7 +42,7 @@ namespace Scenes.Game
                 gameContext.playerSpawnPoint));
             _initGroup.AddInitializer(new CameraSpawnSystem(
                 globalContext.prefabSettings));
-            _initGroup.AddInitializer(new HexGridSystem(
+            _initGroup.AddInitializer(new CellGridSystem(
                 gameContext.boardGameObject,
                 globalContext.worldSettings)); 
             _initGroup.Initialize();
@@ -51,6 +54,8 @@ namespace Scenes.Game
             _updateGroup.AddSystem(new RaycastSystem());
             _updateGroup.AddSystem(new ChooseCellSystem());
             _updateGroup.AddSystem(new ColorCellSystem(gameContext.highlightCellPool));
+            _updateGroup.AddSystem(new UnitSpawnSystem());
+            _updateGroup.AddSystem(new BattleSystem(gameContext.gamePlan));
             
             _updateGroup.AddSystem(new ManaSystem());
             _updateGroup.AddSystem(new DamageSystem());

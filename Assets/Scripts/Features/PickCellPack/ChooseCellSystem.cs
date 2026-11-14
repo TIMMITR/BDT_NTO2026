@@ -1,4 +1,4 @@
-using Features.HexGridPack.Components;
+using Features.CellGridPack.Components;
 using Features.LevelPack.Components;
 using Features.RaycastPack;
 using Features.Requests;
@@ -15,7 +15,7 @@ namespace Features.PickCellPack
         private Filter _gridFilter;
         
         private Stash<RaycastComponent> _raycastStash;
-        private Stash<HexGridComponent> _gridStash;
+        private Stash<CellGridComponent> _gridStash;
         private Stash<ChosenCellComponent> _chosenCellStash;
         
         private Request<ColorCellRequest> _colorCellRequest;
@@ -27,11 +27,11 @@ namespace Features.PickCellPack
                 With<RaycastComponent>().
                 Build();
             _gridFilter = World.Filter.
-                With<HexGridComponent>().
+                With<CellGridComponent>().
                 Build();
             
             _raycastStash = World.GetStash<RaycastComponent>();
-            _gridStash = World.GetStash<HexGridComponent>();
+            _gridStash = World.GetStash<CellGridComponent>();
             _chosenCellStash = World.GetStash<ChosenCellComponent>();
             
             _colorCellRequest = World.GetRequest<ColorCellRequest>();
@@ -68,7 +68,7 @@ namespace Features.PickCellPack
                 
                 _colorCellRequest.Publish(new ColorCellRequest {cellCoord = transCoord});
                 
-                Debug.Log($"Picked cell: {transCoord.Q}, {transCoord.R}");
+                //Debug.Log($"Picked cell: {transCoord.Q}, {transCoord.R}");
             }
             else
             {
