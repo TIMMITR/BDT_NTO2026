@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Configs
 {
-    [CreateAssetMenu(fileName = "UnitConfigs", menuName = "Config/Unit Config", order = 7)]
+    [CreateAssetMenu(fileName = "Configs", menuName = "Config/Unit Config", order = 7)]
     public sealed class UnitConfig : ScriptableObject
     {
         [SerializeField] private string characterName;

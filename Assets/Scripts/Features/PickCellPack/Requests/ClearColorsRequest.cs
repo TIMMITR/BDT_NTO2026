@@ -1,6 +1,6 @@
 using Scellecs.Morpeh;
 
-namespace Features.Requests
+namespace Features.PickCellPack.Requests
 {
     public struct ClearColorsRequest : IRequestData {}
 }

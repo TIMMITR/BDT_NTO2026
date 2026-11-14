@@ -1,11 +1,11 @@
 using System.Collections.Generic;
 using Features.CellGridPack.Components;
 using Features.HexGridPack.Data;
-using Features.Requests;
+using Features.PickCellPack.Requests;
 using Scellecs.Morpeh;
 using UnityEngine;
 
-namespace Features.PickCellPack
+namespace Features.PickCellPack.Systems
 {
     public class ColorCellSystem : ISystem
     {
