@@ -40,13 +40,12 @@ namespace Features.TypingPack.Views
             
              if (speakerLabel != null)
                  speakerLabel.text = SpeakerName(typing.line.speaker);
-            
-             if (lineLabel != null)
-             {
-                 var text = typing.line.text ?? string.Empty;
-                 var count = Mathf.Clamp((int)typing.visibleChars, 0, text.Length);
-                 lineLabel.text = text[..count];
-            }
+
+             if (lineLabel == null) return;
+             
+             var text = typing.line.text ?? string.Empty;
+             var count = Mathf.Clamp((int)typing.visibleChars, 0, text.Length);
+             lineLabel.text = text[..count];
         }
 
         public void OnPanelClicked()

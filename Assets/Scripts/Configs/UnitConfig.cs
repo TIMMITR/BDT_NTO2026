@@ -43,7 +43,7 @@ namespace Configs
         // под управлением противника
         Skeleton, 
         Ranger,
-        Warlock, // сам колдун если будем делать
+        Warlock
     }
     
     public enum TeamSide

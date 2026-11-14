@@ -15,8 +15,8 @@ namespace Configs
         [Header("Dialogue")]
         public float dialogueCharsPerSecond = 60f;
         public float dialogueStayTime = 3f;
-        public float quickTalkGlobalCooldownSeconds = 15f; // минимум между любыми QuickTalk
-        public float quickTalkCandidateTtlSeconds = 5f;    // через сколько кандидат протухает
+        public float quickTalkGlobalCooldownSeconds = 15f;
+        public float quickTalkCandidateTtlSeconds = 5f;
         // todo тут хранить данные
     }
 }
