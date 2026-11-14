@@ -72,6 +72,7 @@ namespace Features.LevelPack.Systems
             }
             else
             {
+                _clearRequest.Publish(new ClearColorsRequest());
                 //Debug.Log("[CHOOSE_CELL_SYSTEM] Cell not found.");
             }
         }

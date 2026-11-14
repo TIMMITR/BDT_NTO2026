@@ -11,6 +11,7 @@ namespace Features.CharacterPack.Systems
         public World World { get; set; }
  
         private Stash<CharacterStatsComponent> _characterStatsStash;
+        private Stash<CharactersDataComponent> _charactersDataStash;
  
         private readonly List<CharacterTemplate> _characterTemplates;
  
@@ -22,6 +23,7 @@ namespace Features.CharacterPack.Systems
         public void OnAwake()
         {
             _characterStatsStash = World.GetStash<CharacterStatsComponent>();
+            _charactersDataStash = World.GetStash<CharactersDataComponent>();
  
             CreateCharacters();
         }
@@ -33,6 +35,9 @@ namespace Features.CharacterPack.Systems
                 Debug.Log("[CHARACTER_INIT_SYSTEM] Character templates has not been initialized.");
                 return;
             }
+            
+            var characterDataEntity = World.CreateEntity();
+            ref var characterDataComp = ref _charactersDataStash.Add(characterDataEntity);
 
             foreach (var template in _characterTemplates)
             {
@@ -48,6 +53,8 @@ namespace Features.CharacterPack.Systems
                 
                 characterComp.characterClass = template.Class;
                 characterComp.stats = template.Stats;
+                
+                characterDataComp.characters.Add(characterComp.characterClass, entity); // todo возможно, стоит вынести в отдельную систему
             }
         }
  
