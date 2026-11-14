@@ -1,7 +1,7 @@
 using Features.HexGridPack.Data;
 using Scellecs.Morpeh;
 
-namespace Features.LevelPack.Requests
+namespace Features.Requests
 {
     public struct ColorCellRequest : IRequestData
     {

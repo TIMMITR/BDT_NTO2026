@@ -1,6 +1,6 @@
 using Scellecs.Morpeh;
 
-namespace Features.PickCellPack
+namespace Features.LevelPack.Components
 {
     public struct ChosenCellComponent : IComponent
     {

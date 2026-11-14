@@ -1,4 +1,3 @@
-using Configs;
 using Features.CameraPack.Systems;
 using Features.DamagePack;
 using Features.HealthPack;

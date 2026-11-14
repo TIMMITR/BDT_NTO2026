@@ -1,7 +1,7 @@
 using Features.HexGridPack.Components;
 using Features.LevelPack.Components;
-using Features.LevelPack.Requests;
 using Features.RaycastPack;
+using Features.Requests;
 using Scellecs.Morpeh;
 using UnityEngine;
 
@@ -68,7 +68,7 @@ namespace Features.PickCellPack
                 
                 _colorCellRequest.Publish(new ColorCellRequest {cellCoord = transCoord});
                 
-                Debug.Log($"Picked cell: {transCoord.q}, {transCoord.r}");
+                Debug.Log($"Picked cell: {transCoord.Q}, {transCoord.R}");
             }
             else
             {

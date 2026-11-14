@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using Configs;
 using Features.HexGridPack.Components;
 using Features.HexGridPack.Data;
-using Features.PickCellPack;
+using Features.LevelPack.Components;
 using Scellecs.Morpeh;
 using UnityEngine;
 
