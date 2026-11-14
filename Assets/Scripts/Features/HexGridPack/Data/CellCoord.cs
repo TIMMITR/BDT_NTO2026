@@ -5,21 +5,18 @@ namespace Features.HexGridPack.Data
 {
     // Замена кортежам, т.к. кортежи не очень читаемы,
     // Этот класс также включает методы перевода координат из мировых в локальные
-    public struct CellCoord
+    public readonly struct CellCoord : IEquatable<CellCoord>
     {
-        public int q => _q;
-        public int r => _r;
-        
-        private int _q;
-        private int _r;
-        
-        private const float CELL_TRANS_MULTIPLIER_1 = 1.5f; // todo вынести в настройки
-        private const float CELL_TRANS_MULTIPLIER_2 = 0.5f;
+        public int Q { get; }
+        public int R { get; }
+
+        private const float CellTransMultiplier1 = 1.5f; // todo вынести в настройки
+        private const float CellTransMultiplier2 = 0.5f;
 
         public CellCoord(int q, int r)
         {
-            _q = q;
-            _r = r;
+            Q = q;
+            R = r;
         }
  
         public static readonly CellCoord[] Directions =
@@ -34,21 +31,21 @@ namespace Features.HexGridPack.Data
  
         public int DistanceTo(CellCoord hex)
         {
-            var deltaQ = q - hex.q; 
-            var deltaR = r - hex.r;
+            var deltaQ = Q - hex.Q; 
+            var deltaR = R - hex.R;
             
             return (Mathf.Abs(deltaQ) + Mathf.Abs(deltaR) + Mathf.Abs(deltaQ + deltaR)) / 2;
         }
         
         public Vector3 ToLocalPosition(float cellRadius) =>
-            new(cellRadius * CELL_TRANS_MULTIPLIER_1 * _q,
+            new(cellRadius * CellTransMultiplier1 * Q,
                 0f,
-                cellRadius * Mathf.Sqrt(3f) * (_r + _q * CELL_TRANS_MULTIPLIER_2));
+                cellRadius * Mathf.Sqrt(3f) * (R + Q * CellTransMultiplier2));
         
         public static CellCoord FromLocalPosition(Vector3 local, float cellRadius)
         {
-            var transQ = local.x / (cellRadius * CELL_TRANS_MULTIPLIER_1);
-            var transR = (local.z / (cellRadius * Mathf.Sqrt(3f))) - transQ * CELL_TRANS_MULTIPLIER_2;
+            var transQ = local.x / (cellRadius * CellTransMultiplier1);
+            var transR = (local.z / (cellRadius * Mathf.Sqrt(3f))) - transQ * CellTransMultiplier2;
             return Round(transQ, transR);
         }
         
@@ -72,6 +69,29 @@ namespace Features.HexGridPack.Data
             return new CellCoord(rq, rr);
         }
         
-        public bool Equals(CellCoord other) => q == other.q && r == other.r;
+        public bool Equals(CellCoord other)
+        {
+            return Q == other.Q && R == other.R;
+        }
+
+        public override bool Equals(object obj)
+        {
+            return obj is CellCoord other && Equals(other);
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(Q, R);
+        }
+
+        public static bool operator ==(CellCoord left, CellCoord right)
+        {
+            return left.Equals(right);
+        }
+
+        public static bool operator !=(CellCoord left, CellCoord right)
+        {
+            return !left.Equals(right);
+        }
     }
 }

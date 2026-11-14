@@ -54,7 +54,7 @@ namespace Features.PickCellPack
                 ref var chosenCellComp = ref _chosenCellStash.Get(gridEntity);
                 chosenCellComp.cellEntity = cellEntity;
                 
-                Debug.Log($"Picked cell: {transCoord.q}, {transCoord.r}");
+                Debug.Log($"Picked cell: {transCoord.Q}, {transCoord.R}");
             }
             else
             {

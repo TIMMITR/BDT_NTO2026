@@ -18,7 +18,17 @@ namespace Features.GamePack
     
     public class BattlePlan : ScriptableObject
     {
-        [SerializeField] private List<BattleTileData> hexTiles = new();
+        [SerializeField] private List<BattleTileData> hexTiles = new()
+        {
+            new BattleTileData
+            {
+                q = 0,
+                r = 0,
+                moveCost = 1,
+                blocked = false,
+                unitConfig = null
+            }
+        };
         
         public IReadOnlyList<BattleTileData> HexTiles => hexTiles;
     }
