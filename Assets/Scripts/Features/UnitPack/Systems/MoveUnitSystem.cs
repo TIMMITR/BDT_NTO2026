@@ -1,4 +1,5 @@
 using Features.CellGridPack.Components;
+using Features.CellPack.Components;
 using Features.InputPack.Requests;
 using Features.PickCellPack.Requests;
 using Scellecs.Morpeh;
@@ -12,6 +13,7 @@ namespace Features.UnitPack.Systems
         private Filter _gridFilter;
         
         private Stash<CellGridComponent> _gridStash;
+        private Stash<PickedCellComponent> _pickedCellStash;
         
         private Request<CellPickedRequest> _pickedRequest;
         private Request<LmbStartRequest> _lmbRequest;
@@ -21,6 +23,7 @@ namespace Features.UnitPack.Systems
             _gridFilter = World.Filter.With<CellGridComponent>().Build();
             
             _gridStash = World.GetStash<CellGridComponent>();
+            _pickedCellStash = World.GetStash<PickedCellComponent>();
             
             _pickedRequest = World.GetRequest<CellPickedRequest>();
             _lmbRequest = World.GetRequest<LmbStartRequest>();
@@ -29,15 +32,22 @@ namespace Features.UnitPack.Systems
         public void OnUpdate(float deltaTime)
         {
             bool lmbClicked = false;
+            bool hasPicked = false;
+            
+            var gridEntity = _gridFilter.First();
             
             foreach (var clickRequest in _lmbRequest.Consume())
+            {
                 lmbClicked = true;
+                hasPicked = _pickedCellStash.Has(gridEntity); // todo потом надо отслеживать availableCellComp
+            }
             
             foreach (var pickRequest in _pickedRequest.Consume())
             {
                 if (lmbClicked)
                 {
-                
+                    
+                    _pickedCellStash.Add(gridEntity);
                 }
             }
         }

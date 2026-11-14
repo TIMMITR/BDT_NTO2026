@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Configs;
 using Features.CellGridPack.Components;
+using Features.CellPack.Components;
 using Features.HexGridPack.Data;
 using Features.PickCellPack;
 using Scellecs.Morpeh;
@@ -15,6 +16,7 @@ namespace Features.CellGridPack
         private Stash<CellGridComponent> _hexGridStash;
         private Stash<CellTileComponent> _hexTileStash;
         private Stash<ChosenCellComponent> _chosenCellStash;
+        private Stash<PickedCellComponent> _pickedCellStash;
 
         private readonly GameObject _boardGameObject;
         private readonly WorldSettingsSo _worldSettings;
@@ -30,6 +32,7 @@ namespace Features.CellGridPack
             _hexGridStash = World.GetStash<CellGridComponent>();
             _hexTileStash = World.GetStash<CellTileComponent>();
             _chosenCellStash = World.GetStash<ChosenCellComponent>();
+            _pickedCellStash = World.GetStash<PickedCellComponent>();
 
             CreateGrid();
         }
@@ -48,6 +51,8 @@ namespace Features.CellGridPack
             var gridEntity = World.CreateEntity();
             
             _chosenCellStash.Add(gridEntity);
+            //_pickedCellStash.Add(gridEntity);
+            
             ref var gridComp = ref _hexGridStash.Add(gridEntity);
             gridComp.root = _boardGameObject.transform;
             gridComp.gridRadius = gridRadius;

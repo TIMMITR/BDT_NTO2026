@@ -5,6 +5,7 @@ using System.Linq;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
+using Path = Features.PathFinder.Path;
 
 namespace Generators
 {

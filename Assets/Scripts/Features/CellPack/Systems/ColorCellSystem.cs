@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Features.CellGridPack.Components;
+using Features.CellPack.Components;
 using Features.HexGridPack.Data;
 using Features.PickCellPack.Requests;
 using Scellecs.Morpeh;
@@ -11,10 +12,9 @@ namespace Features.PickCellPack.Systems
     {
         public World World { get; set; }
 
-        //private Filter _chosenCellFilter; todo возможно, понадобиться
         private Filter _gridFilter;
         
-        //private Stash<ChosenCellComponent> _chosenCellStash;
+        private Stash<PickedCellComponent> _pickedCellStash;
         private Stash<CellGridComponent> _gridStash;
         
         private Request<ColorCellRequest> _colorCellRequest;
@@ -35,16 +35,12 @@ namespace Features.PickCellPack.Systems
 
         public void OnAwake()
         {
-            /*_chosenCellFilter = World.Filter.
-                With<ChosenCellComponent>().
-                Build();*/ 
-            
             _gridFilter = World.Filter.
                 With<CellGridComponent>().
                 Build();
             
-            //_chosenCellStash = World.GetStash<ChosenCellComponent>();
             _gridStash = World.GetStash<CellGridComponent>();
+            _pickedCellStash = World.GetStash<PickedCellComponent>();
             
             _colorCellRequest = World.GetRequest<ColorCellRequest>();
             _clearRequest =  World.GetRequest<ClearColorsRequest>();
@@ -74,6 +70,11 @@ namespace Features.PickCellPack.Systems
                 
                 child.gameObject.SetActive(true);
                 child.position = new Vector3(targetCoordinates.x, child.position.y, targetCoordinates.z);
+
+                if (_pickedCellStash.Has(gridEntity))
+                {
+                    
+                }
             }
 
             foreach (var request in _clearRequest.Consume())
@@ -83,6 +84,11 @@ namespace Features.PickCellPack.Systems
                     _cellPoolParent.GetChild(cell).gameObject.SetActive(false);
                 }
             }
+        }
+
+        private void DrawLine(CellCoord from, CellCoord to)
+        {
+            
         }
 
         private int ChooseNextCellIndex()
