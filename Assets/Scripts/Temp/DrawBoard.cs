@@ -19,7 +19,7 @@ namespace Temp
                 {
                     var center = transform.position + new Vector3(
                         hexRadius * 1.5f * q,
-                        0.1f,
+                        0f,
                         hexRadius * Mathf.Sqrt(3) * (r + q * 0.5f)
                     );
 

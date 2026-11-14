@@ -1,7 +1,7 @@
 ﻿using Configs;
 using Scellecs.Morpeh;
 
-namespace Features.UnitPack
+namespace Features.UnitPack.Requests
 {
     public struct UnitSpawnRequest : IRequestData
     {

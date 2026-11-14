@@ -2,8 +2,8 @@ using Features.CellGridPack.Components;
 using Features.DamagePack;
 using Features.HealthPack;
 using Features.HexGridPack.Data;
-using Features.ManaPack;
 using Features.UnitPack.Components;
+using Features.UnitPack.Requests;
 using Global;
 using Scellecs.Morpeh;
 using UnityEngine;
@@ -50,7 +50,6 @@ namespace Features.UnitPack.Systems
                 
                 var unitConfig = request.unitConfig;
                 var stats = unitConfig.Stats;
-                
                 var cellCoord = new CellCoord(request.q, request.r);
                 var spawnPos = gridComp.ToWorldCoord(cellCoord);
                 
