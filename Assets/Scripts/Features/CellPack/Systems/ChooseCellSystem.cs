@@ -1,4 +1,5 @@
 using Features.CellGridPack.Components;
+using Features.CellPack.Components;
 using Features.PickCellPack.Requests;
 using Features.RaycastPack;
 using Scellecs.Morpeh;
@@ -62,11 +63,11 @@ namespace Features.PickCellPack.Systems
                 
                 ref var chosenCellComp = ref _chosenCellStash.Get(gridEntity);
 
-                if (chosenCellComp.cellEntity != cellEntity)
+                if (chosenCellComp.cellCoord != transCoord)
                 {
                     _clearRequest.Publish(new ClearColorsRequest());
                     
-                    chosenCellComp.cellEntity = cellEntity;
+                    chosenCellComp.cellCoord = transCoord;
                     
                     _colorCellRequest.Publish(new ColorCellRequest {cellCoord = transCoord});
                     _pickedRequest.Publish(new CellPickedRequest {cellCoord = transCoord});

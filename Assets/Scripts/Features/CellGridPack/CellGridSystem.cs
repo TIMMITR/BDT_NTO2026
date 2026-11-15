@@ -16,7 +16,6 @@ namespace Features.CellGridPack
         private Stash<CellGridComponent> _hexGridStash;
         private Stash<CellTileComponent> _hexTileStash;
         private Stash<ChosenCellComponent> _chosenCellStash;
-        private Stash<PickedCellComponent> _pickedCellStash;
 
         private readonly GameObject _boardGameObject;
         private readonly WorldSettingsSo _worldSettings;
@@ -32,7 +31,6 @@ namespace Features.CellGridPack
             _hexGridStash = World.GetStash<CellGridComponent>();
             _hexTileStash = World.GetStash<CellTileComponent>();
             _chosenCellStash = World.GetStash<ChosenCellComponent>();
-            _pickedCellStash = World.GetStash<PickedCellComponent>();
 
             CreateGrid();
         }
@@ -51,14 +49,9 @@ namespace Features.CellGridPack
             var gridEntity = World.CreateEntity();
             
             _chosenCellStash.Add(gridEntity);
-            //_pickedCellStash.Add(gridEntity);
             
             ref var gridComp = ref _hexGridStash.Add(gridEntity);
-            gridComp.root = _boardGameObject.transform;
-            gridComp.gridRadius = gridRadius;
-            gridComp.hexRadius = hexRadius;
-            gridComp.cells = new Dictionary<CellCoord, Entity>();
-            gridComp.takenCells = new Dictionary<CellCoord, Entity>();
+            gridComp = new CellGridComponent(_boardGameObject.transform, hexRadius, gridRadius);
 
             for (int q = -gridRadius; q <= gridRadius; q++)
             {
@@ -68,10 +61,7 @@ namespace Features.CellGridPack
                 for (int r = rMin; r <= rMax; r++)
                 {
                     var tileEntity = World.CreateEntity();
-                    ref var tileComp = ref _hexTileStash.Add(tileEntity);
-                    tileComp.q = q;
-                    tileComp.r = r;
-                    tileComp.moveCost = _worldSettings.defaultMoveCost;
+                    _hexTileStash.Add(tileEntity, new CellTileComponent(q, r, _worldSettings.defaultMoveCost, false));
                     
                     gridComp.cells.Add(new CellCoord(q, r), tileEntity);
                 }

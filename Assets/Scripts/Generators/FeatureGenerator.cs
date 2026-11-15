@@ -2,7 +2,6 @@
 using System.IO;
 using UnityEditor;
 using UnityEngine;
-using Path = Features.PathFinder.Path;
 
 namespace Generators
 {

@@ -14,6 +14,7 @@ namespace Features.UnitPack.Systems
         
         private Stash<CellGridComponent> _gridStash;
         private Stash<PickedCellComponent> _pickedCellStash;
+        private Stash<ChosenCellComponent> _chosenCellStash;
         
         private Request<CellPickedRequest> _pickedRequest;
         private Request<LmbStartRequest> _lmbRequest;
@@ -24,6 +25,7 @@ namespace Features.UnitPack.Systems
             
             _gridStash = World.GetStash<CellGridComponent>();
             _pickedCellStash = World.GetStash<PickedCellComponent>();
+            _chosenCellStash = World.GetStash<ChosenCellComponent>();
             
             _pickedRequest = World.GetRequest<CellPickedRequest>();
             _lmbRequest = World.GetRequest<LmbStartRequest>();
@@ -31,6 +33,8 @@ namespace Features.UnitPack.Systems
 
         public void OnUpdate(float deltaTime)
         {
+            if(_gridFilter.IsEmpty()) return; 
+            
             bool lmbClicked = false;
             bool hasPicked = false;
             
@@ -42,14 +46,10 @@ namespace Features.UnitPack.Systems
                 hasPicked = _pickedCellStash.Has(gridEntity); // todo потом надо отслеживать availableCellComp
             }
             
-            foreach (var pickRequest in _pickedRequest.Consume())
-            {
-                if (lmbClicked)
-                {
-                    
-                    _pickedCellStash.Add(gridEntity);
-                }
-            }
+            if (!lmbClicked) return;
+            
+            ref var chosenCellComp = ref _chosenCellStash.Get(gridEntity);
+            _pickedCellStash.Set(gridEntity, new PickedCellComponent{cellCoord = chosenCellComp.cellCoord});
         }
     
         public void Dispose() {}

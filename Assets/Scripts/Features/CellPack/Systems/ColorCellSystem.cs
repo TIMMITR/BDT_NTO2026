@@ -2,11 +2,12 @@ using System.Collections.Generic;
 using Features.CellGridPack.Components;
 using Features.CellPack.Components;
 using Features.HexGridPack.Data;
+using Features.PathFinderPack;
 using Features.PickCellPack.Requests;
 using Scellecs.Morpeh;
 using UnityEngine;
 
-namespace Features.PickCellPack.Systems
+namespace Features.CellPack.Systems
 {
     public class ColorCellSystem : ISystem
     {
@@ -48,6 +49,17 @@ namespace Features.PickCellPack.Systems
 
         public void OnUpdate(float deltaTime)
         {
+            foreach (var request in _clearRequest.Consume())
+            {
+                foreach (var cell in _usedCells.Values)
+                {
+                    _cellPoolParent.GetChild(cell).gameObject.SetActive(false);
+                }
+                
+                _usedCells.Clear();
+                _currentCellIndex = 0;
+            }
+            
             foreach (var request in _colorCellRequest.Consume())
             {
                 Entity gridEntity = _gridFilter.First(); // todo возможно, стоит вынести в onAwake
@@ -73,15 +85,7 @@ namespace Features.PickCellPack.Systems
 
                 if (_pickedCellStash.Has(gridEntity))
                 {
-                    
-                }
-            }
-
-            foreach (var request in _clearRequest.Consume())
-            {
-                foreach (var cell in _usedCells.Values)
-                {
-                    _cellPoolParent.GetChild(cell).gameObject.SetActive(false);
+                    //PathFinder.GetPath()
                 }
             }
         }

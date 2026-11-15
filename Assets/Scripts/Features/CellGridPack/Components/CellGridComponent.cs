@@ -13,7 +13,16 @@ namespace Features.CellGridPack.Components
         
         public Dictionary<CellCoord, Entity> cells;
         public Dictionary<CellCoord, Entity> takenCells; // todo можно будет попробовать разделить клетки занимаемые игроком и врагом
- 
+
+        public CellGridComponent(Transform root, float hexRadius, int gridRadius)
+        {
+            this.root = root;
+            this.hexRadius = hexRadius;
+            this.gridRadius = gridRadius;
+            cells = new Dictionary<CellCoord, Entity>();
+            takenCells = new Dictionary<CellCoord, Entity>();
+        }
+        
         public Vector3 ToWorldCoord(CellCoord coord) =>
             root.position + coord.ToLocalPosition(hexRadius);
         

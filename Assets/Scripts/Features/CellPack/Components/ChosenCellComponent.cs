@@ -1,9 +1,10 @@
+using Features.HexGridPack.Data;
 using Scellecs.Morpeh;
 
-namespace Features.PickCellPack
+namespace Features.CellPack.Components
 {
     public struct ChosenCellComponent : IComponent
     {
-        public Entity cellEntity;
+        public CellCoord cellCoord;
     }
 }

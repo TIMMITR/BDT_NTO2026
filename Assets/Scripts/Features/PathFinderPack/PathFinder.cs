@@ -4,7 +4,7 @@ using Features.HexGridPack.Data;
 using Scellecs.Morpeh;
 using UnityEngine;
 
-namespace Features.PathFinder
+namespace Features.PathFinderPack
 {
     public static class PathFinder
     {
