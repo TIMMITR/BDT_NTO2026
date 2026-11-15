@@ -46,7 +46,7 @@ namespace Features.UnitPack.Systems
                 hasPicked = _pickedCellStash.Has(gridEntity); // todo потом надо отслеживать availableCellComp
             }
             
-            if (!lmbClicked) return;
+            if (!lmbClicked || !_chosenCellStash.Has(gridEntity)) return;
             
             ref var chosenCellComp = ref _chosenCellStash.Get(gridEntity);
             _pickedCellStash.Set(gridEntity, new PickedCellComponent{cellCoord = chosenCellComp.cellCoord});

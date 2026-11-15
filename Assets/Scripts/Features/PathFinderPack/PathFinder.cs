@@ -45,7 +45,10 @@ namespace Features.PathFinderPack
                     if (!grid.cells.TryGetValue(next, out var cell))
                         continue;
 
-                    int cost = GetCost(cell, stash);
+                    int cost = 0;
+
+                    if (!CanPass(cell, stash, out cost)) 
+                        continue;
 
                     if (cost <= 0)
                     {
@@ -73,6 +76,8 @@ namespace Features.PathFinderPack
         public static List<CellCoord> ReconstructPath(PassReady pass, CellCoord from, CellCoord to)
         {
             List<CellCoord> result = new();
+            
+            if(!pass.path.ContainsKey(to)) return result;
 
             for (var i = to; i != from; i = pass.path[i])
             {
@@ -84,7 +89,12 @@ namespace Features.PathFinderPack
             return result;
         }
 
-        private static int GetCost(Entity cell, Stash<CellTileComponent> stash) => stash.Get(cell).moveCost;
+        private static bool CanPass(Entity cell, Stash<CellTileComponent> stash, out int cost)
+        {
+            ref var cellComp = ref stash.Get(cell);
+            cost = cellComp.moveCost;
+            return !cellComp.blocked;
+        }
 
         private static CostCoord GetMin(List<CostCoord> candidates)
         {
@@ -104,13 +114,13 @@ namespace Features.PathFinderPack
         }
     }
 
-    public class PassReady
+    public struct PassReady
     {
         public Dictionary<CellCoord, CellCoord> path;
         public Dictionary<CellCoord, int> cellsCost;
     }
     
-    public class CostCoord // todo переименовать
+    public struct CostCoord // todo переименовать
     {
         public CellCoord coord;
         public int cost;
