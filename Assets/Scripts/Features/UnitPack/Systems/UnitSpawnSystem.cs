@@ -23,6 +23,7 @@ namespace Features.UnitPack.Systems
         private Stash<HealthComponent> _healthStash;
         private Stash<DefenceComponent> _defenceStash;
         private Stash<DamageComponent> _damageStash;
+        private Stash<CellTileComponent> _cellTileStash;
         
         private Request<UnitSpawnRequest> _request;
         
@@ -33,6 +34,7 @@ namespace Features.UnitPack.Systems
             _gridStash = World.GetStash<CellGridComponent>();
             _transformStash = World.GetStash<TransformComponent>();
             _unitStash = World.GetStash<UnitComponent>();
+            _cellTileStash = World.GetStash<CellTileComponent>();
             
             _healthStash = World.GetStash<HealthComponent>();
             _defenceStash = World.GetStash<DefenceComponent>();
@@ -57,11 +59,16 @@ namespace Features.UnitPack.Systems
                 var unitObj = Object.Instantiate(unitConfig.Prefab, spawnPos, Quaternion.identity);
 
                 _transformStash.Add(newUnit, new TransformComponent { value = unitObj.transform });
+                _unitStash.Add(newUnit, new UnitComponent(unitConfig.Name, unitConfig.Class));
                 
                 _healthStash.Add(newUnit, new HealthComponent(stats.maxHealth));
                 _defenceStash.Add(newUnit, new DefenceComponent{currentDefence = stats.defence});
                 _damageStash.Add(newUnit, new DamageComponent{baseDamage = stats.damage});
-                _unitStash.Add(newUnit, new UnitComponent(unitConfig.Name, unitConfig.Class));
+
+                var cellEntity = gridComp.cells[cellCoord];
+                ref var cellComp = ref _cellTileStash.Get(cellEntity);
+
+                cellComp.blocked = true;
                 
                 gridComp.takenCells.Add(cellCoord, newUnit);
             }

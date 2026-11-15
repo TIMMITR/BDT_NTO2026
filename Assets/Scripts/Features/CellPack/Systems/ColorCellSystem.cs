@@ -1,20 +1,21 @@
 using System.Collections.Generic;
 using Features.CellGridPack.Components;
+using Features.CellPack.Components;
 using Features.HexGridPack.Data;
+using Features.PathFinderPack;
 using Features.PickCellPack.Requests;
 using Scellecs.Morpeh;
 using UnityEngine;
 
-namespace Features.PickCellPack.Systems
+namespace Features.CellPack.Systems
 {
     public class ColorCellSystem : ISystem
     {
         public World World { get; set; }
 
-        //private Filter _chosenCellFilter; todo возможно, понадобиться
         private Filter _gridFilter;
         
-        //private Stash<ChosenCellComponent> _chosenCellStash;
+        private Stash<PickedCellComponent> _pickedCellStash;
         private Stash<CellGridComponent> _gridStash;
         
         private Request<ColorCellRequest> _colorCellRequest;
@@ -35,16 +36,12 @@ namespace Features.PickCellPack.Systems
 
         public void OnAwake()
         {
-            /*_chosenCellFilter = World.Filter.
-                With<ChosenCellComponent>().
-                Build();*/ 
-            
             _gridFilter = World.Filter.
                 With<CellGridComponent>().
                 Build();
             
-            //_chosenCellStash = World.GetStash<ChosenCellComponent>();
             _gridStash = World.GetStash<CellGridComponent>();
+            _pickedCellStash = World.GetStash<PickedCellComponent>();
             
             _colorCellRequest = World.GetRequest<ColorCellRequest>();
             _clearRequest =  World.GetRequest<ClearColorsRequest>();
@@ -52,6 +49,17 @@ namespace Features.PickCellPack.Systems
 
         public void OnUpdate(float deltaTime)
         {
+            foreach (var request in _clearRequest.Consume())
+            {
+                foreach (var cell in _usedCells.Values)
+                {
+                    _cellPoolParent.GetChild(cell).gameObject.SetActive(false);
+                }
+                
+                _usedCells.Clear();
+                _currentCellIndex = 0;
+            }
+            
             foreach (var request in _colorCellRequest.Consume())
             {
                 Entity gridEntity = _gridFilter.First(); // todo возможно, стоит вынести в onAwake
@@ -74,15 +82,17 @@ namespace Features.PickCellPack.Systems
                 
                 child.gameObject.SetActive(true);
                 child.position = new Vector3(targetCoordinates.x, child.position.y, targetCoordinates.z);
-            }
 
-            foreach (var request in _clearRequest.Consume())
-            {
-                foreach (var cell in _usedCells.Values)
+                if (_pickedCellStash.Has(gridEntity))
                 {
-                    _cellPoolParent.GetChild(cell).gameObject.SetActive(false);
+                    //PathFinder.GetPath()
                 }
             }
+        }
+
+        private void DrawLine(CellCoord from, CellCoord to)
+        {
+            
         }
 
         private int ChooseNextCellIndex()

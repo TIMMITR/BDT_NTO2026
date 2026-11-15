@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Configs;
 using Features.CellGridPack.Components;
+using Features.CellPack.Components;
 using Features.HexGridPack.Data;
 using Features.PickCellPack;
 using Scellecs.Morpeh;
@@ -48,12 +49,9 @@ namespace Features.CellGridPack
             var gridEntity = World.CreateEntity();
             
             _chosenCellStash.Add(gridEntity);
+            
             ref var gridComp = ref _hexGridStash.Add(gridEntity);
-            gridComp.root = _boardGameObject.transform;
-            gridComp.gridRadius = gridRadius;
-            gridComp.hexRadius = hexRadius;
-            gridComp.cells = new Dictionary<CellCoord, Entity>();
-            gridComp.takenCells = new Dictionary<CellCoord, Entity>();
+            gridComp = new CellGridComponent(_boardGameObject.transform, hexRadius, gridRadius);
 
             for (int q = -gridRadius; q <= gridRadius; q++)
             {
@@ -63,10 +61,7 @@ namespace Features.CellGridPack
                 for (int r = rMin; r <= rMax; r++)
                 {
                     var tileEntity = World.CreateEntity();
-                    ref var tileComp = ref _hexTileStash.Add(tileEntity);
-                    tileComp.q = q;
-                    tileComp.r = r;
-                    tileComp.moveCost = _worldSettings.defaultMoveCost;
+                    _hexTileStash.Add(tileEntity, new CellTileComponent(q, r, _worldSettings.defaultMoveCost, false));
                     
                     gridComp.cells.Add(new CellCoord(q, r), tileEntity);
                 }

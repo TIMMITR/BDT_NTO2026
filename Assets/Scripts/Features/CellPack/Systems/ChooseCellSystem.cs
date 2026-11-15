@@ -1,10 +1,10 @@
 using Features.CellGridPack.Components;
-using Features.PickCellPack.Requests;
+using Features.CellPack.Components;
 using Features.RaycastPack;
 using Scellecs.Morpeh;
 using UnityEngine;
 
-namespace Features.PickCellPack.Systems
+namespace Features.CellPack.Systems
 {
     public class ChooseCellSystem : ISystem
     {
@@ -16,9 +16,6 @@ namespace Features.PickCellPack.Systems
         private Stash<RaycastComponent> _raycastStash;
         private Stash<CellGridComponent> _gridStash;
         private Stash<ChosenCellComponent> _chosenCellStash;
-        
-        private Request<ColorCellRequest> _colorCellRequest;
-        private Request<ClearColorsRequest> _clearRequest;
     
         public void OnAwake()
         {
@@ -32,19 +29,16 @@ namespace Features.PickCellPack.Systems
             _raycastStash = World.GetStash<RaycastComponent>();
             _gridStash = World.GetStash<CellGridComponent>();
             _chosenCellStash = World.GetStash<ChosenCellComponent>();
-            
-            _colorCellRequest = World.GetRequest<ColorCellRequest>();
-            _clearRequest = World.GetRequest<ClearColorsRequest>();
         }
 
         public void OnUpdate(float deltaTime)
         {
-            if (_raycastFilter.IsEmpty() || _gridFilter.IsEmpty()) 
+            if (_raycastFilter.IsEmpty() || _gridFilter.IsEmpty())
             {
                 Debug.Log("[CHOOSE_CELL_SYSTEM] Can not find one of filter.");
                 return;
             }
-            
+
             var raycastEntity = _raycastFilter.First();
             ref var raycastComp = ref _raycastStash.Get(raycastEntity);
             var raycastCoord = raycastComp.hitPoint;
@@ -53,26 +47,13 @@ namespace Features.PickCellPack.Systems
             ref var gridComp = ref _gridStash.Get(gridEntity);
             var transCoord = gridComp.FromWorldCoord(raycastCoord);
 
-            if (gridComp.cells.TryGetValue(transCoord, out var cellEntity))
+            if (gridComp.cells.ContainsKey(transCoord))
             {
-                Debug.DrawRay(raycastComp.hitPoint, Vector3.up * 2f, Color.green);
-                Debug.DrawRay(gridComp.ToWorldCoord(transCoord), Vector3.up * 2f, Color.red);
-                
-                ref var chosenCellComp = ref _chosenCellStash.Get(gridEntity);
-                
-                if(chosenCellComp.cellEntity != cellEntity)
-                    _clearRequest.Publish(new ClearColorsRequest());
-                
-                chosenCellComp.cellEntity = cellEntity;
-                
-                _colorCellRequest.Publish(new ColorCellRequest {cellCoord = transCoord});
-                
-                //Debug.Log($"Picked cell: {transCoord.Q}, {transCoord.R}");
+                _chosenCellStash.Set(gridEntity, new ChosenCellComponent{cellCoord = transCoord});
             }
             else
             {
-                _clearRequest.Publish(new ClearColorsRequest());
-                //Debug.Log("[CHOOSE_CELL_SYSTEM] Cell not found.");
+                _chosenCellStash.Remove(gridEntity);
             }
         }
         

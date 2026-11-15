@@ -19,16 +19,6 @@ namespace Features.HexGridPack.Data
             R = r;
         }
  
-        public static readonly CellCoord[] Directions =
-        {
-            new(1, 0),
-            new(1, -1),
-            new(0, -1),
-            new(-1, 0),
-            new(-1, 1),
-            new(0, 1)
-        };
- 
         public int DistanceTo(CellCoord hex)
         {
             var deltaQ = Q - hex.Q; 
