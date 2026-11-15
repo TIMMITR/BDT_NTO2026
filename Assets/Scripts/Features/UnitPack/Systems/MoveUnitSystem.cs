@@ -1,8 +1,12 @@
+using Configs;
 using Features.CellGridPack.Components;
 using Features.CellPack.Components;
+using Features.HexGridPack.Data;
 using Features.InputPack.Requests;
 using Features.PickCellPack.Requests;
+using Features.UnitPack.Components;
 using Scellecs.Morpeh;
+using UnityEngine;
 
 namespace Features.UnitPack.Systems
 {
@@ -12,22 +16,22 @@ namespace Features.UnitPack.Systems
         
         private Filter _gridFilter;
         
-        private Stash<CellGridComponent> _gridStash;
         private Stash<PickedCellComponent> _pickedCellStash;
         private Stash<ChosenCellComponent> _chosenCellStash;
+        private Stash<UnitComponent> _unitStash;
+        private Stash<CellGridComponent> _gridStash;
         
-        private Request<CellPickedRequest> _pickedRequest;
         private Request<LmbStartRequest> _lmbRequest;
 
         public void OnAwake()
         {
             _gridFilter = World.Filter.With<CellGridComponent>().Build();
             
-            _gridStash = World.GetStash<CellGridComponent>();
             _pickedCellStash = World.GetStash<PickedCellComponent>();
             _chosenCellStash = World.GetStash<ChosenCellComponent>();
+            _unitStash = World.GetStash<UnitComponent>();
+            _gridStash = World.GetStash<CellGridComponent>();
             
-            _pickedRequest = World.GetRequest<CellPickedRequest>();
             _lmbRequest = World.GetRequest<LmbStartRequest>();
         }
 
@@ -36,20 +40,39 @@ namespace Features.UnitPack.Systems
             if(_gridFilter.IsEmpty()) return; 
             
             bool lmbClicked = false;
-            bool hasPicked = false;
             
             var gridEntity = _gridFilter.First();
             
             foreach (var clickRequest in _lmbRequest.Consume())
             {
                 lmbClicked = true;
-                hasPicked = _pickedCellStash.Has(gridEntity); // todo потом надо отслеживать availableCellComp
             }
             
             if (!lmbClicked || !_chosenCellStash.Has(gridEntity)) return;
+
+            if (!_pickedCellStash.IsEmpty())
+            {
+                Debug.Log("Yeah");
+            }
+            else
+            {
+                ref var gridComp = ref _gridStash.Get(gridEntity);
+                var coord = _chosenCellStash.Get(gridEntity).cellCoord;
+                
+                if (!IsPlayerFigure(gridComp, coord)) return;
+                
+                _pickedCellStash.Set(gridEntity, new PickedCellComponent{cellCoord = coord});
+            }
+        }
+
+        private bool IsPlayerFigure(CellGridComponent gridComp, CellCoord cellCoord)
+        {
+            if (!gridComp.takenCells.TryGetValue(cellCoord, out var unitEntity)) 
+                return false;
             
-            ref var chosenCellComp = ref _chosenCellStash.Get(gridEntity);
-            _pickedCellStash.Set(gridEntity, new PickedCellComponent{cellCoord = chosenCellComp.cellCoord});
+            ref var unitComp = ref _unitStash.Get(unitEntity);
+            
+            return unitComp.teamSide == TeamSide.Player;
         }
     
         public void Dispose() {}

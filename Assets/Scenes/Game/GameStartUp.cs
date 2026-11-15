@@ -12,6 +12,7 @@ using Features.PlayerPack.Systems;
 using Features.QuickTalkPack.Systems;
 using Features.RaycastPack;
 using Features.ScenePack;
+using Features.SpeedPack;
 using Features.TargetPack;
 using Features.UnitPack.Systems;
 using Scellecs.Morpeh;
@@ -64,6 +65,7 @@ namespace Scenes.Game
             _updateGroup.AddSystem(new ManaSystem());
             _updateGroup.AddSystem(new DamageSystem());
             _updateGroup.AddSystem(new HealthSystem());
+            _updateGroup.AddSystem(new SpeedSystem());
             
             _updateGroup.AddSystem(new StoryTalkPlayerSystem(gameContext.introTalk));
             

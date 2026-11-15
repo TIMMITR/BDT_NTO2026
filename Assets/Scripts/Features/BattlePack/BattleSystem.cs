@@ -32,8 +32,8 @@ namespace Features.BattlePack
             _battleEvent = World.GetEvent<BattleEvent>();
             
             ref var battleComponent = ref _battleStash.Add(World.CreateEntity());
-            battleComponent.currentBattleId = 0; // пока что без боя
-            
+            battleComponent.currentBattleId = 0; 
+            _battleRequest.Publish(new BattleRequest{id = battleComponent.currentBattleId}, allowNextFrame: true); // нет, бой будет
         }
 
         public void OnUpdate(float deltaTime)
