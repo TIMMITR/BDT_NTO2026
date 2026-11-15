@@ -20,13 +20,13 @@ namespace Plugins.EasyTransitions.Scripts
         {
             DontDestroyOnLoad(gameObject);
 
-            if (!transitionSettings)
+            if (transitionSettings == null)
             {
                 Debug.LogError("[Transition] TransitionSettings не назначены!", this);
                 return;
             }
 
-            if (transitionCanvas)
+            if (transitionCanvas != null)
                 transitionCanvas.referenceResolution = transitionSettings.refrenceResolution;
 
             transitionPanelIn.gameObject.SetActive(true);
@@ -43,7 +43,7 @@ namespace Plugins.EasyTransitions.Scripts
         {
             SceneManager.sceneLoaded -= OnSceneLoad;
 
-            if (!_instantiatedMaterial) return;
+            if (_instantiatedMaterial == null) return;
             Destroy(_instantiatedMaterial);
             _instantiatedMaterial = null;
         }
@@ -71,14 +71,14 @@ namespace Plugins.EasyTransitions.Scripts
                 ? transitionSettings.multiplyColorMaterial
                 : transitionSettings.addColorMaterial;
 
-            if (!baseMat || transitionSettings.isCutoutTransition) return;
+            if (baseMat == null || transitionSettings.isCutoutTransition) return;
             _instantiatedMaterial = new Material(baseMat);
             _instantiatedMaterial.SetColor(ColorProperty, transitionSettings.colorTint);
         }
 
         private void SetupTransitionObject(GameObject prefab, Transform parent)
         {
-            if (!prefab) return;
+            if (prefab == null) return;
 
             var instance = Instantiate(prefab, parent);
 

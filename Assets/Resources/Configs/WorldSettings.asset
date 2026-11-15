@@ -18,3 +18,11 @@ MonoBehaviour:
   defaultMoveCost: 1
   dialogueCharsPerSecond: 50
   dialogueStayTime: 4
+  quickTalkGlobalCooldownSeconds: 15
+  quickTalkCandidateTtlSeconds: 5
+  rotationSpeedModifier: {x: 0.8, y: 1.25}
+  randomInitialRotation: 1
+  randomRotationDirection: 1
+  bobbingAmplitudeBonus: {x: 0, y: 0.25}
+  bobbingSpeedModifier: {x: 0.85, y: 1.15}
+  randomizeBobbingPhase: 1

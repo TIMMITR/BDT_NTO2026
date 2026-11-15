@@ -1,11 +1,10 @@
 ﻿using Scellecs.Morpeh;
 using UnityEngine;
 
-namespace Global
+namespace Features.TransformPack
 {
     public struct TransformComponent : IComponent
     {
         public Transform value;
     }
-    
 }

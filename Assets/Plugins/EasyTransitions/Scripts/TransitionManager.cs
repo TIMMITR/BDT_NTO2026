@@ -16,6 +16,8 @@ namespace Plugins.EasyTransitions.Scripts
         private readonly UnityAction _onTransitionCutPointReached;
         private readonly UnityAction _onTransitionEnd;
 
+        public TransitionManager() { }
+
         public TransitionManager(UnityAction onTransitionBegin, UnityAction onTransitionCutPointReached, UnityAction onTransitionEnd)
         {
             _onTransitionBegin = onTransitionBegin;
@@ -39,7 +41,7 @@ namespace Plugins.EasyTransitions.Scripts
 
         public static TransitionManager Instance()
         {
-            if (_instance == null) return _instance;
+            if (_instance) return _instance;
             Debug.LogError("[TransitionManager] Экземпляр отсутствует на сцене! Убедитесь, что префаб добавлен.");
             return null;
         }
@@ -56,13 +58,13 @@ namespace Plugins.EasyTransitions.Scripts
 
         private void StartTransitionInternal(TransitionSettings transition, float startDelay, Func<AsyncOperation> loadSceneAction)
         {
-            if (transition != null)
+            if (transition == null)
             {
                 Debug.LogError("[TransitionManager] TransitionSettings не могут быть null!");
                 return;
             }
 
-            if (transitionTemplate  != null)
+            if (transitionTemplate == null)
             {
                 Debug.LogError("[TransitionManager] transitionTemplate не назначен в инспекторе!");
                 return;

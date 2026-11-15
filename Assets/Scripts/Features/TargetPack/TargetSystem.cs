@@ -1,3 +1,4 @@
+using Features.TransformPack;
 using Global;
 using Scellecs.Morpeh;
 
@@ -18,11 +19,11 @@ namespace Features.TargetPack
             _cameraFilter = World.Filter.With<TransformComponent>().With<CameraTargetTag>().Build();
             
             _transformStash = World.GetStash<TransformComponent>();
+            
         }
 
         public void OnUpdate(float deltaTime)
         {
-
             if (_playerFilter.IsEmpty() || _cameraFilter.IsEmpty()) return;
             
             var playerTarget = _playerFilter.First();
@@ -35,6 +36,9 @@ namespace Features.TargetPack
             cameraTransformComp.value.rotation = playerTransformComp.value.rotation;
         }
 
-        public void Dispose() { }
+        public void Dispose()
+        {
+            
+        }
     }
 }

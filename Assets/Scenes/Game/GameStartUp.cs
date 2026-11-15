@@ -88,6 +88,15 @@ namespace Scenes.Game
 
         private void OnDestroy()
         {
+            _playerInputActions?.Disable();
+            _playerInputActions?.Dispose();
+
+            if (_initGroup != null)
+            {
+                _initGroup.Dispose();
+                _initGroup = null;
+            }
+            
             if (_updateGroup != null)
             {
                 _world?.RemoveSystemsGroup(_updateGroup);
