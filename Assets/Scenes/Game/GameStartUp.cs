@@ -9,6 +9,7 @@ using Features.InputPack;
 using Features.ManaPack;
 using Features.PickCellPack.Systems;
 using Features.PlayerPack.Systems;
+using Features.QuickTalkPack.Systems;
 using Features.RaycastPack;
 using Features.ScenePack;
 using Features.TargetPack;
@@ -64,9 +65,10 @@ namespace Scenes.Game
             
             _updateGroup.AddSystem(new StoryTalkPlayerSystem(gameContext.introTalk));
             
+            _updateGroup.AddSystem(new QuickTalkTriggerSystem(gameContext.gamePlan, globalContext.worldSettings));
+            _updateGroup.AddSystem(new QuickTalkQueueSystem(globalContext.worldSettings));
+            
             _updateGroup.AddSystem(new TypingSystem(globalContext.worldSettings));
-            //_updateGroup.AddSystem(new QuickTalkTriggerSystem(gameContext.gamePlan, globalContext.worldSettings));
-            //_updateGroup.AddSystem(new QuickTalkQueueSystem(globalContext.worldSettings));
             _updateGroup.AddSystem(new SceneSystem(globalContext.transitionSettings));
                 
             _updateGroup.Initialize();

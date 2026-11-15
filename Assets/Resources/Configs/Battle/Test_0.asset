@@ -18,3 +18,5 @@ MonoBehaviour:
     moveCost: 1
     blocked: 0
     unitConfig: {fileID: 11400000, guid: b3fbc10f7b091ba4e94c862b3ed315fe, type: 2}
+  quickTalks:
+  - {fileID: 11400000, guid: 0e8183d4d2d24b243aa05c6605c10947, type: 2}

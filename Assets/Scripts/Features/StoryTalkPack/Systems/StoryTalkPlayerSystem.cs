@@ -37,10 +37,6 @@ namespace Features.StoryTalkPack.Systems
             _typingEndEvent = World.GetEvent<TypingEndEvent>();
             _talkStartedEvent = World.GetEvent<StoryTalkStartEvent>();
             _talkFinishedEvent = World.GetEvent<StoryTalkFinishEvent>();
-
-            if (_introTalk != null){ // временное решение
-                _showTalkRequest.Publish(new StoryTalkShowRequest { talk = _introTalk }, allowNextFrame: true);
-            }   
         }
 
         public void OnUpdate(float deltaTime)

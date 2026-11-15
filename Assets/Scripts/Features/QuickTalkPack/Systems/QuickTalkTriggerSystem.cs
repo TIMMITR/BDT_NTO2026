@@ -52,7 +52,10 @@ namespace Features.QuickTalkPack.Systems
                     lastLineIndexes = new Dictionary<QuickTalkSet, int>()
                 });
             }
+            //_triggerEvent.NextFrame(new QuickTalkTriggerEvent { trigger = QuickTalkTrigger.BattleStarted });
+            // вот так вызывать ивенты
         }
+        
 
         public void OnUpdate(float deltaTime)
         {
