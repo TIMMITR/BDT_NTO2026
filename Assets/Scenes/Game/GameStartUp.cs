@@ -58,9 +58,10 @@ namespace Scenes.Game
             _updateGroup.AddSystem(new ChooseCellSystem());
             _updateGroup.AddSystem(new BattleSystem(gameContext.gamePlan));
             _updateGroup.AddSystem(new UnitSpawnSystem());
-            _updateGroup.AddSystem(new MoveUnitSystem());
+            _updateGroup.AddSystem(new StartMoveSystem());
             _updateGroup.AddSystem(new PathPreviewSystem(gameContext.highlightCellPool));
             _updateGroup.AddSystem(new ColorCellSystem(gameContext.highlightCellPool));
+            _updateGroup.AddSystem(new ApplyMoveSystem());
             
             _updateGroup.AddSystem(new ManaSystem());
             _updateGroup.AddSystem(new DamageSystem());

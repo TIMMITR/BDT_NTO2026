@@ -64,7 +64,7 @@ namespace Features.CellPack.Systems
             CellCoord? to = _chosenCellStash.Has(gridEntity) ? _chosenCellStash.Get(gridEntity).cellCoord : null;
 
             if (from == _lastFrom && to == _lastTo) return;
-
+            
             _lastFrom = from;
             _lastTo = to;
 
@@ -72,23 +72,37 @@ namespace Features.CellPack.Systems
 
             if (from.HasValue)
                 _colorCellRequest.Publish(new ColorCellRequest {cellCoord = from.Value});
-            if (to.HasValue)
+            if (to.HasValue && !from.HasValue) // проверка на !from нужна,
+                                               // чтобы не отрисовывать выбранную клетку, при построении пути
                 _colorCellRequest.Publish(new ColorCellRequest {cellCoord = to.Value});
 
             if (from == to || !from.HasValue || !to.HasValue) return;
 
-            SendDrawPassRequest(gridEntity, from.Value, to.Value);
+            ref var gridComp = ref _pickedCellStash.Get(gridEntity);
+            var speed = gridComp.moveSpeed;
+            
+            SendDrawPassRequest(gridEntity, from.Value, to.Value, speed, out var points);
+            
+            gridComp.points = points; // todo возможно, стоит расчет пути вынести в отдельную систему
         }
 
-        private void SendDrawPassRequest(Entity entity, CellCoord from, CellCoord to)
+        private void SendDrawPassRequest(Entity entity, CellCoord from, CellCoord to, int maxCost, out List<CellCoord> points)
         {
             ref var gridComp = ref _cellGridStash.Get(entity);
             var pathReady = PathFinder.GetPath(gridComp, from, to, _cellTileStash);
             
             _path = PathFinder.ReconstructPath(pathReady, from, to);
 
+            points = new()
+            {
+                from
+            };
+
             foreach (var cell in _path)
             {
+                if(pathReady.cellsCost[cell] > maxCost) break;
+                
+                points.Add(cell);
                 _colorCellRequest.Publish(new ColorCellRequest {cellCoord = cell});
             }
         }
