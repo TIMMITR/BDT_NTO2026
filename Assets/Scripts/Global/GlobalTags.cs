@@ -7,4 +7,6 @@ namespace Global
     public struct PlayerTargetTag : IComponent { }
     public struct CameraTargetTag : IComponent { }
     
+    public struct SimpleAnimationActiveTag : IComponent { }
+    
 }

@@ -1,3 +1,4 @@
+using Features.SimpleAnimationPack;
 using Scellecs.Morpeh;
 using UnityEngine;
 
@@ -15,10 +16,13 @@ namespace Scenes.MainMenu
         private void Awake()
         {
             _world = World.Default;
-
             _updateGroup = _world.CreateSystemsGroup();
+            _updateGroup.AddSystem(new SimpleAnimationSystem(globalContext.worldSettings));
             _updateGroup.Initialize();
+            
             _world.AddSystemsGroup(order: 0, _updateGroup);
+            
+            
 
             _fixedGroup = _world.CreateSystemsGroup();
             _fixedGroup.Initialize();
