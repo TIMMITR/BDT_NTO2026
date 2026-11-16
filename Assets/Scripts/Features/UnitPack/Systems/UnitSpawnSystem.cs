@@ -1,5 +1,6 @@
 using Configs;
 using Features.DamagePack;
+using Features.GridPack;
 using Features.GridPack.Components;
 using Features.GridPack.Data;
 using Features.HealthPack;
@@ -21,7 +22,8 @@ namespace Features.UnitPack.Systems
         private Stash<GridComponent> _gridStash;
         private Stash<TransformComponent> _transformStash;
         private Stash<UnitComponent> _unitStash;
-        private Stash<CellTileComponent> _cellTileStash;
+        private Stash<CellTileComponent> _tileStash;
+        private Stash<CellPositionComponent> _positionStash;
         
         private Stash<HealthComponent> _healthStash;
         private Stash<DefenceComponent> _defenceStash;
@@ -37,7 +39,8 @@ namespace Features.UnitPack.Systems
             _gridStash = World.GetStash<GridComponent>();
             _transformStash = World.GetStash<TransformComponent>();
             _unitStash = World.GetStash<UnitComponent>();
-            _cellTileStash = World.GetStash<CellTileComponent>();
+            _tileStash = World.GetStash<CellTileComponent>();
+            _positionStash = World.GetStash<CellPositionComponent>();
             
             _healthStash = World.GetStash<HealthComponent>();
             _defenceStash = World.GetStash<DefenceComponent>();
@@ -67,12 +70,7 @@ namespace Features.UnitPack.Systems
                 
                 ApplyUnitComponents(newUnit, unitConfig);
 
-                var cellEntity = gridComp.cells[cellCoord];
-                ref var cellComp = ref _cellTileStash.Get(cellEntity);
-
-                cellComp.blocked = true;
-                
-                gridComp.takenCells.Add(cellCoord, newUnit);
+                GridOccupancy.Place(ref gridComp, _tileStash, _positionStash, newUnit, cellCoord);
             }
         }
 
@@ -85,7 +83,7 @@ namespace Features.UnitPack.Systems
             _healthStash.Add(unit, new HealthComponent(stats.maxHealth));
             _defenceStash.Add(unit, new DefenceComponent{currentDefence = stats.defence});
             _damageStash.Add(unit, new DamageComponent{baseDamage = stats.damage});
-            _speedStash.Add(unit, new SpeedComponent { currentSpeed = stats.moveSpeed });
+            _speedStash.Add(unit, new SpeedComponent(stats.moveSpeed));
         }
 
         public void Dispose() { }

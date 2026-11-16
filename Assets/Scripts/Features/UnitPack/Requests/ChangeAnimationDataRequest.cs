@@ -2,11 +2,11 @@ using Scellecs.Morpeh;
 
 namespace Features.UnitPack.Requests
 {
-    public struct ChangeMoveAnimationRequest : IRequestData
+    public struct ChangeAnimationDataRequest : IRequestData
     {
         public int dataIndex;
 
-        public ChangeMoveAnimationRequest(int dataIndex)
+        public ChangeAnimationDataRequest(int dataIndex)
         {
             this.dataIndex = dataIndex;
         }

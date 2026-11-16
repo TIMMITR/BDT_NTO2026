@@ -1,5 +1,6 @@
 using Configs;
 using Features.CellSelectionPack.Components;
+using Features.GridPack;
 using Features.GridPack.Components;
 using Features.GridPack.Data;
 using Features.InputPack.Requests;
@@ -21,10 +22,10 @@ namespace Features.UnitPack.Systems
         private Stash<GridComponent> _gridStash;
         private Stash<SpeedComponent> _speedStash;
         private Stash<UnitAnimationComponent> _unitAnimationStash;
-        private Stash<CellTileComponent> _cellTileStash;
+        private Stash<CellTileComponent> _tileStash;
+        private Stash<CellPositionComponent> _positionStash;
         
         private Request<LmbStartRequest> _lmbRequest;
-        
         
         public void OnAwake()
         {
@@ -36,7 +37,8 @@ namespace Features.UnitPack.Systems
             _gridStash = World.GetStash<GridComponent>();
             _speedStash = World.GetStash<SpeedComponent>();
             _unitAnimationStash = World.GetStash<UnitAnimationComponent>();
-            _cellTileStash = World.GetStash<CellTileComponent>();
+            _tileStash = World.GetStash<CellTileComponent>();
+            _positionStash = World.GetStash<CellPositionComponent>();
             
             _lmbRequest = World.GetRequest<LmbStartRequest>();
         }
@@ -60,20 +62,18 @@ namespace Features.UnitPack.Systems
             if (_pickedCellStash.Has(gridEntity))
             {
                 ref var pickedCellComp = ref _pickedCellStash.Get(gridEntity);
-                var from = pickedCellComp.cellCoord;
-                var to = pickedCellComp.points[^1];
-                var unit = gridComp.takenCells[from];
 
-                if (!_unitAnimationStash.Has(unit))
+                if (pickedCellComp.points.Count > 1 &&
+                    gridComp.takenCells.TryGetValue(pickedCellComp.cellCoord, out var unit) &&
+                    !_unitAnimationStash.Has(unit))
                 {
+                    var from = pickedCellComp.cellCoord;
+                    var to = pickedCellComp.points[^1];
+
+                    GridOccupancy.Move(ref gridComp, _tileStash, _positionStash, unit, from, to);
                     _unitAnimationStash.Add(unit, new UnitAnimationComponent(pickedCellComp.points));
-                
-                    gridComp.takenCells.Remove(pickedCellComp.cellCoord);
-                    gridComp.takenCells.Add(to, unit);
-                    _cellTileStash.Get(gridComp.cells[from]).blocked = false;
-                    _cellTileStash.Get(gridComp.cells[to]).blocked = true;
                 }
-                
+
                 _pickedCellStash.Remove(gridEntity);
             } 
             else

@@ -4,7 +4,6 @@ using Features.UnitPack.Components;
 using Features.UnitPack.Requests;
 using Scellecs.Morpeh;
 using Scenes.Game;
-using UnityEngine;
 
 namespace Features.UnitPack.Systems
 {
@@ -17,7 +16,7 @@ namespace Features.UnitPack.Systems
         
         private Stash<MoveAnimationDataComponent> _animationDataStash;
         
-        private Request<ChangeMoveAnimationRequest> _changeAnimationRequest;
+        private Request<ChangeAnimationDataRequest> _changeAnimationRequest;
         
         private readonly List<AnimationData> _animationDataList;
         
@@ -33,7 +32,7 @@ namespace Features.UnitPack.Systems
             
             _animationDataStash = World.GetStash<MoveAnimationDataComponent>();
             
-            _changeAnimationRequest = World.GetRequest<ChangeMoveAnimationRequest>();
+            _changeAnimationRequest = World.GetRequest<ChangeAnimationDataRequest>();
             
             var gridEntity = _gridFilter.First();
             
