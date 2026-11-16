@@ -14,10 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   characterName: Test
   unitClass: 0
+  teamSide: 0
   prefab: {fileID: 4047062368776174659, guid: 47e5d33e07dad074bbfd9798e106e2b3, type: 3}
   stats:
     maxHealth: 10
     damage: 10
     defence: 10
-    moveSpeed: 4
-    teamSide: 0
+    moveSpeed: 3

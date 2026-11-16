@@ -2825,6 +2825,10 @@ MonoBehaviour:
   gamePlan: {fileID: 11400000, guid: a30e07ce048f7ff438a6c67907bbb724, type: 2}
   boardGameObject: {fileID: 525620844}
   highlightCellPool: {fileID: 88044064}
+  moveDataList:
+  - jumpHeight: 4
+    moveDuration: 1
+    rotateSpeed: 180
 --- !u!4 &1593132932
 Transform:
   m_ObjectHideFlags: 0

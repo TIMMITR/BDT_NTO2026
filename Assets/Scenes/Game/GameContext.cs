@@ -1,4 +1,6 @@
 
+using System;
+using System.Collections.Generic;
 using Features.GamePack;
 using Features.StoryTalkPack.Data;
 using UnityEngine;
@@ -18,5 +20,16 @@ namespace Scenes.Game
         [Header("Board Settings")]
         public GameObject boardGameObject;
         public Transform highlightCellPool;
+        
+        [Header("Unit Settings")]
+        public List<MoveData> moveDataList;
+    }
+
+    [Serializable]
+    public class MoveData
+    {
+        public float jumpHeight;
+        public float moveDuration;
+        public float rotateSpeed;
     }
 }
