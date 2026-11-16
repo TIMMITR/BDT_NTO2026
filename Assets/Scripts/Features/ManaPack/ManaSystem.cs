@@ -1,4 +1,5 @@
 using System;
+using Features.ManaPack.Events;
 using Scellecs.Morpeh;
 
 namespace Features.ManaPack
@@ -11,7 +12,7 @@ namespace Features.ManaPack
 
         private Request<ManaChangeRequest> _manaChangeRequest;
 
-        private Event<ManaChangedSuccessEvent> _manaChangeSuccessEvent;
+        private Event<ManaChangedEvent> _manaChangeSuccessEvent;
         private Event<ManaChangedFailedEvent> _manaChangeFailedEvent;
 
         public void OnAwake()
@@ -20,7 +21,7 @@ namespace Features.ManaPack
 
             _manaChangeRequest = World.GetRequest<ManaChangeRequest>();
 
-            _manaChangeSuccessEvent = World.GetEvent<ManaChangedSuccessEvent>();
+            _manaChangeSuccessEvent = World.GetEvent<ManaChangedEvent>();
             _manaChangeFailedEvent = World.GetEvent<ManaChangedFailedEvent>();
         }
 
@@ -40,7 +41,7 @@ namespace Features.ManaPack
 
                 manaComponent.currentMana = Math.Clamp(manaComponent.currentMana + request.amount, 0, manaComponent.maxMana);
 
-                _manaChangeSuccessEvent.NextFrame(new ManaChangedSuccessEvent
+                _manaChangeSuccessEvent.NextFrame(new ManaChangedEvent
                 {
                     entity = request.entity,
                     newAmount = manaComponent.currentMana

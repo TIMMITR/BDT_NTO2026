@@ -4,20 +4,20 @@ using Scellecs.Morpeh;
 
 namespace Features.UnitPack.Components
 {
-    public struct UnitMoveComponent : IComponent
+    public struct UnitAnimationComponent : IComponent
     {
         public List<CellCoord> points;
         public bool isTurning;
         public int index;
-        public float percent;
+        public float progress;
 
-        public UnitMoveComponent(List<CellCoord> points)
+        public UnitAnimationComponent(List<CellCoord> points)
         {
             this.points = points;
             
             isTurning = true;
             index = 1;
-            percent = 0f;
+            progress = 0f;
         }
     }
 }

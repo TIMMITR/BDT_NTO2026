@@ -3,7 +3,7 @@ using Scellecs.Morpeh;
 
 namespace Features.CellSelectionPack.Components
 {
-    public struct HoveredCellComponent : IComponent
+    public struct ChosenCellComponent : IComponent
     {
         public CellCoord cellCoord;
     }

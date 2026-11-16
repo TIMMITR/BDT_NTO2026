@@ -15,7 +15,7 @@ namespace Features.CellSelectionPack.Systems
         
         private Stash<RaycastComponent> _raycastStash;
         private Stash<GridComponent> _gridStash;
-        private Stash<HoveredCellComponent> _chosenCellStash;
+        private Stash<ChosenCellComponent> _chosenCellStash;
     
         public void OnAwake()
         {
@@ -28,7 +28,7 @@ namespace Features.CellSelectionPack.Systems
             
             _raycastStash = World.GetStash<RaycastComponent>();
             _gridStash = World.GetStash<GridComponent>();
-            _chosenCellStash = World.GetStash<HoveredCellComponent>();
+            _chosenCellStash = World.GetStash<ChosenCellComponent>();
         }
 
         public void OnUpdate(float deltaTime)
@@ -41,16 +41,16 @@ namespace Features.CellSelectionPack.Systems
 
             var raycastEntity = _raycastFilter.First();
             ref var raycastComp = ref _raycastStash.Get(raycastEntity);
-            var raycastCoord = raycastComp.hitPoint;
+            var hitPoint = raycastComp.hitPoint;
 
             var gridEntity = _gridFilter.First();
             ref var gridComp = ref _gridStash.Get(gridEntity);
-            var transCoord = gridComp.FromWorldCoord(raycastCoord);
+            var transCoord = gridComp.FromWorldCoord(hitPoint);
             
 
             if (gridComp.cells.ContainsKey(transCoord))
             {
-                _chosenCellStash.Set(gridEntity, new HoveredCellComponent{cellCoord = transCoord});
+                _chosenCellStash.Set(gridEntity, new ChosenCellComponent{cellCoord = transCoord});
             }
             else
             {

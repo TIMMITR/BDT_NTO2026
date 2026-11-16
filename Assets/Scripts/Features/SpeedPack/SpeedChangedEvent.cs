@@ -1,8 +1,8 @@
 using Scellecs.Morpeh;
 
-namespace Features.HealthPack
+namespace Features.SpeedPack
 {
-    public struct SpeedEvent : IEventData
+    public struct SpeedChangedEvent : IEventData
     {
         public int newAmount;
         public int delta;

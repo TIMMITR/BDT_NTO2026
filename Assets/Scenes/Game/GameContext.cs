@@ -21,11 +21,11 @@ namespace Scenes.Game
         public Transform highlightCellPool;
         
         [Header("Unit Settings")]
-        public List<MoveData> moveDataList;
+        public List<AnimationData> moveDataList;
     }
 
     [Serializable]
-    public class MoveData
+    public class AnimationData
     {
         public float jumpHeight;
         public float moveDuration;

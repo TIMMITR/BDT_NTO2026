@@ -12,7 +12,6 @@ using Features.PlayerPack.Systems;
 using Features.QuickTalkPack.Systems;
 using Features.RaycastPack;
 using Features.ScenePack;
-using Features.SpeedPack;
 using Features.SpeedPack.Systems;
 using Features.TargetPack;
 using Features.UnitPack.Systems;
@@ -46,7 +45,7 @@ namespace Scenes.Game
                 gameContext.playerSpawnPoint));
             _initGroup.AddInitializer(new CameraSpawnSystem(
                 globalContext.prefabSettings));
-            _initGroup.AddInitializer(new CellGridSystem(
+            _initGroup.AddInitializer(new GridSystem(
                 globalContext.worldSettings)); 
             _initGroup.Initialize();
             
@@ -59,10 +58,10 @@ namespace Scenes.Game
             _updateGroup.AddSystem(new BattleSystem(gameContext.gamePlan));
             _updateGroup.AddSystem(new UnitSpawnSystem());
             _updateGroup.AddSystem(new MoveCommandSystem());
-            _updateGroup.AddSystem(new PathPreviewSystem(gameContext.highlightCellPool));
+            _updateGroup.AddSystem(new PathPreviewSystem());
             _updateGroup.AddSystem(new ColorCellSystem(gameContext.highlightCellPool));
-            _updateGroup.AddSystem(new UnitMoveAnimationSystem());
-            _updateGroup.AddSystem(new ChangeMoveDataSystem(gameContext.moveDataList));
+            _updateGroup.AddSystem(new UnitAnimationSystem());
+            _updateGroup.AddSystem(new ChangeAnimationDataSystem(gameContext.moveDataList));
             
             _updateGroup.AddSystem(new ManaSystem());
             _updateGroup.AddSystem(new DamageSystem());

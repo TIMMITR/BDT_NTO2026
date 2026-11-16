@@ -1,8 +1,8 @@
 using Scellecs.Morpeh;
 
-namespace Features.HealthPack
+namespace Features.SpeedPack.Requests
 {
-    public struct SpeedRequest : IRequestData
+    public struct SpeedChangeRequest : IRequestData
     {
         public int amount;
         public Entity entity;

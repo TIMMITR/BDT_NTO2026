@@ -1,8 +1,7 @@
-using System;
-using Features.HealthPack;
+using Features.SpeedPack.Requests;
 using Scellecs.Morpeh;
 
-namespace Features.SpeedPack
+namespace Features.SpeedPack.Systems
 {
     public sealed class SpeedSystem : ISystem
     {
@@ -10,17 +9,17 @@ namespace Features.SpeedPack
 
         private Stash<SpeedComponent> _speedStash;
 
-        private Request<SpeedRequest> _speedChangeRequest;
+        private Request<SpeedChangeRequest> _speedChangeRequest;
 
-        private Event<SpeedEvent> _speedChangeEvent;
+        private Event<SpeedChangedEvent> _speedChangeEvent;
  
         public void OnAwake()
         {
             _speedStash = World.GetStash<SpeedComponent>();
 
-            _speedChangeRequest = World.GetRequest<SpeedRequest>();
+            _speedChangeRequest = World.GetRequest<SpeedChangeRequest>();
 
-            _speedChangeEvent = World.GetEvent<SpeedEvent>();
+            _speedChangeEvent = World.GetEvent<SpeedChangedEvent>();
         }
 
         public void OnUpdate(float deltaTime)
@@ -35,7 +34,7 @@ namespace Features.SpeedPack
 
                 speedComponent.currentSpeed = newAmount;
 
-                _speedChangeEvent.NextFrame(new SpeedEvent
+                _speedChangeEvent.NextFrame(new SpeedChangedEvent
                 {
                     entity = request.entity,
                     newAmount = newAmount,
