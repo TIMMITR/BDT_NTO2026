@@ -4,10 +4,11 @@ using UnityEngine;
 namespace Configs
 {
     [CreateAssetMenu(fileName = "Configs", menuName = "Config/Unit Config", order = 7)]
-    public sealed class UnitConfig : ScriptableObject
+    public sealed class UnitConfig : ScriptableObject // todo надо решить как именовать поля
     {
         [SerializeField] private string characterName;
         [SerializeField] private UnitClass unitClass;
+        [SerializeField] private TeamSide teamSide;
         [SerializeField] private GameObject prefab;
         [SerializeField] private UnitStats stats = new()
         {
@@ -15,13 +16,13 @@ namespace Configs
             damage = 10,
             defence = 10,
             moveSpeed = 4,
-            teamSide = TeamSide.Player
         };
         
         public string Name => characterName;
         public UnitClass Class => unitClass;
         public GameObject Prefab => prefab;
         public UnitStats Stats => stats;
+        public TeamSide TeamSide => teamSide;
     }
     
     [Serializable]
@@ -31,8 +32,6 @@ namespace Configs
         public int damage;
         public int defence;
         public int moveSpeed;
-        public TeamSide teamSide;
-        
     }
     
     public enum UnitClass

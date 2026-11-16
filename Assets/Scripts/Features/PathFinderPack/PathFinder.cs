@@ -20,7 +20,7 @@ namespace Features.PathFinderPack
         
         public static PassReady GetPath(CellGridComponent grid, CellCoord from, CellCoord to, Stash<CellTileComponent> stash)
         {
-            PassReady result = new() 
+            PassReady result = new()
             {
                 path = new Dictionary < CellCoord, CellCoord>(),
                 cellsCost = new Dictionary<CellCoord, int>(),

@@ -7,11 +7,13 @@ namespace Features.UnitPack.Components
     {
         public string characterName;
         public UnitClass unitClass;
+        public TeamSide teamSide;
 
-        public UnitComponent(string characterName, UnitClass unitClass)
+        public UnitComponent(string characterName, UnitClass unitClass, TeamSide teamSide)
         {
             this.characterName = characterName;
             this.unitClass = unitClass;
+            this.teamSide = teamSide;
         }
     }
 }
