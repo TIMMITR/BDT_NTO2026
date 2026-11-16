@@ -46,7 +46,6 @@ namespace Scenes.Game
             _initGroup.AddInitializer(new CameraSpawnSystem(
                 globalContext.prefabSettings));
             _initGroup.AddInitializer(new CellGridSystem(
-                gameContext.boardGameObject,
                 globalContext.worldSettings)); 
             _initGroup.Initialize();
             

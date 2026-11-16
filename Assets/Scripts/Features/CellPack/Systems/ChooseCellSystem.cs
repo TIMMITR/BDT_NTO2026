@@ -46,6 +46,7 @@ namespace Features.CellPack.Systems
             var gridEntity = _gridFilter.First();
             ref var gridComp = ref _gridStash.Get(gridEntity);
             var transCoord = gridComp.FromWorldCoord(raycastCoord);
+            
 
             if (gridComp.cells.ContainsKey(transCoord))
             {

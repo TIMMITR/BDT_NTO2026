@@ -17,12 +17,10 @@ namespace Features.CellGridPack
         private Stash<CellTileComponent> _hexTileStash;
         private Stash<ChosenCellComponent> _chosenCellStash;
 
-        private readonly GameObject _boardGameObject;
         private readonly WorldSettingsSo _worldSettings;
 
-        public CellGridSystem(GameObject boardGameObject, WorldSettingsSo worldSettings)
+        public CellGridSystem(WorldSettingsSo worldSettings)
         {
-            _boardGameObject = boardGameObject;
             _worldSettings = worldSettings;
         }
 
@@ -37,12 +35,6 @@ namespace Features.CellGridPack
 
         private void CreateGrid()
         {
-            if (_boardGameObject == null)
-            {
-                Debug.LogWarning("[HEX_GRID_SYSTEM] No GridStartPointView found on " + _boardGameObject.name);
-                return;
-            }
-            
             int gridRadius = _worldSettings.gridRadius;
             float hexRadius = _worldSettings.cellRadius;
 
@@ -51,7 +43,7 @@ namespace Features.CellGridPack
             _chosenCellStash.Add(gridEntity);
             
             ref var gridComp = ref _hexGridStash.Add(gridEntity);
-            gridComp = new CellGridComponent(_boardGameObject.transform, hexRadius, gridRadius);
+            gridComp = new CellGridComponent(hexRadius, gridRadius);
 
             for (int q = -gridRadius; q <= gridRadius; q++)
             {
