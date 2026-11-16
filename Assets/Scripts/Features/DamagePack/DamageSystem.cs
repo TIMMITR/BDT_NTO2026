@@ -10,14 +10,14 @@ namespace Features.DamagePack
         private Stash<DamageComponent> _damageStash;
 
         private Request<DamageRequest> _damageRequest;
-        private Request<HealthRequest> _healthChangeRequest;
+        private Request<HealthChangeRequest> _healthChangeRequest;
 
         public void OnAwake()
         {
             _damageStash = World.GetStash<DamageComponent>();
 
             _damageRequest = World.GetRequest<DamageRequest>();
-            _healthChangeRequest = World.GetRequest<HealthRequest>();
+            _healthChangeRequest = World.GetRequest<HealthChangeRequest>();
         }
 
         public void OnUpdate(float deltaTime)
@@ -28,7 +28,7 @@ namespace Features.DamagePack
 
                 ref var damageComponent = ref _damageStash.Get(request.source);
 
-                _healthChangeRequest.Publish(new HealthRequest
+                _healthChangeRequest.Publish(new HealthChangeRequest
                 {
                     entity = request.target,
                     amount = -damageComponent.baseDamage

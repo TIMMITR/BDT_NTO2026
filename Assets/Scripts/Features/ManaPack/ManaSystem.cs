@@ -11,8 +11,8 @@ namespace Features.ManaPack
 
         private Request<ManaChangeRequest> _manaChangeRequest;
 
-        private Event<ManaChangeSuccessEvent> _manaChangeSuccessEvent;
-        private Event<ManaChangeFailedEvent> _manaChangeFailedEvent;
+        private Event<ManaChangedSuccessEvent> _manaChangeSuccessEvent;
+        private Event<ManaChangedFailedEvent> _manaChangeFailedEvent;
 
         public void OnAwake()
         {
@@ -20,8 +20,8 @@ namespace Features.ManaPack
 
             _manaChangeRequest = World.GetRequest<ManaChangeRequest>();
 
-            _manaChangeSuccessEvent = World.GetEvent<ManaChangeSuccessEvent>();
-            _manaChangeFailedEvent = World.GetEvent<ManaChangeFailedEvent>();
+            _manaChangeSuccessEvent = World.GetEvent<ManaChangedSuccessEvent>();
+            _manaChangeFailedEvent = World.GetEvent<ManaChangedFailedEvent>();
         }
 
         public void OnUpdate(float deltaTime)
@@ -34,13 +34,13 @@ namespace Features.ManaPack
 
                 if (request.amount < 0 && manaComponent.currentMana < -request.amount)
                 {
-                    _manaChangeFailedEvent.NextFrame(new ManaChangeFailedEvent { entity = request.entity });
+                    _manaChangeFailedEvent.NextFrame(new ManaChangedFailedEvent { entity = request.entity });
                     continue;
                 }
 
                 manaComponent.currentMana = Math.Clamp(manaComponent.currentMana + request.amount, 0, manaComponent.maxMana);
 
-                _manaChangeSuccessEvent.NextFrame(new ManaChangeSuccessEvent
+                _manaChangeSuccessEvent.NextFrame(new ManaChangedSuccessEvent
                 {
                     entity = request.entity,
                     newAmount = manaComponent.currentMana

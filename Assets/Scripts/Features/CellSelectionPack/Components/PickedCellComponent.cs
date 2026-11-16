@@ -1,9 +1,8 @@
 using System.Collections.Generic;
-using Features.HexGridPack.Data;
+using Features.GridPack.Data;
 using Scellecs.Morpeh;
-using UnityEngine;
 
-namespace Features.CellPack.Components
+namespace Features.CellSelectionPack.Components
 {
     public struct PickedCellComponent : IComponent
     {

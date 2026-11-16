@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using Features.CellGridPack.Components;
+using Features.GridPack.Components;
 using Features.UnitPack.Components;
 using Features.UnitPack.Requests;
 using Scellecs.Morpeh;
@@ -30,7 +30,7 @@ namespace Features.UnitPack.Systems
         
         public void OnAwake()
         {
-            _gridFilter = World.Filter.With<CellGridComponent>().Build();
+            _gridFilter = World.Filter.With<GridComponent>().Build();
             _dataFilter = World.Filter.With<MoveDataComponent>().Build();
             
             _dataStash = World.GetStash<MoveDataComponent>();

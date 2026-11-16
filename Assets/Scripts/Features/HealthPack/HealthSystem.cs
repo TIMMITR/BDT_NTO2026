@@ -10,18 +10,18 @@ namespace Features.HealthPack
         private Stash<HealthComponent> _healthStash;
         private Stash<DefenceComponent> _defenceStash;
 
-        private Request<HealthRequest> _healthChangeRequest;
+        private Request<HealthChangeRequest> _healthChangeRequest;
 
-        private Event<HealthEvent> _healthChangeEvent;
+        private Event<HealthChangedEvent> _healthChangeEvent;
  
         public void OnAwake()
         {
             _healthStash = World.GetStash<HealthComponent>();
             _defenceStash = World.GetStash<DefenceComponent>();
 
-            _healthChangeRequest = World.GetRequest<HealthRequest>();
+            _healthChangeRequest = World.GetRequest<HealthChangeRequest>();
 
-            _healthChangeEvent = World.GetEvent<HealthEvent>();
+            _healthChangeEvent = World.GetEvent<HealthChangedEvent>();
         }
 
         public void OnUpdate(float deltaTime)
@@ -43,7 +43,7 @@ namespace Features.HealthPack
                 var delta = newHealth - healthComponent.currentHealth;
                 healthComponent.currentHealth = newHealth;
 
-                _healthChangeEvent.NextFrame(new HealthEvent
+                _healthChangeEvent.NextFrame(new HealthChangedEvent
                 {
                     entity = request.entity,
                     newAmount = newHealth,

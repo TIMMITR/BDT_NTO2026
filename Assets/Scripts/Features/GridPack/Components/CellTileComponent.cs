@@ -1,6 +1,6 @@
 ﻿using Scellecs.Morpeh;
 
-namespace Features.CellGridPack.Components
+namespace Features.GridPack.Components
 {
     public struct CellTileComponent : IComponent
     {

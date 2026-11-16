@@ -17,12 +17,15 @@ namespace Configs
             defence = 10,
             moveSpeed = 4,
         };
+
+        [SerializeField] private float posY;
         
         public string Name => characterName;
         public UnitClass Class => unitClass;
         public GameObject Prefab => prefab;
         public UnitStats Stats => stats;
         public TeamSide TeamSide => teamSide;
+        public float PosY => posY;
     }
     
     [Serializable]

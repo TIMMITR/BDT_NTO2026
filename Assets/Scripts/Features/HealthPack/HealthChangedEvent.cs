@@ -2,7 +2,7 @@ using Scellecs.Morpeh;
 
 namespace Features.HealthPack
 {
-    public struct HealthEvent : IEventData
+    public struct HealthChangedEvent : IEventData
     {
         public int newAmount;
         public int delta;

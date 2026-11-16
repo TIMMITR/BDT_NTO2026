@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace Features.HexGridPack.Data
+namespace Features.GridPack.Data
 {
     // Замена кортежам, т.к. кортежи не очень читаемы,
     // Этот класс также включает методы перевода координат из мировых в локальные

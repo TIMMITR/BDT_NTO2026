@@ -1,8 +1,8 @@
 using Features.BattlePack;
 using Features.CameraPack.Systems;
-using Features.CellGridPack;
-using Features.CellPack.Systems;
+using Features.CellSelectionPack.Systems;
 using Features.DamagePack;
+using Features.GridPack;
 using Features.StoryTalkPack.Systems;
 using Features.TypingPack.Systems;
 using Features.HealthPack;
@@ -13,6 +13,7 @@ using Features.QuickTalkPack.Systems;
 using Features.RaycastPack;
 using Features.ScenePack;
 using Features.SpeedPack;
+using Features.SpeedPack.Systems;
 using Features.TargetPack;
 using Features.UnitPack.Systems;
 using Scellecs.Morpeh;
@@ -57,16 +58,17 @@ namespace Scenes.Game
             _updateGroup.AddSystem(new ChooseCellSystem());
             _updateGroup.AddSystem(new BattleSystem(gameContext.gamePlan));
             _updateGroup.AddSystem(new UnitSpawnSystem());
-            _updateGroup.AddSystem(new StartMoveSystem());
+            _updateGroup.AddSystem(new MoveCommandSystem());
             _updateGroup.AddSystem(new PathPreviewSystem(gameContext.highlightCellPool));
             _updateGroup.AddSystem(new ColorCellSystem(gameContext.highlightCellPool));
-            _updateGroup.AddSystem(new ApplyMoveSystem());
+            _updateGroup.AddSystem(new UnitMoveAnimationSystem());
             _updateGroup.AddSystem(new ChangeMoveDataSystem(gameContext.moveDataList));
             
             _updateGroup.AddSystem(new ManaSystem());
             _updateGroup.AddSystem(new DamageSystem());
             _updateGroup.AddSystem(new HealthSystem());
             _updateGroup.AddSystem(new SpeedSystem());
+            _updateGroup.AddSystem(new ResetSpeedSystem());
             
             _updateGroup.AddSystem(new StoryTalkPlayerSystem(gameContext.introTalk));
             

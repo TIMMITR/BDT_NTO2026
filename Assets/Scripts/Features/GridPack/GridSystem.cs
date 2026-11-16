@@ -1,21 +1,19 @@
-using System.Collections.Generic;
 using Configs;
-using Features.CellGridPack.Components;
-using Features.CellPack.Components;
-using Features.HexGridPack.Data;
-using Features.PickCellPack;
+using Features.CellSelectionPack.Components;
+using Features.GridPack.Components;
+using Features.GridPack.Data;
 using Scellecs.Morpeh;
 using UnityEngine;
 
-namespace Features.CellGridPack
+namespace Features.GridPack
 {
     public sealed class CellGridSystem : IInitializer
     {
         public World World { get; set; }
 
-        private Stash<CellGridComponent> _hexGridStash;
+        private Stash<GridComponent> _hexGridStash;
         private Stash<CellTileComponent> _hexTileStash;
-        private Stash<ChosenCellComponent> _chosenCellStash;
+        private Stash<HoveredCellComponent> _chosenCellStash;
 
         private readonly WorldSettingsSo _worldSettings;
 
@@ -26,9 +24,9 @@ namespace Features.CellGridPack
 
         public void OnAwake()
         {
-            _hexGridStash = World.GetStash<CellGridComponent>();
+            _hexGridStash = World.GetStash<GridComponent>();
             _hexTileStash = World.GetStash<CellTileComponent>();
-            _chosenCellStash = World.GetStash<ChosenCellComponent>();
+            _chosenCellStash = World.GetStash<HoveredCellComponent>();
 
             CreateGrid();
         }
@@ -43,7 +41,7 @@ namespace Features.CellGridPack
             _chosenCellStash.Add(gridEntity);
             
             ref var gridComp = ref _hexGridStash.Add(gridEntity);
-            gridComp = new CellGridComponent(hexRadius, gridRadius);
+            gridComp = new GridComponent(hexRadius, gridRadius);
 
             for (int q = -gridRadius; q <= gridRadius; q++)
             {

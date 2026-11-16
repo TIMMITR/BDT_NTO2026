@@ -1,30 +1,30 @@
 using System.Collections.Generic;
-using Features.HexGridPack.Data;
+using Features.GridPack.Data;
 using Scellecs.Morpeh;
 using UnityEngine;
 
-namespace Features.CellGridPack.Components
+namespace Features.GridPack.Components
 {
-    public struct CellGridComponent : IComponent
+    public struct GridComponent : IComponent
     {
-        public float hexRadius;
+        public float cellRadius;
         public int gridRadius;
         
         public Dictionary<CellCoord, Entity> cells;
         public Dictionary<CellCoord, Entity> takenCells; // todo можно будет попробовать разделить клетки занимаемые игроком и врагом
 
-        public CellGridComponent(float hexRadius, int gridRadius)
+        public GridComponent(float cellRadius, int gridRadius)
         {
-            this.hexRadius = hexRadius;
+            this.cellRadius = cellRadius;
             this.gridRadius = gridRadius;
             cells = new Dictionary<CellCoord, Entity>();
             takenCells = new Dictionary<CellCoord, Entity>();
         }
         
         public Vector3 ToWorldCoord(CellCoord coord) =>
-            coord.ToLocalPosition(hexRadius);
+            coord.ToLocalPosition(cellRadius);
         
         public CellCoord FromWorldCoord(Vector3 world) =>
-            CellCoord.FromLocalPosition(world, hexRadius);
+            CellCoord.FromLocalPosition(world, cellRadius);
     }
 }

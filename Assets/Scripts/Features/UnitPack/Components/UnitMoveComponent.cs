@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using Features.HexGridPack.Data;
+using Features.GridPack.Data;
 using Scellecs.Morpeh;
 
 namespace Features.UnitPack.Components

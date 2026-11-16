@@ -1,13 +1,12 @@
 using System.Collections.Generic;
-using Features.CellGridPack.Components;
-using Features.CellPack.Components;
-using Features.HexGridPack.Data;
-using Features.PathFinderPack;
-using Features.PickCellPack.Requests;
+using Features.CellSelectionPack.Components;
+using Features.CellSelectionPack.Requests;
+using Features.GridPack.Components;
+using Features.GridPack.Data;
 using Scellecs.Morpeh;
 using UnityEngine;
 
-namespace Features.CellPack.Systems
+namespace Features.CellSelectionPack.Systems
 {
     public class ColorCellSystem : ISystem
     {
@@ -16,7 +15,7 @@ namespace Features.CellPack.Systems
         private Filter _gridFilter;
         
         private Stash<PickedCellComponent> _pickedCellStash;
-        private Stash<CellGridComponent> _gridStash;
+        private Stash<GridComponent> _gridStash;
         
         private Request<ColorCellRequest> _colorCellRequest;
         private Request<ClearColorsRequest> _clearRequest;
@@ -37,10 +36,10 @@ namespace Features.CellPack.Systems
         public void OnAwake()
         {
             _gridFilter = World.Filter.
-                With<CellGridComponent>().
+                With<GridComponent>().
                 Build();
             
-            _gridStash = World.GetStash<CellGridComponent>();
+            _gridStash = World.GetStash<GridComponent>();
             _pickedCellStash = World.GetStash<PickedCellComponent>();
             
             _colorCellRequest = World.GetRequest<ColorCellRequest>();

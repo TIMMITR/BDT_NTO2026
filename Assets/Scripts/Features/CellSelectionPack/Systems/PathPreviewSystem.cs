@@ -1,14 +1,13 @@
 using System.Collections.Generic;
-using Features.CellGridPack.Components;
-using Features.CellPack.Components;
-using Features.HexGridPack.Data;
+using Features.CellSelectionPack.Components;
+using Features.CellSelectionPack.Requests;
+using Features.GridPack.Components;
+using Features.GridPack.Data;
 using Features.PathFinderPack;
-using Features.PickCellPack;
-using Features.PickCellPack.Requests;
 using Scellecs.Morpeh;
 using UnityEngine;
 
-namespace Features.CellPack.Systems
+namespace Features.CellSelectionPack.Systems
 {
     public class PathPreviewSystem : ISystem
     {
@@ -16,9 +15,9 @@ namespace Features.CellPack.Systems
 
         private Filter _cellGridFilter;
 
-        private Stash<CellGridComponent> _cellGridStash;
+        private Stash<GridComponent> _cellGridStash;
         private Stash<PickedCellComponent> _pickedCellStash;
-        private Stash<ChosenCellComponent> _chosenCellStash;
+        private Stash<HoveredCellComponent> _chosenCellStash;
         
         private Stash<CellTileComponent> _cellTileStash; //todo стоит поменять на Dict gridCell
         
@@ -43,11 +42,11 @@ namespace Features.CellPack.Systems
 
         public void OnAwake()
         {
-            _cellGridFilter = World.Filter.With<CellGridComponent>().Build();
+            _cellGridFilter = World.Filter.With<GridComponent>().Build();
             
-            _cellGridStash = World.GetStash<CellGridComponent>();
+            _cellGridStash = World.GetStash<GridComponent>();
             _pickedCellStash = World.GetStash<PickedCellComponent>();
-            _chosenCellStash = World.GetStash<ChosenCellComponent>();
+            _chosenCellStash = World.GetStash<HoveredCellComponent>();
             _cellTileStash = World.GetStash<CellTileComponent>();
             
             _colorCellRequest = World.GetRequest<ColorCellRequest>();

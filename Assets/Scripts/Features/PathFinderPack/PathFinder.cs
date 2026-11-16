@@ -1,6 +1,6 @@
 using System.Collections.Generic;
-using Features.CellGridPack.Components;
-using Features.HexGridPack.Data;
+using Features.GridPack.Components;
+using Features.GridPack.Data;
 using Scellecs.Morpeh;
 using UnityEngine;
 
@@ -18,7 +18,7 @@ namespace Features.PathFinderPack
             new(0, 1),
         };
         
-        public static PassReady GetPath(CellGridComponent grid, CellCoord from, CellCoord to, Stash<CellTileComponent> stash)
+        public static PassReady GetPath(GridComponent grid, CellCoord from, CellCoord to, Stash<CellTileComponent> stash)
         {
             PassReady result = new()
             {

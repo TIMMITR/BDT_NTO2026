@@ -1,14 +1,12 @@
 using Configs;
-using Configs;
-using Features.CellGridPack.Components;
 using Features.DamagePack;
+using Features.GridPack.Components;
+using Features.GridPack.Data;
 using Features.HealthPack;
-using Features.HexGridPack.Data;
 using Features.SpeedPack;
 using Features.TransformPack;
 using Features.UnitPack.Components;
 using Features.UnitPack.Requests;
-using Global;
 using Scellecs.Morpeh;
 using UnityEngine;
 
@@ -20,7 +18,7 @@ namespace Features.UnitPack.Systems
 
         private Filter _gridFilter;
         
-        private Stash<CellGridComponent> _gridStash;
+        private Stash<GridComponent> _gridStash;
         private Stash<TransformComponent> _transformStash;
         private Stash<UnitComponent> _unitStash;
         private Stash<CellTileComponent> _cellTileStash;
@@ -34,9 +32,9 @@ namespace Features.UnitPack.Systems
         
         public void OnAwake()
         {
-            _gridFilter = World.Filter.With<CellGridComponent>().Build();
+            _gridFilter = World.Filter.With<GridComponent>().Build();
             
-            _gridStash = World.GetStash<CellGridComponent>();
+            _gridStash = World.GetStash<GridComponent>();
             _transformStash = World.GetStash<TransformComponent>();
             _unitStash = World.GetStash<UnitComponent>();
             _cellTileStash = World.GetStash<CellTileComponent>();
@@ -60,6 +58,7 @@ namespace Features.UnitPack.Systems
                 
                 var cellCoord = new CellCoord(request.q, request.r);
                 var spawnPos = gridComp.ToWorldCoord(cellCoord);
+                spawnPos.y = unitConfig.PosY;
                 
                 Entity newUnit = World.CreateEntity();
                 var unitObj = Object.Instantiate(unitConfig.Prefab, spawnPos, Quaternion.identity);

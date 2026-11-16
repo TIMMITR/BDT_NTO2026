@@ -1,7 +1,7 @@
 using Configs;
-using Features.CellGridPack.Components;
-using Features.CellPack.Components;
-using Features.HexGridPack.Data;
+using Features.CellSelectionPack.Components;
+using Features.GridPack.Components;
+using Features.GridPack.Data;
 using Features.InputPack.Requests;
 using Features.SpeedPack;
 using Features.UnitPack.Components;
@@ -9,16 +9,16 @@ using Scellecs.Morpeh;
 
 namespace Features.UnitPack.Systems
 {
-    public class StartMoveSystem : ISystem
+    public class MoveCommandSystem : ISystem
     {
         public World World { get; set; }
         
         private Filter _gridFilter;
         
         private Stash<PickedCellComponent> _pickedCellStash;
-        private Stash<ChosenCellComponent> _chosenCellStash;
+        private Stash<HoveredCellComponent> _chosenCellStash;
         private Stash<UnitComponent> _unitStash;
-        private Stash<CellGridComponent> _gridStash;
+        private Stash<GridComponent> _gridStash;
         private Stash<SpeedComponent> _speedStash;
         private Stash<UnitMoveComponent> _unitMoveStash;
         private Stash<CellTileComponent> _tileStash;
@@ -28,12 +28,12 @@ namespace Features.UnitPack.Systems
         
         public void OnAwake()
         {
-            _gridFilter = World.Filter.With<CellGridComponent>().Build();
+            _gridFilter = World.Filter.With<GridComponent>().Build();
             
             _pickedCellStash = World.GetStash<PickedCellComponent>();
-            _chosenCellStash = World.GetStash<ChosenCellComponent>();
+            _chosenCellStash = World.GetStash<HoveredCellComponent>();
             _unitStash = World.GetStash<UnitComponent>();
-            _gridStash = World.GetStash<CellGridComponent>();
+            _gridStash = World.GetStash<GridComponent>();
             _speedStash = World.GetStash<SpeedComponent>();
             _unitMoveStash = World.GetStash<UnitMoveComponent>();
             _tileStash = World.GetStash<CellTileComponent>();
@@ -86,7 +86,7 @@ namespace Features.UnitPack.Systems
             }
         }
 
-        private bool IsPlayerFigure(CellGridComponent gridComp, CellCoord cellCoord, out int speed)
+        private bool IsPlayerFigure(GridComponent gridComp, CellCoord cellCoord, out int speed)
         {
             if (!gridComp.takenCells.TryGetValue(cellCoord, out var unitEntity))
             {

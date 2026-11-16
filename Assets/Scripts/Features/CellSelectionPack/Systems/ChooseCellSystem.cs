@@ -1,10 +1,10 @@
-using Features.CellGridPack.Components;
-using Features.CellPack.Components;
+using Features.CellSelectionPack.Components;
+using Features.GridPack.Components;
 using Features.RaycastPack;
 using Scellecs.Morpeh;
 using UnityEngine;
 
-namespace Features.CellPack.Systems
+namespace Features.CellSelectionPack.Systems
 {
     public class ChooseCellSystem : ISystem
     {
@@ -14,8 +14,8 @@ namespace Features.CellPack.Systems
         private Filter _gridFilter;
         
         private Stash<RaycastComponent> _raycastStash;
-        private Stash<CellGridComponent> _gridStash;
-        private Stash<ChosenCellComponent> _chosenCellStash;
+        private Stash<GridComponent> _gridStash;
+        private Stash<HoveredCellComponent> _chosenCellStash;
     
         public void OnAwake()
         {
@@ -23,12 +23,12 @@ namespace Features.CellPack.Systems
                 With<RaycastComponent>().
                 Build();
             _gridFilter = World.Filter.
-                With<CellGridComponent>().
+                With<GridComponent>().
                 Build();
             
             _raycastStash = World.GetStash<RaycastComponent>();
-            _gridStash = World.GetStash<CellGridComponent>();
-            _chosenCellStash = World.GetStash<ChosenCellComponent>();
+            _gridStash = World.GetStash<GridComponent>();
+            _chosenCellStash = World.GetStash<HoveredCellComponent>();
         }
 
         public void OnUpdate(float deltaTime)
@@ -50,7 +50,7 @@ namespace Features.CellPack.Systems
 
             if (gridComp.cells.ContainsKey(transCoord))
             {
-                _chosenCellStash.Set(gridEntity, new ChosenCellComponent{cellCoord = transCoord});
+                _chosenCellStash.Set(gridEntity, new HoveredCellComponent{cellCoord = transCoord});
             }
             else
             {

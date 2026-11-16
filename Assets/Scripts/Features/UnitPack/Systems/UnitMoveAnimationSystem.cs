@@ -1,4 +1,4 @@
-using Features.CellGridPack.Components;
+using Features.GridPack.Components;
 using Features.TransformPack;
 using Features.UnitPack.Components;
 using Scellecs.Morpeh;
@@ -6,24 +6,24 @@ using UnityEngine;
 
 namespace Features.UnitPack.Systems
 {
-    public class ApplyMoveSystem : ISystem // todo переименовать
+    public class UnitMoveAnimationSystem : ISystem
     {
         public World World { get; set; }
 
         private Filter _gridFilter;
         private Filter _moveFilter;
         
-        private Stash<CellGridComponent> _gridStash;
+        private Stash<GridComponent> _gridStash;
         private Stash<TransformComponent> _transformStash;
         private Stash<UnitMoveComponent> _moveUnitStash; // todo возможно, стоит разделить на request + comp реализацию
         private Stash<MoveDataComponent> _moveDataStash;
         
         public void OnAwake()
         {
-            _gridFilter = World.Filter.With<CellGridComponent>().Build();
+            _gridFilter = World.Filter.With<GridComponent>().Build();
             _moveFilter = World.Filter.With<UnitMoveComponent>().Build();
             
-            _gridStash = World.GetStash<CellGridComponent>();
+            _gridStash = World.GetStash<GridComponent>();
             _transformStash = World.GetStash<TransformComponent>();
             _moveUnitStash = World.GetStash<UnitMoveComponent>();
             _moveDataStash = World.GetStash<MoveDataComponent>();

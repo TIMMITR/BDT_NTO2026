@@ -13,11 +13,12 @@ MonoBehaviour:
   m_Name: Test_1
   m_EditorClassIdentifier: 
   characterName: 
-  unitClass: 0
-  prefab: {fileID: 0}
+  unitClass: 2
+  teamSide: 1
+  prefab: {fileID: 5304423242275499964, guid: 80db1b3a812fd8540b77c7de554a4c9b, type: 3}
   stats:
     maxHealth: 10
     damage: 10
     defence: 10
-    moveSpeed: 4
-    teamSide: 0
+    moveSpeed: 2
+  posY: 0.2

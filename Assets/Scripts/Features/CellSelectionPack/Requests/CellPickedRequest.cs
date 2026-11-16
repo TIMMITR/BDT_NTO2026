@@ -1,7 +1,7 @@
-using Features.HexGridPack.Data;
+using Features.GridPack.Data;
 using Scellecs.Morpeh;
 
-namespace Features.PickCellPack.Requests
+namespace Features.CellSelectionPack.Requests
 {
     public struct CellPickedRequest : IRequestData
     {
