@@ -63,6 +63,12 @@ namespace Features.CellSelectionPack.Systems
                                                // чтобы не отрисовывать выбранную клетку, при построении пути
                 _colorCellRequest.Publish(new ColorCellRequest {cellCoord = to.Value});
 
+            if (_pickedCellStash.Has(gridEntity)) // нужно для очистки массива выбранных клеток
+            {
+                ref var pickedCellForClear = ref _pickedCellStash.Get(gridEntity);
+                pickedCellForClear.points.Clear();
+            }
+
             if (from == to || !from.HasValue || !to.HasValue) return;
 
             ref var pickedCellComp = ref _pickedCellStash.Get(gridEntity);
