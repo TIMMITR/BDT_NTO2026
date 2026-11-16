@@ -3,12 +3,9 @@ using Features.CellGridPack.Components;
 using Features.CellPack.Components;
 using Features.HexGridPack.Data;
 using Features.InputPack.Requests;
-using Features.PickCellPack.Requests;
 using Features.SpeedPack;
 using Features.UnitPack.Components;
-using Features.UnitPack.Requests;
 using Scellecs.Morpeh;
-using UnityEngine;
 
 namespace Features.UnitPack.Systems
 {
@@ -64,12 +61,12 @@ namespace Features.UnitPack.Systems
             {
                 ref var pickedCellComp = ref _pickedCellStash.Get(gridEntity);
                 var from = pickedCellComp.cellCoord;
-                var to = pickedCellComp.points[pickedCellComp.points.Count - 1];
+                var to = pickedCellComp.points[^1];
                 var unit = gridComp.takenCells[from];
 
                 if (!_unitMoveStash.Has(unit))
                 {
-                    _unitMoveStash.Add(unit, new UnitMoveComponent(pickedCellComp.points, 1f, 1f));
+                    _unitMoveStash.Add(unit, new UnitMoveComponent(pickedCellComp.points));
                 
                     gridComp.takenCells.Remove(pickedCellComp.cellCoord);
                     gridComp.takenCells.Add(to, unit);

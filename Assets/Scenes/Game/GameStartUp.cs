@@ -61,6 +61,7 @@ namespace Scenes.Game
             _updateGroup.AddSystem(new PathPreviewSystem(gameContext.highlightCellPool));
             _updateGroup.AddSystem(new ColorCellSystem(gameContext.highlightCellPool));
             _updateGroup.AddSystem(new ApplyMoveSystem());
+            _updateGroup.AddSystem(new ChangeMoveDataSystem(gameContext.moveDataList));
             
             _updateGroup.AddSystem(new ManaSystem());
             _updateGroup.AddSystem(new DamageSystem());

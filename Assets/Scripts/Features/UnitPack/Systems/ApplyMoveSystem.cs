@@ -15,7 +15,8 @@ namespace Features.UnitPack.Systems
         
         private Stash<CellGridComponent> _gridStash;
         private Stash<TransformComponent> _transformStash;
-        private Stash<UnitMoveComponent> _moveStash; // todo возможно, стоит разделить на request + comp реализацию
+        private Stash<UnitMoveComponent> _moveUnitStash; // todo возможно, стоит разделить на request + comp реализацию
+        private Stash<MoveDataComponent> _moveDataStash;
         
         public void OnAwake()
         {
@@ -24,45 +25,52 @@ namespace Features.UnitPack.Systems
             
             _gridStash = World.GetStash<CellGridComponent>();
             _transformStash = World.GetStash<TransformComponent>();
-            _moveStash = World.GetStash<UnitMoveComponent>();
+            _moveUnitStash = World.GetStash<UnitMoveComponent>();
+            _moveDataStash = World.GetStash<MoveDataComponent>();
         }
 
         public void OnUpdate(float deltaTime)
         {
             foreach (var entity in _moveFilter)
             {
-                ref var moveComp = ref _moveStash.Get(entity);
-                ref var gridComp = ref _gridStash.Get(_gridFilter.First());
+                var gridEntity = _gridFilter.First();
                 
-                var points = moveComp.points;
+                ref var moveUnitComp = ref _moveUnitStash.Get(entity);
+                ref var gridComp = ref _gridStash.Get(_gridFilter.First());
+                ref var moveDataComp = ref _moveDataStash.Get(gridEntity); 
+                
+                var points = moveUnitComp.points;
                 var tr = _transformStash.Get(entity).value;
-                var duration = moveComp.duration;
+                
+                var moveDuration = moveDataComp.moveData.moveDuration;
+                var jumpHeight = moveDataComp.moveData.jumpHeight;
+                var rotateSpeed = moveDataComp.moveData.rotateSpeed;
 
-                var from = gridComp.ToWorldCoord(points[moveComp.index - 1]);
-                var to = gridComp.ToWorldCoord(points[moveComp.index]);
+                var from = gridComp.ToWorldCoord(points[moveUnitComp.index - 1]);
+                var to = gridComp.ToWorldCoord(points[moveUnitComp.index]);
                     
-                if (moveComp.isTurning)
+                if (moveUnitComp.isTurning)
                 {
-                    if(!RotateToTarget(tr, to, 360f, deltaTime))
+                    if(!RotateToTarget(tr, to, rotateSpeed, deltaTime))
                         continue;
                         
-                    moveComp.isTurning = false;
+                    moveUnitComp.isTurning = false;
                 }
                     
-                moveComp.percent += deltaTime / moveComp.duration;
+                moveUnitComp.percent += deltaTime / moveDuration;
                 
-                MoveUnit(tr, from, to, moveComp.percent, moveComp.jumpHeight);
+                MoveUnit(tr, from, to, moveUnitComp.percent, jumpHeight);
 
-                if (moveComp.percent >= 1f)
+                if (moveUnitComp.percent >= 1f)
                 {
-                    moveComp.percent = 0f;
-                    moveComp.index++;
-                    moveComp.isTurning = true;
+                    moveUnitComp.percent = 0f;
+                    moveUnitComp.index++;
+                    moveUnitComp.isTurning = true;
 
-                    if (moveComp.index >= moveComp.points.Count)
+                    if (moveUnitComp.index >= moveUnitComp.points.Count)
                     {
                         // Конец хода
-                        _moveStash.Remove(entity);
+                        _moveUnitStash.Remove(entity);
                     }
                 }
             }
@@ -87,10 +95,10 @@ namespace Features.UnitPack.Systems
         {
             var pos = Vector3.Lerp(from, to, time);
             
-            pos.y += jumpHeight * 5f * time * (1f - time);
+            pos.y += jumpHeight * time * (1f - time);
             tr.position = pos;
         }
         
-        public void Dispose() { }
+        public void Dispose() {}
     }
 }

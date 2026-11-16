@@ -8,21 +8,16 @@ namespace Features.UnitPack.Components
     {
         public List<CellCoord> points;
         public bool isTurning;
-        public float duration;
-        public float jumpHeight; // todo вынести в контекст
         public int index;
         public float percent;
 
-        public UnitMoveComponent(List<CellCoord> points, float duration, float jumpHeight)
+        public UnitMoveComponent(List<CellCoord> points)
         {
             this.points = points;
-            this.duration = duration;
-            this.jumpHeight = jumpHeight;
             
             isTurning = true;
             index = 1;
             percent = 0f;
-            duration = 1f;
         }
     }
 }
