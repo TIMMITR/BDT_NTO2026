@@ -1,5 +1,6 @@
 using Features.GridPack;
 using Features.GridPack.Components;
+using Features.SpeedPack.Requests;
 using Features.UnitPack.Components;
 using Features.UnitPack.Requests;
 using Scellecs.Morpeh;
@@ -18,6 +19,7 @@ namespace Features.UnitPack.Systems
         private Stash<UnitAnimationComponent> _unitAnimationStash;
 
         private Request<MoveUnitRequest> _moveUnitRequest;
+        private Request<SpeedChangeRequest> _speedChangeRequest;
 
         public void OnAwake()
         {
@@ -29,6 +31,7 @@ namespace Features.UnitPack.Systems
             _unitAnimationStash = World.GetStash<UnitAnimationComponent>();
 
             _moveUnitRequest = World.GetRequest<MoveUnitRequest>();
+            _speedChangeRequest = World.GetRequest<SpeedChangeRequest>();
         }
 
         public void OnUpdate(float deltaTime)
@@ -48,6 +51,9 @@ namespace Features.UnitPack.Systems
 
                 GridOccupancy.Move(ref gridComp, _tileStash, _positionStash, unit, path[0], path[^1]);
                 _unitAnimationStash.Add(unit, new UnitAnimationComponent(path));
+
+                var cost = path.Count - 1;
+                _speedChangeRequest.Publish(new SpeedChangeRequest(cost, unit));
             }
         }
 

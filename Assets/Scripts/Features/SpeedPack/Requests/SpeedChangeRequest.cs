@@ -6,5 +6,11 @@ namespace Features.SpeedPack.Requests
     {
         public int amount;
         public Entity entity;
+
+        public SpeedChangeRequest(int amount, Entity entity)
+        {
+            this.amount = amount;
+            this.entity = entity;
+        }
     }
 }

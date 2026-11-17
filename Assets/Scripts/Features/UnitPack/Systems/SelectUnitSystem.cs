@@ -1,5 +1,6 @@
 using Configs;
 using Features.CellSelectionPack.Components;
+using Features.FightPack.Requests;
 using Features.GridPack.Components;
 using Features.GridPack.Data;
 using Features.InputPack.Requests;
@@ -8,7 +9,7 @@ using Features.UnitPack.Components;
 using Features.UnitPack.Requests;
 using Scellecs.Morpeh;
 
-namespace Features.CellSelectionPack.Systems
+namespace Features.UnitPack.Systems
 {
     public sealed class SelectUnitSystem : ISystem
     {
@@ -26,6 +27,7 @@ namespace Features.CellSelectionPack.Systems
 
         private Request<LmbStartRequest> _lmbRequest;
         private Request<MoveUnitRequest> _moveUnitRequest;
+        private Request<StartFightMoveRequest> _startFightRequest;
 
         public void OnAwake()
         {
@@ -58,15 +60,23 @@ namespace Features.CellSelectionPack.Systems
             ref var gridComp = ref _gridStash.Get(gridEntity);
             var clicked = _chosenCellStash.Get(gridEntity).cellCoord;
 
-            if (_selectedUnitStash.Has(gridEntity))
+            bool isFirstPickedCell = _selectedUnitStash.Has(gridEntity);
+
+            if (isFirstPickedCell)
             {
                 var selected = _selectedUnitStash.Get(gridEntity);
 
+                var teamSide = TryGetUnit(gridComp, clicked, out var unit);
+
                 // если второй клеткой выбран союзный юнит, то перезаписываем данные для нового юнита
-                if (TryGetPlayerUnit(gridComp, clicked, out var newUnit, out var moveSpeed))
+                if (teamSide == TeamSide.Player && TryGetPlayerSpeed(unit, out var moveSpeed))
                 {
-                    _selectedUnitStash.Set(gridEntity, new SelectedUnitComponent(newUnit, moveSpeed, selected.path));
+                    _selectedUnitStash.Set(gridEntity, new SelectedUnitComponent(unit, teamSide, moveSpeed, selected.path));
                     return;
+                }
+                else if (teamSide == TeamSide.Enemy)
+                {
+                    
                 }
 
                 // двигаем
@@ -79,25 +89,33 @@ namespace Features.CellSelectionPack.Systems
             }
             else
             {
-                // первый раз выбрали клетку с союзным юнитом
-                if (!TryGetPlayerUnit(gridComp, clicked, out var unit, out var moveSpeed)) return;
+                var teamSide = TryGetUnit(gridComp, clicked, out var unit);
+                
+                if (teamSide == TeamSide.None || !TryGetPlayerSpeed(unit, out var moveSpeed))
+                    return;
 
-                _selectedUnitStash.Set(gridEntity, new SelectedUnitComponent(unit, moveSpeed));
+                _selectedUnitStash.Set(gridEntity, new SelectedUnitComponent(unit, teamSide, moveSpeed));
             }
         }
 
-        private bool TryGetPlayerUnit(in GridComponent gridComp, CellCoord cellCoord, out Entity unit, out int moveSpeed)
+        private TeamSide TryGetUnit(GridComponent gridComp, CellCoord cellCoord, out Entity unit)
         {
-            unit = default;
-            moveSpeed = 0;
-
-            if (!gridComp.takenCells.TryGetValue(cellCoord, out unit)) return false;
-            if (_unitAnimationStash.Has(unit)) return false;
+            if (!gridComp.takenCells.TryGetValue(cellCoord, out unit))
+                return TeamSide.None;
+            if (_unitAnimationStash.Has(unit))
+                return TeamSide.None;
 
             ref var unitComp = ref _unitStash.Get(unit);
-            if (unitComp.teamSide != TeamSide.Player) return false;
+            
+            return unitComp.teamSide;
+        }
 
+        private bool TryGetPlayerSpeed(Entity unit, out int moveSpeed)
+        {
             moveSpeed = _speedStash.Get(unit).currentSpeed;
+            if (moveSpeed <= 0)
+                return false;
+            
             return true;
         }
 

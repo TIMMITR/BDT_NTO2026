@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Configs;
 using Features.CellSelectionPack.Components;
 using Features.CellSelectionPack.Requests;
 using Features.GridPack.Components;
@@ -76,12 +77,19 @@ namespace Features.CellSelectionPack.Systems
 
             if (from == to || !from.HasValue || !to.HasValue) return;
 
-            ref var pickedCellComp = ref _selectedUnitStash.Get(gridEntity);
-            var speed = pickedCellComp.moveSpeed;
+            ref var selectedUnitComp = ref _selectedUnitStash.Get(gridEntity);
+            var speed = selectedUnitComp.moveSpeed;
+
+            if (selectedUnitComp.teamSide == TeamSide.Player)
+            {
+                BuildPreviewPath(gridEntity, from.Value, to.Value, speed, out var path);
             
-            BuildPreviewPath(gridEntity, from.Value, to.Value, speed, out var path);
-            
-            pickedCellComp.path = path; // todo возможно, стоит расчет пути вынести в отдельную систему
+                selectedUnitComp.path = path; // todo возможно, стоит расчет пути вынести в отдельную систему
+            }
+            else
+            {
+                
+            }
         }
 
         private void BuildPreviewPath(Entity entity, CellCoord from, CellCoord to, int maxCost, out List<CellCoord> path)

@@ -51,6 +51,7 @@ namespace Configs
     public enum TeamSide
     {
         Player,
-        Enemy
+        Enemy,
+        None
     }
 }
