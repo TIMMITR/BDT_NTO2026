@@ -14,7 +14,7 @@ namespace Features.CellSelectionPack.Systems
 
         private Filter _gridFilter;
         
-        private Stash<PickedCellComponent> _pickedCellStash;
+        private Stash<SelectedUnitComponent> _pickedCellStash;
         private Stash<GridComponent> _gridStash;
         
         private Request<ColorCellRequest> _colorCellRequest;
@@ -40,7 +40,7 @@ namespace Features.CellSelectionPack.Systems
                 Build();
             
             _gridStash = World.GetStash<GridComponent>();
-            _pickedCellStash = World.GetStash<PickedCellComponent>();
+            _pickedCellStash = World.GetStash<SelectedUnitComponent>();
             
             _colorCellRequest = World.GetRequest<ColorCellRequest>();
             _clearRequest =  World.GetRequest<ClearColorsRequest>();

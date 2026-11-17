@@ -15,10 +15,11 @@ namespace Features.CellSelectionPack.Systems
         private Filter _gridFilter;
 
         private Stash<GridComponent> _gridStash;
-        private Stash<PickedCellComponent> _pickedCellStash;
+        private Stash<SelectedUnitComponent> _selectedUnitStash;
         private Stash<ChosenCellComponent> _chosenCellStash;
         
-        private Stash<CellTileComponent> _cellTileStash; //todo стоит поменять на Dict gridCell
+        private Stash<CellTileComponent> _cellTileStash;
+        private Stash<CellPositionComponent> _positionStash;
         
         private Request<ColorCellRequest> _colorCellRequest;
         private Request<ClearColorsRequest> _clearColorsRequest;
@@ -33,9 +34,10 @@ namespace Features.CellSelectionPack.Systems
             _gridFilter = World.Filter.With<GridComponent>().Build();
             
             _gridStash = World.GetStash<GridComponent>();
-            _pickedCellStash = World.GetStash<PickedCellComponent>();
+            _selectedUnitStash = World.GetStash<SelectedUnitComponent>();
             _chosenCellStash = World.GetStash<ChosenCellComponent>();
             _cellTileStash = World.GetStash<CellTileComponent>();
+            _positionStash = World.GetStash<CellPositionComponent>();
             
             _colorCellRequest = World.GetRequest<ColorCellRequest>();
             _clearColorsRequest = World.GetRequest<ClearColorsRequest>();
@@ -47,7 +49,10 @@ namespace Features.CellSelectionPack.Systems
 
             var gridEntity = _gridFilter.First();
 
-            CellCoord? from = _pickedCellStash.Has(gridEntity) ? _pickedCellStash.Get(gridEntity).cellCoord : null;
+            Entity? unit = _selectedUnitStash.Has(gridEntity) ? _selectedUnitStash.Get(gridEntity).unit : null;
+
+            CellCoord? from = unit.HasValue && _positionStash.Has(unit.Value)
+                ? _positionStash.Get(unit.Value).coord : null;
             CellCoord? to = _chosenCellStash.Has(gridEntity) ? _chosenCellStash.Get(gridEntity).cellCoord : null;
 
             if (from == _lastFrom && to == _lastTo) return;
@@ -63,30 +68,30 @@ namespace Features.CellSelectionPack.Systems
                                                // чтобы не отрисовывать выбранную клетку, при построении пути
                 _colorCellRequest.Publish(new ColorCellRequest {cellCoord = to.Value});
 
-            if (_pickedCellStash.Has(gridEntity)) // нужно для очистки массива выбранных клеток
+            if (_selectedUnitStash.Has(gridEntity)) // нужно для очистки массива выбранных клеток
             {
-                ref var pickedCellForClear = ref _pickedCellStash.Get(gridEntity);
-                pickedCellForClear.points.Clear();
+                ref var pickedCellForClear = ref _selectedUnitStash.Get(gridEntity);
+                pickedCellForClear.path.Clear();
             }
 
             if (from == to || !from.HasValue || !to.HasValue) return;
 
-            ref var pickedCellComp = ref _pickedCellStash.Get(gridEntity);
+            ref var pickedCellComp = ref _selectedUnitStash.Get(gridEntity);
             var speed = pickedCellComp.moveSpeed;
             
-            BuildPreviewPath(gridEntity, from.Value, to.Value, speed, out var points);
+            BuildPreviewPath(gridEntity, from.Value, to.Value, speed, out var path);
             
-            pickedCellComp.points = points; // todo возможно, стоит расчет пути вынести в отдельную систему
+            pickedCellComp.path = path; // todo возможно, стоит расчет пути вынести в отдельную систему
         }
 
-        private void BuildPreviewPath(Entity entity, CellCoord from, CellCoord to, int maxCost, out List<CellCoord> points)
+        private void BuildPreviewPath(Entity entity, CellCoord from, CellCoord to, int maxCost, out List<CellCoord> path)
         {
             ref var gridComp = ref _gridStash.Get(entity);
             var pathReady = PathFinder.GetPath(gridComp, from, to, _cellTileStash);
             
             _fullPath = PathFinder.ReconstructPath(pathReady, from, to);
 
-            points = new()
+            path = new()
             {
                 from
             };
@@ -95,7 +100,7 @@ namespace Features.CellSelectionPack.Systems
             {
                 if(pathReady.cellsCost[cell] > maxCost) break;
                 
-                points.Add(cell);
+                path.Add(cell);
                 _colorCellRequest.Publish(new ColorCellRequest {cellCoord = cell});
             }
         }

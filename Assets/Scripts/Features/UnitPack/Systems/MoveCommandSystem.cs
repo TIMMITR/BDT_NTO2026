@@ -1,105 +1,56 @@
-using Configs;
-using Features.CellSelectionPack.Components;
 using Features.GridPack;
 using Features.GridPack.Components;
-using Features.GridPack.Data;
-using Features.InputPack.Requests;
-using Features.SpeedPack;
 using Features.UnitPack.Components;
+using Features.UnitPack.Requests;
 using Scellecs.Morpeh;
 
 namespace Features.UnitPack.Systems
 {
-    public class MoveCommandSystem : ISystem
+    public sealed class MoveCommandSystem : ISystem
     {
         public World World { get; set; }
-        
+
         private Filter _gridFilter;
-        
-        private Stash<PickedCellComponent> _pickedCellStash;
-        private Stash<ChosenCellComponent> _chosenCellStash;
-        private Stash<UnitComponent> _unitStash;
+
         private Stash<GridComponent> _gridStash;
-        private Stash<SpeedComponent> _speedStash;
-        private Stash<UnitAnimationComponent> _unitAnimationStash;
         private Stash<CellTileComponent> _tileStash;
         private Stash<CellPositionComponent> _positionStash;
-        
-        private Request<LmbStartRequest> _lmbRequest;
-        
+        private Stash<UnitAnimationComponent> _unitAnimationStash;
+
+        private Request<MoveUnitRequest> _moveUnitRequest;
+
         public void OnAwake()
         {
             _gridFilter = World.Filter.With<GridComponent>().Build();
-            
-            _pickedCellStash = World.GetStash<PickedCellComponent>();
-            _chosenCellStash = World.GetStash<ChosenCellComponent>();
-            _unitStash = World.GetStash<UnitComponent>();
+
             _gridStash = World.GetStash<GridComponent>();
-            _speedStash = World.GetStash<SpeedComponent>();
-            _unitAnimationStash = World.GetStash<UnitAnimationComponent>();
             _tileStash = World.GetStash<CellTileComponent>();
             _positionStash = World.GetStash<CellPositionComponent>();
-            
-            _lmbRequest = World.GetRequest<LmbStartRequest>();
+            _unitAnimationStash = World.GetStash<UnitAnimationComponent>();
+
+            _moveUnitRequest = World.GetRequest<MoveUnitRequest>();
         }
 
         public void OnUpdate(float deltaTime)
         {
-            if(_gridFilter.IsEmpty()) return; 
-            
-            bool lmbClicked = false;
-            
+            if (_gridFilter.IsEmpty()) return;
+
             var gridEntity = _gridFilter.First();
-            ref var gridComp =  ref _gridStash.Get(gridEntity);
-            
-            foreach (var clickRequest in _lmbRequest.Consume())
+            ref var gridComp = ref _gridStash.Get(gridEntity);
+
+            foreach (var request in _moveUnitRequest.Consume())
             {
-                lmbClicked = true;
-            }
-            
-            if (!lmbClicked || !_chosenCellStash.Has(gridEntity)) return;
+                var unit = request.unit;
+                var path = request.path;
 
-            if (_pickedCellStash.Has(gridEntity))
-            {
-                ref var pickedCellComp = ref _pickedCellStash.Get(gridEntity);
+                if (path == null || path.Count < 2) continue;
+                if (_unitAnimationStash.Has(unit)) continue;
 
-                if (pickedCellComp.points.Count > 1 &&
-                    gridComp.takenCells.TryGetValue(pickedCellComp.cellCoord, out var unit) &&
-                    !_unitAnimationStash.Has(unit))
-                {
-                    var from = pickedCellComp.cellCoord;
-                    var to = pickedCellComp.points[^1];
-
-                    GridOccupancy.Move(ref gridComp, _tileStash, _positionStash, unit, from, to);
-                    _unitAnimationStash.Add(unit, new UnitAnimationComponent(pickedCellComp.points));
-                }
-
-                _pickedCellStash.Remove(gridEntity);
-            } 
-            else
-            {
-                var coord = _chosenCellStash.Get(gridEntity).cellCoord;
-                
-                if (!TryGetPlayerUnit(gridComp, coord, out var speed)) return;
-                
-                _pickedCellStash.Set(gridEntity, new PickedCellComponent(coord, speed));
+                GridOccupancy.Move(ref gridComp, _tileStash, _positionStash, unit, path[0], path[^1]);
+                _unitAnimationStash.Add(unit, new UnitAnimationComponent(path));
             }
         }
 
-        private bool TryGetPlayerUnit(GridComponent gridComp, CellCoord cellCoord, out int speed)
-        {
-            if (!gridComp.takenCells.TryGetValue(cellCoord, out var unitEntity))
-            {
-                speed = 0;
-                return false;
-            }
-            
-            ref var unitComp = ref _unitStash.Get(unitEntity);
-            speed = _speedStash.Get(unitEntity).currentSpeed;
-            
-            return unitComp.teamSide == TeamSide.Player;
-        }
-    
         public void Dispose() {}
     }
 }
