@@ -70,7 +70,7 @@ namespace Features.UnitPack.Systems
                 
                 ApplyUnitComponents(newUnit, unitConfig);
 
-                GridOccupancy.Place(ref gridComp, _tileStash, _positionStash, newUnit, cellCoord);
+                GridOccupancy.Place(ref gridComp, _tileStash, _positionStash, newUnit, cellCoord, request.isBlocked);
             }
         }
 

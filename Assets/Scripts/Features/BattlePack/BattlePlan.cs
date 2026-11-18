@@ -10,7 +10,7 @@ namespace Features.BattlePack
     [CreateAssetMenu(fileName = "BattlePlan", menuName = "Plan/Battle Plan", order = 6)]
     public class BattlePlan : ScriptableObject
     {
-        [SerializeField] private List<BattleTileData> hexTiles = new()
+        [SerializeField] private List<BattleTileData> units = new()
         {
             new BattleTileData
             {
@@ -24,7 +24,7 @@ namespace Features.BattlePack
 
         [SerializeField] private List<QuickTalkSet> quickTalks = new();
 
-        public IReadOnlyList<BattleTileData> HexTiles => hexTiles;
+        public IReadOnlyList<BattleTileData> Units => units;
         public IReadOnlyList<QuickTalkSet> QuickTalks => quickTalks;
     
         [Serializable]

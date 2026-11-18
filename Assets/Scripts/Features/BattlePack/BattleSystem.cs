@@ -48,16 +48,16 @@ namespace Features.BattlePack
                 
                 var battlePlan = _gamePlan.BattlePlans[request.id];
 
-                foreach (var tile in battlePlan.HexTiles)
+                foreach (var tile in battlePlan.Units)
                 {
                     if (tile.unitConfig != null)
                     {
                         _unitSpawnRequest.Publish(new UnitSpawnRequest
-                        {
-                            q = tile.q,
-                            r = tile.r,
-                            unitConfig = tile.unitConfig
-                        });
+                        (
+                            tile.q, tile.r,
+                            tile.unitConfig,
+                            tile.blocked
+                        ));
                     }
                 }
                 

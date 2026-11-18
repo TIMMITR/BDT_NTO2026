@@ -1,8 +1,9 @@
 using UnityEngine;
 
-namespace Features.FightPack.SO
+namespace Configs
 {
-    public class SpellConfigSo : MonoBehaviour
+    [CreateAssetMenu(fileName = "SpellConfig", menuName = "Configs/New Spell Config")]
+    public class SpellConfigSo : ScriptableObject
     {
         [Header("General")]
         public SpellType spellType;
@@ -10,6 +11,7 @@ namespace Features.FightPack.SO
         public int range;
         public SpellRangeType rangeType;
         public bool ignoreArmor;
+        public bool isMultipleHit;
         public int punchDistance;
  
         [Header("Цепочка")]
