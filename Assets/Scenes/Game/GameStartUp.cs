@@ -44,7 +44,8 @@ namespace Scenes.Game
                 globalContext.worldSettings,
                 gameContext.playerSpawnPoint));
             _initGroup.AddInitializer(new CameraSpawnSystem(
-                globalContext.prefabSettings));
+                globalContext.prefabSettings,
+                gameContext.playerSpawnPoint));
             _initGroup.AddInitializer(new GridSystem(
                 globalContext.worldSettings)); 
             _initGroup.Initialize();
@@ -52,8 +53,12 @@ namespace Scenes.Game
             _updateGroup = _world.CreateSystemsGroup();
             _updateGroup.Initialize();
             _updateGroup.AddSystem(new InputSystem(_playerInputActions));
+            _updateGroup.AddSystem(new CameraTargetMoveSystem(
+                gameContext.cameraCorridorStart,
+                gameContext.cameraCorridorEnd));
             _updateGroup.AddSystem(new TargetSystem());
             _updateGroup.AddSystem(new RaycastSystem());
+            
             _updateGroup.AddSystem(new ChooseCellSystem());
             _updateGroup.AddSystem(new BattleSystem(gameContext.gamePlan));
             _updateGroup.AddSystem(new SelectUnitSystem());
@@ -63,6 +68,7 @@ namespace Scenes.Game
             _updateGroup.AddSystem(new ColorCellSystem(gameContext.highlightCellPool));
             _updateGroup.AddSystem(new UnitAnimationSystem());
             _updateGroup.AddSystem(new ChangeAnimationDataSystem(gameContext.moveDataList));
+            _updateGroup.AddSystem(new PlayerPositionStateSystem());
             
             _updateGroup.AddSystem(new ManaSystem());
             _updateGroup.AddSystem(new DamageSystem());

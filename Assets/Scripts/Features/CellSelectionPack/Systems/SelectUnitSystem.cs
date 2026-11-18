@@ -3,6 +3,8 @@ using Features.CellSelectionPack.Components;
 using Features.GridPack.Components;
 using Features.GridPack.Data;
 using Features.InputPack.Requests;
+using Features.PlayerPack;
+using Features.PlayerPack.Requests;
 using Features.SpeedPack;
 using Features.UnitPack.Components;
 using Features.UnitPack.Requests;
@@ -49,12 +51,15 @@ namespace Features.CellSelectionPack.Systems
 
             var lmbClicked = false;
             foreach (var request in _lmbRequest.Consume())
+            {
                 lmbClicked = true;
+
+            }
 
             var gridEntity = _gridFilter.First();
 
             if (!lmbClicked || !_chosenCellStash.Has(gridEntity)) return;
-
+            
             ref var gridComp = ref _gridStash.Get(gridEntity);
             var clicked = _chosenCellStash.Get(gridEntity).cellCoord;
 

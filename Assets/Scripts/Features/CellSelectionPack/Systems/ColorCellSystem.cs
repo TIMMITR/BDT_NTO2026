@@ -63,9 +63,11 @@ namespace Features.CellSelectionPack.Systems
             {
                 Entity gridEntity = _gridFilter.First(); // todo возможно, стоит вынести в onAwake
                 ref var gridComp = ref _gridStash.Get(gridEntity);
+                
+                Debug.Log($"{Time.time} ,{new Vector2(request.cellCoord.Q, request.cellCoord.R)}");
 
                 Vector3 targetCoordinates = gridComp.ToWorldCoord(request.cellCoord);
-                int poolCellIndex = 0;
+                int poolCellIndex;
 
                 if (_usedCells.TryGetValue(request.cellCoord, out var usedCellIndex))
                 {

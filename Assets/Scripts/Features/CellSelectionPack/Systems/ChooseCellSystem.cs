@@ -47,7 +47,6 @@ namespace Features.CellSelectionPack.Systems
             ref var gridComp = ref _gridStash.Get(gridEntity);
             var transCoord = gridComp.FromWorldCoord(hitPoint);
             
-
             if (gridComp.cells.ContainsKey(transCoord))
             {
                 _chosenCellStash.Set(gridEntity, new ChosenCellComponent{cellCoord = transCoord});

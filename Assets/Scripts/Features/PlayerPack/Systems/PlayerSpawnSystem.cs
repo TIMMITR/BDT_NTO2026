@@ -45,6 +45,10 @@ namespace Features.PlayerPack.Systems
             ref var playerTransformComp = ref World.GetStash<TransformComponent>().Add(playerEntity);
             playerTransformComp.value = playerGameObject.transform;
             
+            ref var playerPositionComponent = ref World.GetStash<PlayerPositionComponent>().Add(playerEntity);
+            playerPositionComponent.positionState = PlayerPositionState.Idle;
+            playerPositionComponent.progress = 0f;
+            
             World.GetStash<PlayerTag>().Add(playerEntity);
             
             // сущность цели в игроке 

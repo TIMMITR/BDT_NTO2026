@@ -20,5 +20,5 @@ MonoBehaviour:
     maxHealth: 10
     damage: 10
     defence: 10
-    moveSpeed: 4
+    moveSpeed: 3
   posY: 0.4

@@ -19,6 +19,10 @@ namespace Scenes.Game
         [Header("Board Settings")]
         public GameObject boardGameObject;
         public Transform highlightCellPool;
+
+        [Header("Camera Settings")]
+        public Transform cameraCorridorStart;
+        public Transform cameraCorridorEnd;
         
         [Header("Unit Settings")]
         public List<AnimationData> moveDataList;
@@ -32,3 +36,4 @@ namespace Scenes.Game
         public float rotateSpeed;
     }
 }
+  
