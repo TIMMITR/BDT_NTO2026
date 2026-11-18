@@ -47,9 +47,9 @@ namespace Features.UnitPack.Systems
                     var unitComp = _unitComponentStash.Get(unit);
                     
                     cellSide = unitComp.teamSide;
-                    
-                    Debug.Log(unitComp.teamSide);
                 }
+                
+                Debug.Log(cellSide);
                 
                 _cellChooseEvent.NextFrame(new CellChooseEvent(cellSide));
             }

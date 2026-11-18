@@ -19,6 +19,7 @@ namespace Configs
         };
 
         [SerializeField] private float posY;
+        [SerializeField] private SpellConfigSo spellConfig;
         
         public string Name => characterName;
         public UnitClass Class => unitClass;
@@ -26,6 +27,7 @@ namespace Configs
         public UnitStats Stats => stats;
         public TeamSide TeamSide => teamSide;
         public float PosY => posY;
+        public SpellConfigSo SpellConfig => spellConfig;
     }
     
     [Serializable]

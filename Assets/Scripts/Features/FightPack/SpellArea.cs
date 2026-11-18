@@ -58,6 +58,66 @@ namespace Features.FightPack
             return targets;
         }
 
+        public static List<CellCoord> ReconstructPath(GridComponent grid, Stash<CellTileComponent> tiles,
+            SpellConfigSo spell,
+            CellCoord from, CellCoord to, CellCoord dir) // todo возможно to не нужен
+        {
+            List<CellCoord> cells = new List<CellCoord>();
+
+            switch (spell.rangeType)
+            {
+                case SpellRangeType.Straight:
+                    ReconstructLine(grid, tiles, spell, from, dir, cells);
+                    break;
+                case  SpellRangeType.Area:
+                    ReconstructArea(grid, spell, from, cells);
+                    break;
+                case SpellRangeType.Cone:
+                    break;
+            }
+
+            return cells;
+        }
+        
+        private static void ReconstructLine(GridComponent grid, Stash<CellTileComponent> tiles,
+            SpellConfigSo spell,
+            CellCoord from, CellCoord direction, List<CellCoord> cells)
+        {
+            var cell = from;
+ 
+            for (var i = 0; i < spell.range; i++)
+            {
+                cell = new CellCoord(cell.Q + direction.Q, cell.R + direction.R);
+ 
+                if (!grid.cells.TryGetValue(cell, out var cellEntity))
+                    break;
+ 
+                cells.Add(cell);            
+ 
+                if (!spell.isMultipleHit && grid.takenCells.ContainsKey(cell))
+                    break;
+            }
+        }
+        
+        private static void ReconstructArea(GridComponent grid, 
+            SpellConfigSo spell,
+            CellCoord from, List<CellCoord> cells)
+        {
+            for (var dq = -spell.range; dq <= spell.range; dq++)
+            {
+                var rMin = Math.Max(-spell.range, -dq - spell.range);
+                var rMax = Math.Min(spell.range, -dq + spell.range);
+ 
+                for (var dr = rMin; dr <= rMax; dr++)
+                {
+                    var cell = new CellCoord(from.Q + dq, from.R + dr);
+                    
+                    if (grid.cells.ContainsKey(cell))
+                        cells.Add(cell);
+                }
+            }
+        }
+
         private static void CollectLineTarget(GridComponent grid, Stash<CellTileComponent> tiles, Stash<UnitComponent> units,
             SpellConfigSo spell,
             CellCoord from, CellCoord to, CellCoord direction,

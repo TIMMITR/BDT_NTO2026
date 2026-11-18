@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace Configs
 {
-    [CreateAssetMenu(fileName = "SpellConfig", menuName = "Configs/New Spell Config")]
+    [CreateAssetMenu(fileName = "SpellConfig_", menuName = "Spell/New Spell Config")]
     public class SpellConfigSo : ScriptableObject
     {
         [Header("General")]

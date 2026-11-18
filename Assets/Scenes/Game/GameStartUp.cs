@@ -13,6 +13,7 @@ using Features.QuickTalkPack.Systems;
 using Features.RaycastPack;
 using Features.ScenePack;
 using Features.SpeedPack.Systems;
+using Features.SpellPack.Systems;
 using Features.TargetPack;
 using Features.UnitPack.Systems;
 using Scellecs.Morpeh;
@@ -57,6 +58,7 @@ namespace Scenes.Game
             _updateGroup.AddSystem(new ChooseCellSystem());
             _updateGroup.AddSystem(new TrackChosenUnitSystem());
             _updateGroup.AddSystem(new BattleSystem(gameContext.gamePlan));
+            
             _updateGroup.AddSystem(new SelectUnitSystem());
             _updateGroup.AddSystem(new UnitSpawnSystem());
             _updateGroup.AddSystem(new MoveCommandSystem());

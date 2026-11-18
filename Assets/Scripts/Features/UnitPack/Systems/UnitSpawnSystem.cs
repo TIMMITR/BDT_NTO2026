@@ -6,6 +6,7 @@ using Features.GridPack.Data;
 using Features.HealthPack;
 using Features.MeshPack;
 using Features.SpeedPack;
+using Features.SpellPack.Components;
 using Features.TransformPack;
 using Features.UnitPack.Components;
 using Features.UnitPack.Requests;
@@ -19,6 +20,8 @@ namespace Features.UnitPack.Systems
         public World World { get; set; }
 
         private Filter _gridFilter;
+        
+        private Stash<SpellDataComponent> _spellStash;
         
         private Stash<GridComponent> _gridStash;
         private Stash<TransformComponent> _transformStash;
@@ -50,6 +53,8 @@ namespace Features.UnitPack.Systems
             _damageStash = World.GetStash<DamageComponent>();
             _speedStash = World.GetStash<SpeedComponent>();
             
+            _spellStash = World.GetStash<SpellDataComponent>();
+            
             _request = World.GetRequest<UnitSpawnRequest>();
         }
 
@@ -72,6 +77,7 @@ namespace Features.UnitPack.Systems
                 
                 _meshRendererStash.Add(newUnit, new MeshRendererComponent { value = mr });
                 _transformStash.Add(newUnit, new TransformComponent { value = unitObj.transform });
+                _spellStash.Add(newUnit, new SpellDataComponent(unitConfig.SpellConfig));
                 
                 ApplyUnitComponents(newUnit, unitConfig);
 
