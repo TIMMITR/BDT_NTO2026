@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a8a37a6d49844efbb9a70f1c0fd12b9a, type: 3}
   m_Name: WorldSettings
   m_EditorClassIdentifier: 
+  gameSceneName: GameScene
   playerMaxMana: 10
   gridRadius: 5
   cellRadius: 0.25
@@ -26,3 +27,8 @@ MonoBehaviour:
   bobbingAmplitudeBonus: {x: 0, y: 0.25}
   bobbingSpeedModifier: {x: 0.85, y: 1.15}
   randomizeBobbingPhase: 1
+  colorData:
+    clickedColor: {r: 0.10512066, g: 1, b: 0, a: 1}
+    chosenColor: {r: 1, g: 0.50889933, b: 0, a: 1}
+    pathColor: {r: 0, g: 1, b: 0.973691, a: 1}
+    attackColor: {r: 0.69182384, g: 0.036984242, b: 0.036984242, a: 1}

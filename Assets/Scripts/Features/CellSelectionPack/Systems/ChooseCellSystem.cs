@@ -1,5 +1,8 @@
 using Features.CellSelectionPack.Components;
+using Features.CellSelectionPack.Events;
+using Features.GridPack;
 using Features.GridPack.Components;
+using Features.GridPack.Data;
 using Features.RaycastPack;
 using Scellecs.Morpeh;
 using UnityEngine;
@@ -16,6 +19,10 @@ namespace Features.CellSelectionPack.Systems
         private Stash<RaycastComponent> _raycastStash;
         private Stash<GridComponent> _gridStash;
         private Stash<ChosenCellComponent> _chosenCellStash;
+        
+        private Event<CellChooseChangedEvent> _cellChooseChanged;
+        
+        private CellCoord _lastCoord;
     
         public void OnAwake()
         {
@@ -29,6 +36,8 @@ namespace Features.CellSelectionPack.Systems
             _raycastStash = World.GetStash<RaycastComponent>();
             _gridStash = World.GetStash<GridComponent>();
             _chosenCellStash = World.GetStash<ChosenCellComponent>();
+            
+            _cellChooseChanged = World.GetEvent<CellChooseChangedEvent>();
         }
 
         public void OnUpdate(float deltaTime)
@@ -46,7 +55,6 @@ namespace Features.CellSelectionPack.Systems
             var gridEntity = _gridFilter.First();
             ref var gridComp = ref _gridStash.Get(gridEntity);
             var transCoord = gridComp.FromWorldCoord(hitPoint);
-            
 
             if (gridComp.cells.ContainsKey(transCoord))
             {
@@ -56,6 +64,11 @@ namespace Features.CellSelectionPack.Systems
             {
                 _chosenCellStash.Remove(gridEntity);
             }
+            
+            if(_lastCoord != transCoord)
+                _cellChooseChanged.NextFrame(new CellChooseChangedEvent(transCoord));
+            
+            _lastCoord = transCoord;
         }
         
         public void Dispose() {}

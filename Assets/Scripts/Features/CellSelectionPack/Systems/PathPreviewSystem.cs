@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using Configs;
 using Features.CellSelectionPack.Components;
 using Features.CellSelectionPack.Requests;
+using Features.GridPack;
 using Features.GridPack.Components;
 using Features.GridPack.Data;
 using Features.PathFinderPack;
@@ -52,7 +53,7 @@ namespace Features.CellSelectionPack.Systems
             var gridEntity = _gridFilter.First();
 
             Entity? unit = _selectedUnitStash.Has(gridEntity) ? _selectedUnitStash.Get(gridEntity).unit : null;
-
+            
             CellCoord? from = unit.HasValue && _positionStash.Has(unit.Value)
                 ? _positionStash.Get(unit.Value).coord : null;
             CellCoord? to = _chosenCellStash.Has(gridEntity) ? _chosenCellStash.Get(gridEntity).cellCoord : null;
@@ -80,7 +81,7 @@ namespace Features.CellSelectionPack.Systems
 
             ref var selectedUnitComp = ref _selectedUnitStash.Get(gridEntity);
             var speed = selectedUnitComp.moveSpeed;
-
+            
             BuildPreviewPath(gridEntity, from.Value, to.Value, speed, out var path);
             
             selectedUnitComp.path = path; // todo возможно, стоит расчет пути вынести в отдельную систему

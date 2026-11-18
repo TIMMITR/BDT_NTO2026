@@ -1,5 +1,6 @@
 using Features.GridPack.Components;
 using Features.GridPack.Data;
+using Features.UnitPack.Components;
 using Scellecs.Morpeh;
 
 namespace Features.GridPack
@@ -35,6 +36,15 @@ namespace Features.GridPack
  
             ref var pos = ref positions.Get(unit);
             pos.coord = to;
+        }
+        
+        public static bool TryGetUnit(
+            GridComponent grid,
+            Stash<UnitComponent> units,
+            CellCoord at,
+            out Entity unit)
+        {
+            return grid.takenCells.TryGetValue(at, out unit) && units.Has(unit);
         }
     }
 }
