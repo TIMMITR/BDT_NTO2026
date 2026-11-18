@@ -53,7 +53,10 @@ namespace Features.CellSelectionPack.Systems
             foreach (var request in _lmbRequest.Consume())
             {
                 lmbClicked = true;
-
+                World.GetRequest<PlayerStateChangeRequest>().Publish(new PlayerStateChangeRequest
+                {
+                    newPositionState = PlayerPositionState.Battle
+                });
             }
 
             var gridEntity = _gridFilter.First();
