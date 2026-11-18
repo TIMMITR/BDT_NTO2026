@@ -1,6 +1,8 @@
 using Configs;
 using Features.CellSelectionPack.Components;
 using Features.CellSelectionPack.Requests;
+using Features.FightPack;
+using Features.FightPack.Components;
 using Features.FightPack.Requests;
 using Features.GridPack.Components;
 using Features.GridPack.Data;
@@ -12,7 +14,7 @@ using Scellecs.Morpeh;
 
 namespace Features.UnitPack.Systems
 {
-    public sealed class SelectUnitSystem : ISystem
+    public sealed class SelectUnitSystem : ISystem // todo этот класс надо полностью переписать: разделить на ивенты и доп системы
     {
         public World World { get; set; }
 
@@ -25,10 +27,11 @@ namespace Features.UnitPack.Systems
         private Stash<SpeedComponent> _speedStash;
         private Stash<CellPositionComponent> _positionStash;
         private Stash<UnitAnimationComponent> _unitAnimationStash;
+        private Stash<CellTileComponent> _cellTileStash;
+        private Stash<DelayAttackComponent> _delayAttackStash;
 
         private Request<LmbStartRequest> _lmbRequest;
         private Request<MoveUnitRequest> _moveUnitRequest;
-        private Request<StartFightMoveRequest> _startFightRequest;
         private Request<ColorCellRequest> _colorCellRequest;
 
         public void OnAwake()
@@ -42,6 +45,8 @@ namespace Features.UnitPack.Systems
             _speedStash = World.GetStash<SpeedComponent>();
             _positionStash = World.GetStash<CellPositionComponent>();
             _unitAnimationStash = World.GetStash<UnitAnimationComponent>();
+            _cellTileStash = World.GetStash<CellTileComponent>();
+            _delayAttackStash = World.GetStash<DelayAttackComponent>();
 
             _lmbRequest = World.GetRequest<LmbStartRequest>();
             _moveUnitRequest = World.GetRequest<MoveUnitRequest>();
@@ -72,14 +77,17 @@ namespace Features.UnitPack.Systems
                 var teamSide = TryGetUnit(gridComp, clicked, out var unit);
 
                 // если второй клеткой выбран союзный юнит, то перезаписываем данные для нового юнита
-                if (teamSide == TeamSide.Player && TryGetPlayerSpeed(unit, out var moveSpeed))
+                if (teamSide == TeamSide.Player)
                 {
-                    _selectedUnitStash.Set(gridEntity, new SelectedUnitComponent(unit, teamSide, moveSpeed, selected.path));
-                    return;
+                    if (TryGetPlayerSpeed(unit, out var moveSpeed))
+                    {
+                        _selectedUnitStash.Set(gridEntity, new SelectedUnitComponent(unit, teamSide, moveSpeed, selected.path));
+                        return;
+                    }
                 }
-                else if (teamSide == TeamSide.Enemy)
+                else
                 {
-                    
+                    _delayAttackStash.Set(selected.unit, new DelayAttackComponent(unit));
                 }
 
                 // двигаем

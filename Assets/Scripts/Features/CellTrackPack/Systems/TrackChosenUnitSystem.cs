@@ -1,5 +1,4 @@
 using Configs;
-using Features.CellSelectionPack.Components;
 using Features.CellSelectionPack.Events;
 using Features.CellTrackPack.Events;
 using Features.GridPack;
@@ -8,7 +7,7 @@ using Features.UnitPack.Components;
 using Scellecs.Morpeh;
 using UnityEngine;
 
-namespace Features.UnitPack.Systems
+namespace Features.CellTrackPack.Systems
 {
     public class TrackChosenUnitSystem : ISystem
     {
@@ -49,7 +48,7 @@ namespace Features.UnitPack.Systems
                     cellSide = unitComp.teamSide;
                 }
                 
-                Debug.Log(cellSide);
+                //Debug.Log(cellSide);
                 
                 _cellChooseEvent.NextFrame(new CellChooseEvent(cellSide));
             }

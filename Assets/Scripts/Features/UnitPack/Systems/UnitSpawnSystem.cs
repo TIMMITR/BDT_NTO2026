@@ -93,7 +93,7 @@ namespace Features.UnitPack.Systems
             
             _healthStash.Add(unit, new HealthComponent(stats.maxHealth));
             _defenceStash.Add(unit, new DefenceComponent{currentDefence = stats.defence});
-            _damageStash.Add(unit, new DamageComponent{baseDamage = stats.damage});
+            _damageStash.Add(unit, new DamageComponent{multiplier = stats.multiplier});
             _speedStash.Add(unit, new SpeedComponent(stats.moveSpeed));
         }
 

@@ -29,6 +29,7 @@ namespace Features.CellSelectionPack.Systems
         private Stash<CellPositionComponent> _positionStash;
         
         private Stash<SpellDataComponent> _spellDataStash;
+        private Stash<AttackDataComponent> _attackDataStash;
         
         private Event<CellChooseEvent> _cellChooseEvent;
         
@@ -53,6 +54,7 @@ namespace Features.CellSelectionPack.Systems
             _cellChooseEvent = World.GetEvent<CellChooseEvent>();
             
             _spellDataStash = World.GetStash<SpellDataComponent>();
+            _attackDataStash = World.GetStash<AttackDataComponent>();
             
             _colorCellRequest = World.GetRequest<ColorCellRequest>();
             _clearColorsRequest = World.GetRequest<ClearColorsRequest>();
@@ -96,18 +98,17 @@ namespace Features.CellSelectionPack.Systems
                 ref var selectedUnitComp = ref _selectedUnitStash.Get(gridEntity);
                 var speed = selectedUnitComp.moveSpeed;
                 
-                if (evt.cellSide == TeamSide.None)
+                if (evt.cellSide == TeamSide.Enemy || evt.cellSide == TeamSide.None)
                 {
-                    BuildPreviewPath(ref gridComp, from.Value, to.Value, speed, out var path);
-            
-                    selectedUnitComp.path = path; // todo возможно, стоит расчет пути вынести в отдельную систему
-                }
-
-                if (evt.cellSide == TeamSide.Enemy)
-                {
+                    if(!_spellDataStash.Has(unit.Value))
+                        return;
+                    
                     var spell = _spellDataStash.Get(unit.Value).spellData;
                     
-                    BuildAttackPath(ref gridComp, from.Value, to.Value, speed, spell, out var path);
+                    _attackDataStash.Set(gridEntity, new AttackDataComponent(spell, from.Value, to.Value));
+                    ref var attackComp = ref _attackDataStash.Get(gridEntity);
+                    
+                    BuildAttackPath(ref gridComp, ref attackComp,speed, out var path);
                     
                     selectedUnitComp.path = path;
                 }
@@ -116,18 +117,22 @@ namespace Features.CellSelectionPack.Systems
         }
 
         private void BuildAttackPath(ref GridComponent gridComp, 
-            CellCoord from, CellCoord to,
-            int speed, SpellConfigSo spell,
+            ref AttackDataComponent attackData,
+            int speed,
             out List<CellCoord> resultPath)
         {
-            var findedPath = PathFinder.GetPath(gridComp, from, to, _cellTileStash);
+            var from = attackData.from;
+            var to = attackData.to;
+            var spell = attackData.spellConfig;
+            
+            var foundPath = PathFinder.GetPath(gridComp, from, to, _cellTileStash);
             resultPath = new List<CellCoord> { from };
 
             CellCoord best = default;
             CellCoord bestDir = default;
             var bestCost = int.MaxValue;
  
-            foreach (var pair in findedPath.cellsCost)
+            foreach (var pair in foundPath.cellsCost)
             {
                 if (pair.Value > speed || pair.Value >= bestCost)
                     continue;
@@ -143,7 +148,9 @@ namespace Features.CellSelectionPack.Systems
                 return;
             
             if (best != from)
-                resultPath = PathFinder.ReconstructPath(findedPath, from, best);
+                resultPath = PathFinder.ReconstructPath(foundPath, from, best);
+            
+            attackData.dir = bestDir;
             
             foreach (var cell in resultPath)
                 _colorCellRequest.Publish(new ColorCellRequest(cell, ColorType.Path));

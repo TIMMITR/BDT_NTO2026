@@ -10,8 +10,10 @@ namespace Configs
         public int damage;
         public int range;
         public SpellRangeType rangeType;
+        public int areaRadius;
         public bool ignoreArmor;
         public bool isMultipleHit;
+        public bool canHitAllies;
         public int punchDistance;
  
         [Header("Цепочка")]

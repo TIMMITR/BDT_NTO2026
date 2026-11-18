@@ -31,7 +31,7 @@ namespace Features.DamagePack
                 _healthChangeRequest.Publish(new HealthChangeRequest
                 {
                     entity = request.target,
-                    amount = -damageComponent.baseDamage
+                    amount = -damageComponent.multiplier * request.amount
                 });
             }
         }

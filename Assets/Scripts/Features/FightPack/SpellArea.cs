@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Configs;
+using Features.CellSelectionPack.Components;
 using Features.GridPack.Components;
 using Features.GridPack.Data;
 using Features.PathFinderPack;
@@ -37,11 +38,15 @@ namespace Features.FightPack
         }
 
         public static List<Entity> CollectTargets(GridComponent grid, Stash<CellTileComponent> tiles, Stash<UnitComponent> units,
-            SpellConfigSo spell,
-            CellCoord from, CellCoord to, CellCoord direction,
+            AttackDataComponent attackData,
             TeamSide casterSide)
         {
             List<Entity> targets = new();
+
+            var spell = attackData.spellConfig;
+            var from = attackData.from;
+            var to = attackData.to;
+            var direction = attackData.dir;
 
             switch (spell.rangeType)
             {
@@ -70,7 +75,7 @@ namespace Features.FightPack
                     ReconstructLine(grid, tiles, spell, from, dir, cells);
                     break;
                 case  SpellRangeType.Area:
-                    ReconstructArea(grid, spell, from, cells);
+                    ReconstructArea(grid, spell, to, cells);
                     break;
                 case SpellRangeType.Cone:
                     break;
@@ -101,16 +106,18 @@ namespace Features.FightPack
         
         private static void ReconstructArea(GridComponent grid, 
             SpellConfigSo spell,
-            CellCoord from, List<CellCoord> cells)
+            CellCoord center, List<CellCoord> cells)
         {
-            for (var dq = -spell.range; dq <= spell.range; dq++)
+            var radius = spell.areaRadius;
+            
+            for (var dq = -radius; dq <= radius; dq++)
             {
-                var rMin = Math.Max(-spell.range, -dq - spell.range);
-                var rMax = Math.Min(spell.range, -dq + spell.range);
+                var rMin = Math.Max(-radius, -dq - radius);
+                var rMax = Math.Min(radius, -dq + radius);
  
                 for (var dr = rMin; dr <= rMax; dr++)
                 {
-                    var cell = new CellCoord(from.Q + dq, from.R + dr);
+                    var cell = new CellCoord(center.Q + dq, center.R + dr);
                     
                     if (grid.cells.ContainsKey(cell))
                         cells.Add(cell);
@@ -124,16 +131,29 @@ namespace Features.FightPack
             List<Entity> targets,
             TeamSide casterSide) //todo перепроверить
         {
+            var cell = from;
+            
             for (int i = 0; i < spell.range; i++)
             {
-                var cell = new CellCoord(from.Q + direction.Q, from.R + direction.R);
+                cell = new CellCoord(cell.Q + direction.Q, cell.R + direction.R);
 
-                if (!grid.cells.TryGetValue(cell, out var a)) 
+                if (!grid.cells.TryGetValue(cell, out var cellEntity)) 
+                    break;
+
+                if (tiles.Get(cellEntity).blocked)
                     break;
                 
                 if (!grid.takenCells.TryGetValue(cell, out var unit))
-                    break;
+                    continue;
                 
+                if (!units.Has(unit))
+                    return;
+                
+                ref var unitComp = ref units.Get(unit);
+                
+                if(casterSide == unitComp.teamSide && !spell.canHitAllies)
+                    return;
+                    
                 targets.Add(unit);
 
                 if (!spell.isMultipleHit)
@@ -143,24 +163,30 @@ namespace Features.FightPack
         
         private static void CollectAreaTarget(GridComponent grid, Stash<CellTileComponent> tiles, Stash<UnitComponent> units,
             SpellConfigSo spell,
-            CellCoord from,
+            CellCoord center,
             List<Entity> targets,
             TeamSide casterSide) //todo перепроверить
         {
-            var range = spell.range;
+            var radius = spell.areaRadius;
  
-            for (var dq = -range; dq <= range; dq++)
+            for (var dq = -radius; dq <= radius; dq++)
             {
-                var rMin = Math.Max(-range, -dq - range);
-                var rMax = Math.Min(range, -dq + range);
+                var rMin = Math.Max(-radius, -dq - radius);
+                var rMax = Math.Min(radius, -dq + radius);
  
                 for (var dr = rMin; dr <= rMax; dr++)
                 {
-                    var cell = new CellCoord(from.Q + dq, from.R + dr);
+                    var cell = new CellCoord(center.Q + dq, center.R + dr);
  
                     if (!grid.takenCells.TryGetValue(cell, out var unit)) 
                         continue;
-                    if (units.Get(unit).teamSide == casterSide)
+                    
+                    if(!units.Has(unit))
+                        continue;
+                    
+                    ref var unitComp = ref units.Get(unit);
+                    
+                    if(casterSide == unitComp.teamSide && !spell.canHitAllies)
                         continue;
  
                     targets.Add(unit);
@@ -188,9 +214,9 @@ namespace Features.FightPack
                         return true;
                     }
 
-                    if (!grid.cells.TryGetValue(cell, out var gridCell))
+                    if (!grid.cells.TryGetValue(cell, out var cellEntity))
                         break;
-                    if (tiles.Get(gridCell).blocked)
+                    if (tiles.Get(cellEntity).blocked)
                         break;
                     if (!spell.isMultipleHit && grid.takenCells.ContainsKey(cell))
                         break;
