@@ -53,6 +53,15 @@ namespace Features.FightPack.Systems
                 ref var attackData = ref _attackDataStash.Get(gridEntity);
 
                 attackData.from = _positionStash.Get(unit).coord;
+
+                if (!SpellArea.TryHitFrom(gridComp, _cellTileStash, //todo возможно стоит попробовать избежать пересчитывания
+                        attackData.spellConfig,
+                        attackData.from, attackData.to, 
+                        out attackData.dir))
+                {
+                    _delayStash.Remove(unit);
+                    continue;
+                }
                 
                 var targets = SpellArea.CollectTargets(gridComp, _cellTileStash, _unitStash, attackData, TeamSide.Player);
 

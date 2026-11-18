@@ -54,7 +54,7 @@ namespace Features.FightPack
                     CollectLineTarget(grid, tiles, units, spell, from, to, direction, targets, casterSide);
                     break;
                 case SpellRangeType.Area:
-                    CollectAreaTarget(grid, tiles, units, spell, from, targets, casterSide);
+                    CollectAreaTarget(grid, tiles, units, spell, to, targets, casterSide);
                     break;
                 case SpellRangeType.Cone:
                     break;

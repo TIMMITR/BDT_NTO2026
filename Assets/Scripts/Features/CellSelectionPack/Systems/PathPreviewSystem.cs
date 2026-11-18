@@ -148,7 +148,8 @@ namespace Features.CellSelectionPack.Systems
                 return;
             
             if (best != from)
-                resultPath = PathFinder.ReconstructPath(foundPath, from, best);
+                resultPath.AddRange(PathFinder.ReconstructPath(foundPath, from, best)); // тут именно добавление,
+                                                                                        // т.к. иначе from не запишется
             
             attackData.dir = bestDir;
             
