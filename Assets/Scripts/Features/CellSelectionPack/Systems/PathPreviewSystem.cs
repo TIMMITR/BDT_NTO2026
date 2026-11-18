@@ -6,10 +6,11 @@ using Features.GridPack.Components;
 using Features.GridPack.Data;
 using Features.PathFinderPack;
 using Scellecs.Morpeh;
+using UnityEngine;
 
 namespace Features.CellSelectionPack.Systems
 {
-    public class PathPreviewSystem : ISystem
+    public class PathPreviewSystem : ISystem // todo этот скрипт надо зарефакторить, он выполняет несколько действий одновременно
     {
         public World World { get; set; }
 
@@ -64,10 +65,10 @@ namespace Features.CellSelectionPack.Systems
             _clearColorsRequest.Publish(new ClearColorsRequest()); // полная чистка доски
 
             if (from.HasValue)
-                _colorCellRequest.Publish(new ColorCellRequest {cellCoord = from.Value});
-            if (to.HasValue && !from.HasValue) // проверка на !from нужна,
+                _colorCellRequest.Publish(new ColorCellRequest(from.Value, ColorType.Clicked));
+            if (to.HasValue) // проверка на !from нужна,
                                                // чтобы не отрисовывать выбранную клетку, при построении пути
-                _colorCellRequest.Publish(new ColorCellRequest {cellCoord = to.Value});
+                _colorCellRequest.Publish(new ColorCellRequest(to.Value, ColorType.Chosen));
 
             if (_selectedUnitStash.Has(gridEntity)) // нужно для очистки массива выбранных клеток
             {
@@ -80,16 +81,9 @@ namespace Features.CellSelectionPack.Systems
             ref var selectedUnitComp = ref _selectedUnitStash.Get(gridEntity);
             var speed = selectedUnitComp.moveSpeed;
 
-            if (selectedUnitComp.teamSide == TeamSide.Player)
-            {
-                BuildPreviewPath(gridEntity, from.Value, to.Value, speed, out var path);
+            BuildPreviewPath(gridEntity, from.Value, to.Value, speed, out var path);
             
-                selectedUnitComp.path = path; // todo возможно, стоит расчет пути вынести в отдельную систему
-            }
-            else
-            {
-                
-            }
+            selectedUnitComp.path = path; // todo возможно, стоит расчет пути вынести в отдельную систему
         }
 
         private void BuildPreviewPath(Entity entity, CellCoord from, CellCoord to, int maxCost, out List<CellCoord> path)
@@ -109,7 +103,7 @@ namespace Features.CellSelectionPack.Systems
                 if(pathReady.cellsCost[cell] > maxCost) break;
                 
                 path.Add(cell);
-                _colorCellRequest.Publish(new ColorCellRequest {cellCoord = cell});
+                _colorCellRequest.Publish(new ColorCellRequest(cell, ColorType.Path));
             }
         }
         

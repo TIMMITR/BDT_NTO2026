@@ -27,6 +27,17 @@ namespace Configs
         public Vector2 bobbingAmplitudeBonus = new(0.0f, 0.25f);
         public Vector2 bobbingSpeedModifier = new(0.85f, 1.15f);
         public bool randomizeBobbingPhase = true;
+        
+        [Header("Color")]
+        public ColorData colorData;
     }
-    
+
+    [Serializable]
+    public struct ColorData
+    {
+        public Color clickedColor;
+        public Color chosenColor;
+        public Color pathColor;
+        public Color attackColor;
+    }
 }

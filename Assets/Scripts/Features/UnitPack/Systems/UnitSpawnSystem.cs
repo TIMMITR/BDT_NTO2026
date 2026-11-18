@@ -4,6 +4,7 @@ using Features.GridPack;
 using Features.GridPack.Components;
 using Features.GridPack.Data;
 using Features.HealthPack;
+using Features.MeshPack;
 using Features.SpeedPack;
 using Features.TransformPack;
 using Features.UnitPack.Components;
@@ -24,6 +25,7 @@ namespace Features.UnitPack.Systems
         private Stash<UnitComponent> _unitStash;
         private Stash<CellTileComponent> _tileStash;
         private Stash<CellPositionComponent> _positionStash;
+        private Stash<MeshRendererComponent> _meshRendererStash;
         
         private Stash<HealthComponent> _healthStash;
         private Stash<DefenceComponent> _defenceStash;
@@ -41,6 +43,7 @@ namespace Features.UnitPack.Systems
             _unitStash = World.GetStash<UnitComponent>();
             _tileStash = World.GetStash<CellTileComponent>();
             _positionStash = World.GetStash<CellPositionComponent>();
+            _meshRendererStash = World.GetStash<MeshRendererComponent>();
             
             _healthStash = World.GetStash<HealthComponent>();
             _defenceStash = World.GetStash<DefenceComponent>();
@@ -65,7 +68,9 @@ namespace Features.UnitPack.Systems
                 
                 Entity newUnit = World.CreateEntity();
                 var unitObj = Object.Instantiate(unitConfig.Prefab, spawnPos, Quaternion.identity);
-
+                var mr = unitObj.GetComponent<MeshRenderer>();
+                
+                _meshRendererStash.Add(newUnit, new MeshRendererComponent { value = mr });
                 _transformStash.Add(newUnit, new TransformComponent { value = unitObj.transform });
                 
                 ApplyUnitComponents(newUnit, unitConfig);

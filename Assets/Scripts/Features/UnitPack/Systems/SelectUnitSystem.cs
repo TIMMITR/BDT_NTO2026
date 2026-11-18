@@ -1,5 +1,6 @@
 using Configs;
 using Features.CellSelectionPack.Components;
+using Features.CellSelectionPack.Requests;
 using Features.FightPack.Requests;
 using Features.GridPack.Components;
 using Features.GridPack.Data;
@@ -28,6 +29,7 @@ namespace Features.UnitPack.Systems
         private Request<LmbStartRequest> _lmbRequest;
         private Request<MoveUnitRequest> _moveUnitRequest;
         private Request<StartFightMoveRequest> _startFightRequest;
+        private Request<ColorCellRequest> _colorCellRequest;
 
         public void OnAwake()
         {
@@ -43,6 +45,7 @@ namespace Features.UnitPack.Systems
 
             _lmbRequest = World.GetRequest<LmbStartRequest>();
             _moveUnitRequest = World.GetRequest<MoveUnitRequest>();
+            _colorCellRequest = World.GetRequest<ColorCellRequest>();
         }
 
         public void OnUpdate(float deltaTime)
@@ -60,9 +63,9 @@ namespace Features.UnitPack.Systems
             ref var gridComp = ref _gridStash.Get(gridEntity);
             var clicked = _chosenCellStash.Get(gridEntity).cellCoord;
 
-            bool isFirstPickedCell = _selectedUnitStash.Has(gridEntity);
+            bool hadPickedCell = _selectedUnitStash.Has(gridEntity);
 
-            if (isFirstPickedCell)
+            if (hadPickedCell)
             {
                 var selected = _selectedUnitStash.Get(gridEntity);
 
@@ -91,10 +94,14 @@ namespace Features.UnitPack.Systems
             {
                 var teamSide = TryGetUnit(gridComp, clicked, out var unit);
                 
-                if (teamSide == TeamSide.None || !TryGetPlayerSpeed(unit, out var moveSpeed))
+                if (teamSide != TeamSide.Player || !TryGetPlayerSpeed(unit, out var moveSpeed))
                     return;
 
                 _selectedUnitStash.Set(gridEntity, new SelectedUnitComponent(unit, teamSide, moveSpeed));
+                
+                var pos = _positionStash.Get(unit);
+                
+                _colorCellRequest.Publish(new ColorCellRequest(pos.coord, ColorType.Clicked));
             }
         }
 

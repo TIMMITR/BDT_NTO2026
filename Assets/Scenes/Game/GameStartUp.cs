@@ -60,7 +60,7 @@ namespace Scenes.Game
             _updateGroup.AddSystem(new UnitSpawnSystem());
             _updateGroup.AddSystem(new MoveCommandSystem());
             _updateGroup.AddSystem(new PathPreviewSystem());
-            _updateGroup.AddSystem(new ColorCellSystem(gameContext.highlightCellPool));
+            _updateGroup.AddSystem(new ColorCellSystem(gameContext.highlightCellPool, globalContext.worldSettings.colorData));
             _updateGroup.AddSystem(new UnitAnimationSystem());
             _updateGroup.AddSystem(new ChangeAnimationDataSystem(gameContext.moveDataList));
             

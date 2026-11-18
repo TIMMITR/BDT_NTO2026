@@ -54,6 +54,8 @@ namespace Features.FightPack
                 case SpellRangeType.Cone:
                     break;
             }
+
+            return targets;
         }
 
         private static void CollectLineTarget(GridComponent grid, Stash<CellTileComponent> tiles, Stash<UnitComponent> units,
