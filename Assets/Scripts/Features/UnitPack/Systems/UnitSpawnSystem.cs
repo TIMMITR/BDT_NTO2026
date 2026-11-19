@@ -4,7 +4,9 @@ using Features.GridPack;
 using Features.GridPack.Components;
 using Features.GridPack.Data;
 using Features.HealthPack;
+using Features.MeshPack;
 using Features.SpeedPack;
+using Features.SpellPack.Components;
 using Features.TransformPack;
 using Features.UnitPack.Components;
 using Features.UnitPack.Requests;
@@ -19,11 +21,14 @@ namespace Features.UnitPack.Systems
 
         private Filter _gridFilter;
         
+        private Stash<SpellDataComponent> _spellStash;
+        
         private Stash<GridComponent> _gridStash;
         private Stash<TransformComponent> _transformStash;
         private Stash<UnitComponent> _unitStash;
         private Stash<CellTileComponent> _tileStash;
         private Stash<CellPositionComponent> _positionStash;
+        private Stash<MeshRendererComponent> _meshRendererStash;
         
         private Stash<HealthComponent> _healthStash;
         private Stash<DefenceComponent> _defenceStash;
@@ -41,11 +46,14 @@ namespace Features.UnitPack.Systems
             _unitStash = World.GetStash<UnitComponent>();
             _tileStash = World.GetStash<CellTileComponent>();
             _positionStash = World.GetStash<CellPositionComponent>();
+            _meshRendererStash = World.GetStash<MeshRendererComponent>();
             
             _healthStash = World.GetStash<HealthComponent>();
             _defenceStash = World.GetStash<DefenceComponent>();
             _damageStash = World.GetStash<DamageComponent>();
             _speedStash = World.GetStash<SpeedComponent>();
+            
+            _spellStash = World.GetStash<SpellDataComponent>();
             
             _request = World.GetRequest<UnitSpawnRequest>();
         }
@@ -65,12 +73,15 @@ namespace Features.UnitPack.Systems
                 
                 Entity newUnit = World.CreateEntity();
                 var unitObj = Object.Instantiate(unitConfig.Prefab, spawnPos, Quaternion.identity);
-
+                var mr = unitObj.GetComponent<MeshRenderer>();
+                
+                _meshRendererStash.Add(newUnit, new MeshRendererComponent { value = mr });
                 _transformStash.Add(newUnit, new TransformComponent { value = unitObj.transform });
+                _spellStash.Add(newUnit, new SpellDataComponent(unitConfig.SpellConfig));
                 
                 ApplyUnitComponents(newUnit, unitConfig);
 
-                GridOccupancy.Place(ref gridComp, _tileStash, _positionStash, newUnit, cellCoord);
+                GridOccupancy.Place(ref gridComp, _tileStash, _positionStash, newUnit, cellCoord, request.isBlocked);
             }
         }
 
@@ -82,7 +93,7 @@ namespace Features.UnitPack.Systems
             
             _healthStash.Add(unit, new HealthComponent(stats.maxHealth));
             _defenceStash.Add(unit, new DefenceComponent{currentDefence = stats.defence});
-            _damageStash.Add(unit, new DamageComponent{baseDamage = stats.damage});
+            _damageStash.Add(unit, new DamageComponent{multiplier = stats.multiplier});
             _speedStash.Add(unit, new SpeedComponent(stats.moveSpeed));
         }
 

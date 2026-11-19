@@ -6,5 +6,13 @@ namespace Features.DamagePack
     {
         public Entity source; // может быть пригодится
         public Entity target;
+        public int amount;
+
+        public DamageRequest(Entity source, Entity target, int amount)
+        {
+            this.source = source;
+            this.target = target;
+            this.amount = amount;
+        }
     }
 }

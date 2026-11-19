@@ -1,5 +1,9 @@
 using Configs;
 using Features.CellSelectionPack.Components;
+using Features.CellSelectionPack.Requests;
+using Features.FightPack;
+using Features.FightPack.Components;
+using Features.FightPack.Requests;
 using Features.GridPack.Components;
 using Features.GridPack.Data;
 using Features.InputPack.Requests;
@@ -10,9 +14,9 @@ using Features.UnitPack.Components;
 using Features.UnitPack.Requests;
 using Scellecs.Morpeh;
 
-namespace Features.CellSelectionPack.Systems
+namespace Features.UnitPack.Systems
 {
-    public sealed class SelectUnitSystem : ISystem
+    public sealed class SelectUnitSystem : ISystem // todo этот класс надо полностью переписать: разделить на ивенты и доп системы
     {
         public World World { get; set; }
 
@@ -25,9 +29,12 @@ namespace Features.CellSelectionPack.Systems
         private Stash<SpeedComponent> _speedStash;
         private Stash<CellPositionComponent> _positionStash;
         private Stash<UnitAnimationComponent> _unitAnimationStash;
+        private Stash<CellTileComponent> _cellTileStash;
+        private Stash<DelayAttackComponent> _delayAttackStash;
 
         private Request<LmbStartRequest> _lmbRequest;
         private Request<MoveUnitRequest> _moveUnitRequest;
+        private Request<ColorCellRequest> _colorCellRequest;
 
         public void OnAwake()
         {
@@ -40,12 +47,15 @@ namespace Features.CellSelectionPack.Systems
             _speedStash = World.GetStash<SpeedComponent>();
             _positionStash = World.GetStash<CellPositionComponent>();
             _unitAnimationStash = World.GetStash<UnitAnimationComponent>();
+            _cellTileStash = World.GetStash<CellTileComponent>();
+            _delayAttackStash = World.GetStash<DelayAttackComponent>();
 
             _lmbRequest = World.GetRequest<LmbStartRequest>();
             _moveUnitRequest = World.GetRequest<MoveUnitRequest>();
+            _colorCellRequest = World.GetRequest<ColorCellRequest>();
         }
 
-        public void OnUpdate(float deltaTime)
+        public void OnUpdate(float deltaTime) // todo переписать
         {
             if (_gridFilter.IsEmpty()) return;
 
@@ -66,15 +76,26 @@ namespace Features.CellSelectionPack.Systems
             ref var gridComp = ref _gridStash.Get(gridEntity);
             var clicked = _chosenCellStash.Get(gridEntity).cellCoord;
 
-            if (_selectedUnitStash.Has(gridEntity))
+            bool hadPickedCell = _selectedUnitStash.Has(gridEntity);
+
+            if (hadPickedCell)
             {
                 var selected = _selectedUnitStash.Get(gridEntity);
 
+                var teamSide = TryGetUnit(gridComp, clicked, out var unit);
+
                 // если второй клеткой выбран союзный юнит, то перезаписываем данные для нового юнита
-                if (TryGetPlayerUnit(gridComp, clicked, out var newUnit, out var moveSpeed))
+                if (teamSide == TeamSide.Player)
                 {
-                    _selectedUnitStash.Set(gridEntity, new SelectedUnitComponent(newUnit, moveSpeed, selected.path));
-                    return;
+                    if (TryGetPlayerSpeed(unit, out var moveSpeed))
+                    {
+                        _selectedUnitStash.Set(gridEntity, new SelectedUnitComponent(unit, teamSide, moveSpeed, selected.path));
+                        return;
+                    }
+                }
+                else
+                {
+                    _delayAttackStash.Set(selected.unit, new DelayAttackComponent(unit));
                 }
 
                 // двигаем
@@ -87,25 +108,37 @@ namespace Features.CellSelectionPack.Systems
             }
             else
             {
-                // первый раз выбрали клетку с союзным юнитом
-                if (!TryGetPlayerUnit(gridComp, clicked, out var unit, out var moveSpeed)) return;
+                var teamSide = TryGetUnit(gridComp, clicked, out var unit);
+                
+                if (teamSide != TeamSide.Player || !TryGetPlayerSpeed(unit, out var moveSpeed))
+                    return;
 
-                _selectedUnitStash.Set(gridEntity, new SelectedUnitComponent(unit, moveSpeed));
+                _selectedUnitStash.Set(gridEntity, new SelectedUnitComponent(unit, teamSide, moveSpeed));
+                
+                var pos = _positionStash.Get(unit);
+                
+                _colorCellRequest.Publish(new ColorCellRequest(pos.coord, ColorType.Clicked));
             }
         }
 
-        private bool TryGetPlayerUnit(in GridComponent gridComp, CellCoord cellCoord, out Entity unit, out int moveSpeed)
+        private TeamSide TryGetUnit(GridComponent gridComp, CellCoord cellCoord, out Entity unit)
         {
-            unit = default;
-            moveSpeed = 0;
-
-            if (!gridComp.takenCells.TryGetValue(cellCoord, out unit)) return false;
-            if (_unitAnimationStash.Has(unit)) return false;
+            if (!gridComp.takenCells.TryGetValue(cellCoord, out unit))
+                return TeamSide.None;
+            if (_unitAnimationStash.Has(unit))
+                return TeamSide.None;
 
             ref var unitComp = ref _unitStash.Get(unit);
-            if (unitComp.teamSide != TeamSide.Player) return false;
+            
+            return unitComp.teamSide;
+        }
 
+        private bool TryGetPlayerSpeed(Entity unit, out int moveSpeed)
+        {
             moveSpeed = _speedStash.Get(unit).currentSpeed;
+            if (moveSpeed <= 0)
+                return false;
+            
             return true;
         }
 
