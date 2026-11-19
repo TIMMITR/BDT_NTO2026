@@ -226,19 +226,6 @@ namespace Features.FightPack
             return false;
         }
 
-        private static CellCoord GetDirection(CellCoord from, CellCoord to)
-        {
-            var dq = to.Q - from.Q;
-            var dr = to.R - from.R;
-            var da = -dq - dr;
- 
-            if (Mathf.Abs(dq) >= Mathf.Abs(dr) && Mathf.Abs(dq) >= Mathf.Abs(da))
-                return new CellCoord(Math.Sign(dq), 0);
- 
-            if (Mathf.Abs(dr) >= Mathf.Abs(da))
-                return new CellCoord(0, Math.Sign(dr));
- 
-            return new CellCoord(-Math.Sign(da), Math.Sign(da));
-        }
+        private static CellCoord GetDirection(CellCoord from, CellCoord to) => from.DirectionTo(to);
     }
 }

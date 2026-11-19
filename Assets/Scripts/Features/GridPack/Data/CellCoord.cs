@@ -1,4 +1,5 @@
 using System;
+using Features.PathFinderPack;
 using UnityEngine;
 
 namespace Features.GridPack.Data
@@ -29,17 +30,22 @@ namespace Features.GridPack.Data
         
         public CellCoord DirectionTo(CellCoord hex)
         {
-            var dq = hex.Q - Q;
-            var dr = hex.R - R;
-            var da = -dq - dr;
+            if (Equals(hex)) return default;
  
-            if (Mathf.Abs(dq) >= Mathf.Abs(dr) && Mathf.Abs(dq) >= Mathf.Abs(da))
-                return new CellCoord(Math.Sign(dq), 0);
+            var best = default(CellCoord);
+            var bestDist = int.MaxValue;
  
-            if (Mathf.Abs(dr) >= Mathf.Abs(da))
-                return new CellCoord(0, Math.Sign(dr));
+            foreach (var dir in PathFinder.Directions)
+            {
+                var dist = new CellCoord(Q + dir.Q, R + dir.R).DistanceTo(hex);
+                if (dist < bestDist)
+                {
+                    bestDist = dist;
+                    best = dir;
+                }
+            }
  
-            return new CellCoord(-Math.Sign(da), Math.Sign(da));
+            return best;
         }
         
         public Vector3 ToLocalPosition(float cellRadius) =>

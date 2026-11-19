@@ -6,6 +6,7 @@ using Features.GridPack.Data;
 using Features.KnockbackPack.Requests;
 using Features.UnitPack.Components;
 using Scellecs.Morpeh;
+using UnityEngine;
 
 namespace Features.KnockbackPack.Systems
 {
@@ -54,9 +55,13 @@ namespace Features.KnockbackPack.Systems
                 var returnDistance = request.returnDistance;
                 
                 var path = BuildKnockbackPath(gridComp, from, dir, distance, returnDistance, out var collided);
-                
-                if(collided)
+
+                if (collided)
+                {
                     _damageRequest.Publish(new DamageRequest(request.source, unit, request.damage));
+                    
+                    Debug.Log($"{request.source} punched {request.source} with {request.damage}");
+                }
                 
                 if (path.Count < 2) 
                     continue;
@@ -95,23 +100,29 @@ namespace Features.KnockbackPack.Systems
             {
                 for (var i = 0; i < returnDistance; i++)
                 {
-                    var back = new CellCoord(cell.Q - dir.Q, cell.R - dir.R);
+                    var next = new CellCoord(cell.Q - dir.Q, cell.R - dir.R);
 
-                    if (!IsFree(grid, back))
-                        break;
+                    if (!IsFree(grid, next, from))
+                    {
+                        dir = new CellCoord(-dir.Q, -dir.R);
+                        next = new CellCoord(cell.Q + dir.Q, cell.R + dir.R);
+                        
+                        if (!IsFree(grid, next, from))
+                            break;
+                    }
                     
-                    path.Add(back);
-                    cell = back;
+                    path.Add(next);
+                    cell = next;
                 }
             }
             
             return path;
         }
         
-        private bool IsFree(GridComponent grid, CellCoord cell) =>
+        private bool IsFree(GridComponent grid, CellCoord cell, CellCoord self) =>
             grid.cells.TryGetValue(cell, out var cellEntity) &&
             !_cellTileStash.Get(cellEntity).blocked &&
-            !grid.takenCells.ContainsKey(cell);
+            (!grid.takenCells.ContainsKey(cell) || cell == self);
         
         public void Dispose() { }
     }

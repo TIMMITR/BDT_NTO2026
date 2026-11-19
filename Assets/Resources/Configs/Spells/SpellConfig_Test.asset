@@ -20,7 +20,9 @@ MonoBehaviour:
   ignoreArmor: 0
   isMultipleHit: 0
   canHitAllies: 0
-  punchDistance: 0
+  punchDistance: 3
+  punchDamage: 0
+  punchReturnDistance: 10
   nextSpell: {fileID: 0}
   nextSpellOrigin: 0
   nextSpellDelay: 0

@@ -16,7 +16,8 @@ namespace Features.UnitPack.Systems
         private Stash<GridComponent> _gridStash;
         private Stash<TransformComponent> _transformStash;
         private Stash<UnitAnimationComponent> _unitAnimationStash;
-        private Stash<MoveAnimationDataComponent> _animationDataStash;
+        private Stash<MoveAnimationDataComponent> _animationDataStash;  
+        private Stash<UnitComponent> _unitStash;
         
         public void OnAwake()
         {
@@ -27,6 +28,7 @@ namespace Features.UnitPack.Systems
             _transformStash = World.GetStash<TransformComponent>();
             _unitAnimationStash = World.GetStash<UnitAnimationComponent>();
             _animationDataStash = World.GetStash<MoveAnimationDataComponent>();
+            _unitStash = World.GetStash<UnitComponent>();
         }
 
         public void OnUpdate(float deltaTime)
@@ -48,9 +50,10 @@ namespace Features.UnitPack.Systems
 
                 var from = gridComp.ToWorldCoord(points[animationComp.index - 1]);
                 var to = gridComp.ToWorldCoord(points[animationComp.index]);
-                
-                from.y = tr.position.y;
-                to.y = tr.position.y;
+
+                var baseY = _unitStash.Get(entity).posY;
+                from.y = baseY;
+                to.y = baseY;
                     
                 if (!animationComp.isSlide && animationComp.isTurning)
                 {
