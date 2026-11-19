@@ -10,6 +10,7 @@ using Features.TypingPack.Systems;
 using Features.HealthPack;
 using Features.InputPack;
 using Features.KnockbackPack.Systems;
+using Features.LifetimePack.Systems;
 using Features.ManaPack;
 using Features.PlayerPack.Systems;
 using Features.QuickTalkPack.Systems;
@@ -78,6 +79,8 @@ namespace Scenes.Game
             _updateGroup.AddSystem(new PlayerPositionStateSystem());
 
             _updateGroup.AddSystem(new KnockbackSystem());
+            _updateGroup.AddSystem(new LifetimeSystem());
+            _updateGroup.AddSystem(new ProjectileSystem());
             
             _updateGroup.AddSystem(new ManaSystem());
             _updateGroup.AddSystem(new DamageSystem());
