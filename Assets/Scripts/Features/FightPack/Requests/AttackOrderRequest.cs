@@ -1,3 +1,4 @@
+using Features.GridPack.Data;
 using Scellecs.Morpeh;
 
 namespace Features.FightPack.Requests
@@ -6,11 +7,13 @@ namespace Features.FightPack.Requests
     {
         public Entity source; // todo переименовать
         public Entity target;
+        public CellCoord origin;
 
-        public AttackOrderRequest(Entity source, Entity target)
+        public AttackOrderRequest(Entity source, Entity target, CellCoord origin)
         {
             this.source = source;
             this.target = target;
+            this.origin = origin;
         }
     }
 }

@@ -64,19 +64,19 @@ namespace Features.FightPack.Systems
                 }
                 
                 var targets = SpellArea.CollectTargets(gridComp, _cellTileStash, _unitStash, attackData, TeamSide.Player);
+                var origin = attackData.spellConfig.rangeType == SpellRangeType.Area 
+                    ? attackData.to 
+                    : attackData.from;
 
                 foreach (var target in targets)
                 {
-                    _attackOrderRequest.Publish(new AttackOrderRequest(unit, target));
+                    _attackOrderRequest.Publish(new AttackOrderRequest(unit, target, origin));
                 }
                 
                 _delayStash.Remove(unit);
             }
         }
         
-        public void Dispose()
-        {
-            
-        }
+        public void Dispose() { }
     }
 }

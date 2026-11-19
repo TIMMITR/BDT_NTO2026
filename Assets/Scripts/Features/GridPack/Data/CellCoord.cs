@@ -27,6 +27,21 @@ namespace Features.GridPack.Data
             return (Mathf.Abs(deltaQ) + Mathf.Abs(deltaR) + Mathf.Abs(deltaQ + deltaR)) / 2;
         }
         
+        public CellCoord DirectionTo(CellCoord hex)
+        {
+            var dq = hex.Q - Q;
+            var dr = hex.R - R;
+            var da = -dq - dr;
+ 
+            if (Mathf.Abs(dq) >= Mathf.Abs(dr) && Mathf.Abs(dq) >= Mathf.Abs(da))
+                return new CellCoord(Math.Sign(dq), 0);
+ 
+            if (Mathf.Abs(dr) >= Mathf.Abs(da))
+                return new CellCoord(0, Math.Sign(dr));
+ 
+            return new CellCoord(-Math.Sign(da), Math.Sign(da));
+        }
+        
         public Vector3 ToLocalPosition(float cellRadius) =>
             new(cellRadius * CellTransMultiplier1 * Q,
                 0f,

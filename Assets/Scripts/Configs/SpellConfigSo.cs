@@ -14,9 +14,13 @@ namespace Configs
         public bool ignoreArmor;
         public bool isMultipleHit;
         public bool canHitAllies;
-        public int punchDistance;
  
-        [Header("Цепочка")]
+        [Header("Punch")]
+        public int punchDistance;
+        public int punchDamage;
+        public int punchReturnDistance;
+        
+        [Header("Next Spell")]
         public SpellConfigSo nextSpell;
         public NextSpellOrigin nextSpellOrigin;
         public int nextSpellDelay; 

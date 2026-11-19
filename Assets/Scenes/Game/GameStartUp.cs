@@ -9,13 +9,13 @@ using Features.StoryTalkPack.Systems;
 using Features.TypingPack.Systems;
 using Features.HealthPack;
 using Features.InputPack;
+using Features.KnockbackPack.Systems;
 using Features.ManaPack;
 using Features.PlayerPack.Systems;
 using Features.QuickTalkPack.Systems;
 using Features.RaycastPack;
 using Features.ScenePack;
 using Features.SpeedPack.Systems;
-using Features.SpellPack.Systems;
 using Features.TargetPack;
 using Features.UnitPack.Systems;
 using Scellecs.Morpeh;
@@ -76,6 +76,8 @@ namespace Scenes.Game
             _updateGroup.AddSystem(new UnitAnimationSystem());
             _updateGroup.AddSystem(new ChangeAnimationDataSystem(gameContext.moveDataList));
             _updateGroup.AddSystem(new PlayerPositionStateSystem());
+
+            _updateGroup.AddSystem(new KnockbackSystem());
             
             _updateGroup.AddSystem(new ManaSystem());
             _updateGroup.AddSystem(new DamageSystem());

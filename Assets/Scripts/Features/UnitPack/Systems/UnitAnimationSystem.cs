@@ -48,8 +48,11 @@ namespace Features.UnitPack.Systems
 
                 var from = gridComp.ToWorldCoord(points[animationComp.index - 1]);
                 var to = gridComp.ToWorldCoord(points[animationComp.index]);
+                
+                from.y = tr.position.y;
+                to.y = tr.position.y;
                     
-                if (animationComp.isTurning)
+                if (!animationComp.isSlide && animationComp.isTurning)
                 {
                     if(!RotateToTarget(tr, to, rotateSpeed, deltaTime))
                         continue;
@@ -59,13 +62,13 @@ namespace Features.UnitPack.Systems
                     
                 animationComp.progress += deltaTime / moveDuration;
                 
-                MoveUnit(tr, from, to, animationComp.progress, jumpHeight);
+                MoveUnit(tr, from, to, animationComp.progress, animationComp.isSlide ? 0f : jumpHeight);
 
                 if (animationComp.progress >= 1f)
                 {
                     animationComp.progress = 0f;
                     animationComp.index++;
-                    animationComp.isTurning = true;
+                    animationComp.isTurning = !animationComp.isSlide;
 
                     if (animationComp.index >= animationComp.points.Count)
                     {
