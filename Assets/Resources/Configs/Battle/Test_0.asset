@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: Test_0
   m_EditorClassIdentifier: 
   units:
-  - q: 1
-    r: -1
+  - q: -3
+    r: 3
     moveCost: 1
     blocked: 0
     unitConfig: {fileID: 11400000, guid: b3fbc10f7b091ba4e94c862b3ed315fe, type: 2}

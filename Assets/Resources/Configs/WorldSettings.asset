@@ -28,7 +28,7 @@ MonoBehaviour:
   bobbingSpeedModifier: {x: 0.85, y: 1.15}
   randomizeBobbingPhase: 1
   colorData:
-    clickedColor: {r: 0.10512066, g: 1, b: 0, a: 1}
-    chosenColor: {r: 1, g: 0.50889933, b: 0, a: 1}
-    pathColor: {r: 0, g: 1, b: 0.973691, a: 1}
-    attackColor: {r: 0.69182384, g: 0.036984242, b: 0.036984242, a: 1}
+    clickedColor: {r: 0.10512066, g: 1, b: 0, a: 0.6666667}
+    chosenColor: {r: 1, g: 0.50889933, b: 0, a: 0.69411767}
+    pathColor: {r: 0, g: 1, b: 0.973691, a: 0.5647059}
+    attackColor: {r: 0.69182384, g: 0.036984242, b: 0.036984242, a: 0.6666667}

@@ -13,11 +13,13 @@ MonoBehaviour:
   m_Name: SpellConfig_Test
   m_EditorClassIdentifier: 
   spellType: 0
-  damage: 0
-  range: 0
-  rangeType: 0
+  damage: 7
+  range: 4
+  rangeType: 1
+  areaRadius: 1
   ignoreArmor: 0
   isMultipleHit: 0
+  canHitAllies: 0
   punchDistance: 0
   nextSpell: {fileID: 0}
   nextSpellOrigin: 0
