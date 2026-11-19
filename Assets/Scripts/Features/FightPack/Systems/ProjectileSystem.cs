@@ -81,7 +81,7 @@ namespace Features.FightPack.Systems
             var tr = _transformStash.Get(entity).value;
             
             var dist = Vector3.Distance(projComp.from, projComp.to);
-            projComp.progress = projComp.speed * deltaTime / dist;
+            projComp.progress += projComp.speed * deltaTime / dist;
             
             var pos = Vector3.Lerp(projComp.from, projComp.to, projComp.progress);
             
@@ -89,19 +89,14 @@ namespace Features.FightPack.Systems
 
             if (projComp.progress < 1f)
                 return;
-
+            
             foreach (var order in projComp.orders)
-            {
                 _attackOrderRequest.Publish(order);
-            }
             
             Object.Destroy(tr.gameObject);
             World.RemoveEntity(entity);
         }
     
-        public void Dispose()
-        {
-            throw new System.NotImplementedException();
-        }
+        public void Dispose() {}
     }
 }

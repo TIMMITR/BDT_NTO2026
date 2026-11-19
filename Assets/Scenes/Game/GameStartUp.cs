@@ -72,6 +72,7 @@ namespace Scenes.Game
             _updateGroup.AddSystem(new MoveCommandSystem());
             _updateGroup.AddSystem(new PathPreviewSystem());
             _updateGroup.AddSystem(new DelayAttackSystem());
+            _updateGroup.AddSystem(new ProjectileSystem());
             _updateGroup.AddSystem(new AttackSystem());
             _updateGroup.AddSystem(new ColorCellSystem(gameContext.highlightCellPool, globalContext.worldSettings.colorData));
             _updateGroup.AddSystem(new UnitAnimationSystem());
@@ -80,7 +81,6 @@ namespace Scenes.Game
 
             _updateGroup.AddSystem(new KnockbackSystem());
             _updateGroup.AddSystem(new LifetimeSystem());
-            _updateGroup.AddSystem(new ProjectileSystem());
             
             _updateGroup.AddSystem(new ManaSystem());
             _updateGroup.AddSystem(new DamageSystem());

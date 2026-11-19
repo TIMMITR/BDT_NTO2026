@@ -27,12 +27,11 @@ namespace Features.LifetimePack.Systems
         {
             foreach (var entity in _lifetimeFilter)
             {
-                ref var ltComp = ref _lifetimeStash.Get(entity);
-                var time = ltComp.remainingTime;
+                ref var ltComp = ref _lifetimeStash.Get(entity); 
                 
-                time -= deltaTime;
+                ltComp.remainingTime -= deltaTime;
 
-                if (time > 0f)
+                if (ltComp.remainingTime > 0f)
                     continue;
                 
                 if(_transformStash.Has(entity))
