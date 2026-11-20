@@ -48,7 +48,7 @@ namespace Features.CameraPack.Systems
             _unitStash = World.GetStash<UnitComponent>();
         }
 
-        public void OnUpdate(float deltaTime)
+        public void OnUpdate(float deltaTime) // todo переделать под активного героя
         {
             if (_playerFilter.IsEmpty() || _playerTargetFilter.IsEmpty()) return;
 
