@@ -28,7 +28,7 @@ MonoBehaviour:
   nextSpellDelay: 0
   projectilePrefab: {fileID: 8241781037024382630, guid: 94b682359a1d63c4f83e8b9a4f25d24e, type: 3}
   explosionPrefab: {fileID: 7718701054235509535, guid: c8ef84ead6bc0a649840ab9ed0f42e0e, type: 3}
-  projectileSpeed: 1
+  projectileSpeed: 2
   projectileHeight: 0.3
   swayAmplitude: 1
   explosionLifetime: 10
