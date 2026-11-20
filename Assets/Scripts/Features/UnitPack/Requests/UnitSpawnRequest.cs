@@ -1,19 +1,18 @@
 ﻿using Configs;
+using Features.GridPack.Data;
 using Scellecs.Morpeh;
 
 namespace Features.UnitPack.Requests
 {
-    public struct UnitSpawnRequest : IRequestData
+    public struct UnitSpawnRequest : IRequestData // todo надо либо вынести в отдельный лист сооружения, блокирующие проход, либо что-то
     {
-        public int q;
-        public int r;
+        public CellCoord cellCoord;
         public UnitConfig unitConfig;
         public bool isBlocked;
 
-        public UnitSpawnRequest(int q, int r, UnitConfig unitConfig, bool isBlocked)
+        public UnitSpawnRequest(CellCoord cellCoord, UnitConfig unitConfig, bool isBlocked)
         {
-            this.q = q;
-            this.r = r;
+            this.cellCoord = cellCoord;
             this.unitConfig = unitConfig;
             this.isBlocked = isBlocked;
         }

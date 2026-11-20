@@ -1,4 +1,6 @@
+using Features.ControlPointPack.Requests;
 using Features.GamePack;
+using Features.GridPack.Data;
 using Features.UnitPack;
 using Features.UnitPack.Requests;
 using Scellecs.Morpeh;
@@ -9,10 +11,14 @@ namespace Features.BattlePack
     {
         public World World { get; set; }
 
-        private Filter _filter;
+        private Filter _battleFilter;
+        
         private Stash<BattleComponent> _battleStash;
+        
         private Request<BattleRequest> _battleRequest; 
         private Request<UnitSpawnRequest> _unitSpawnRequest;
+        private Request<SpawnControlPointRequest> _spawnControlPointRequest;
+        
         private Event<BattleEvent> _battleEvent;
         
         private readonly GamePlan _gamePlan;
@@ -24,41 +30,55 @@ namespace Features.BattlePack
         
         public void OnAwake()
         {
-            _filter = World.Filter.With<BattleComponent>().Build();
+            _battleFilter = World.Filter.With<BattleComponent>().Build();
+            
             _battleStash = World.GetStash<BattleComponent>();
+            
             _battleRequest = World.GetRequest<BattleRequest>();
             _unitSpawnRequest =  World.GetRequest<UnitSpawnRequest>();
+            _spawnControlPointRequest = World.GetRequest<SpawnControlPointRequest>();
             
             _battleEvent = World.GetEvent<BattleEvent>();
             
             ref var battleComponent = ref _battleStash.Add(World.CreateEntity());
             battleComponent.currentBattleId = 0; 
-            _battleRequest.Publish(new BattleRequest{id = battleComponent.currentBattleId}, allowNextFrame: true); // нет, бой будет
+            battleComponent.battlePlan = _gamePlan.BattlePlans[0];
+            
+            _battleRequest.Publish(new BattleRequest{id = battleComponent.currentBattleId}, allowNextFrame: true);
         }
 
         public void OnUpdate(float deltaTime)
         {
-            // тут иницилизируется бой 
-            if (_filter.IsEmpty()) return;
-            
             foreach (var request in _battleRequest.Consume())
             {
                 if (request.id < 0 || request.id > _gamePlan.BattlePlans.Count)
                     continue;
+
+                var battle = _battleFilter.First();
+                ref var battleComp = ref _battleStash.Get(battle);
                 
                 var battlePlan = _gamePlan.BattlePlans[request.id];
 
+                battleComp.currentBattleId = request.id;
+                battleComp.battlePlan = battlePlan;
+                
                 foreach (var tile in battlePlan.Units)
                 {
-                    if (tile.unitConfig != null)
-                    {
-                        _unitSpawnRequest.Publish(new UnitSpawnRequest
-                        (
-                            tile.q, tile.r,
-                            tile.unitConfig,
-                            tile.blocked
-                        ));
-                    }
+                    _unitSpawnRequest.Publish(new UnitSpawnRequest
+                    (
+                        new CellCoord(tile.q, tile.r),
+                        tile.unitConfig,
+                        tile.blocked
+                    ));
+                }
+
+                foreach (var controlPoint in battlePlan.ControlPoints)
+                {
+                    _spawnControlPointRequest.Publish(new SpawnControlPointRequest
+                    (
+                        controlPoint.config,
+                        new CellCoord(controlPoint.q, controlPoint.r)
+                    ));
                 }
                 
                 _battleEvent.NextFrame(new BattleEvent()); // начинается бой
