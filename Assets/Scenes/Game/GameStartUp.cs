@@ -2,6 +2,7 @@ using Features.BattlePack;
 using Features.CameraPack.Systems;
 using Features.CellSelectionPack.Systems;
 using Features.CellTrackPack.Systems;
+using Features.ControlPointPack.Systems;
 using Features.DamagePack;
 using Features.FightPack.Systems;
 using Features.GridPack;
@@ -69,6 +70,8 @@ namespace Scenes.Game
             _updateGroup.AddSystem(new ChooseCellSystem());
             _updateGroup.AddSystem(new TrackChosenUnitSystem());
             _updateGroup.AddSystem(new BattleSystem(gameContext.gamePlan));
+
+            _updateGroup.AddSystem(new SpawnControlPointSystem());
             
             _updateGroup.AddSystem(new SelectUnitSystem());
             _updateGroup.AddSystem(new UnitSpawnSystem());
