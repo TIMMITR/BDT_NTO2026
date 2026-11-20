@@ -59,6 +59,9 @@ namespace Features.FightPack.Systems
             var from = gridComp.ToWorldCoord(request.from);
             var to = gridComp.ToWorldCoord(request.to);
             
+            from.y += spell.projectileHeight;
+            to.y += spell.projectileHeight;
+            
             var obj = Object.Instantiate(spell.projectilePrefab, from, Quaternion.identity);
             
             var entity = World.CreateEntity();

@@ -29,6 +29,7 @@ namespace Configs
         public GameObject projectilePrefab;
         public GameObject explosionPrefab;
         public float projectileSpeed;
+        public float projectileHeight;
         public float swayAmplitude;
         public float explosionLifetime;
     }
