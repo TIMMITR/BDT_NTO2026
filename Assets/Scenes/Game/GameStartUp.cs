@@ -66,6 +66,7 @@ namespace Scenes.Game
             _updateGroup.AddSystem(new RaycastSystem());
             
             _updateGroup.AddSystem(new StateChangeSystem());
+            _updateGroup.AddSystem(new StateBundleSystem());
             
             _updateGroup.AddSystem(new ChooseCellSystem());
             _updateGroup.AddSystem(new TrackChosenUnitSystem());
