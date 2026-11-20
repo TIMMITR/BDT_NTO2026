@@ -33,14 +33,11 @@ namespace Features.BattlePack
             
             ref var battleComponent = ref _battleStash.Add(World.CreateEntity());
             battleComponent.currentBattleId = 0; 
-            _battleRequest.Publish(new BattleRequest{id = battleComponent.currentBattleId}, allowNextFrame: true); // нет, бой будет
+            _battleRequest.Publish(new BattleRequest{id = battleComponent.currentBattleId}, allowNextFrame: true);
         }
 
         public void OnUpdate(float deltaTime)
         {
-            // тут иницилизируется бой 
-            if (_filter.IsEmpty()) return;
-            
             foreach (var request in _battleRequest.Consume())
             {
                 if (request.id < 0 || request.id > _gamePlan.BattlePlans.Count)
@@ -50,15 +47,17 @@ namespace Features.BattlePack
 
                 foreach (var tile in battlePlan.Units)
                 {
-                    if (tile.unitConfig != null)
-                    {
-                        _unitSpawnRequest.Publish(new UnitSpawnRequest
-                        (
-                            tile.q, tile.r,
-                            tile.unitConfig,
-                            tile.blocked
-                        ));
-                    }
+                    _unitSpawnRequest.Publish(new UnitSpawnRequest
+                    (
+                        tile.q, tile.r,
+                        tile.unitConfig,
+                        tile.blocked
+                    ));
+                }
+
+                foreach (var controlPoint in battlePlan.Controlpoints)
+                {
+                    
                 }
                 
                 _battleEvent.NextFrame(new BattleEvent()); // начинается бой
