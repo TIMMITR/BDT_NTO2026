@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d7c0918ab1b1548499c9997a490daa15, type: 3}
+  m_Name: SpellConfig_Test
+  m_EditorClassIdentifier: 
+  spellType: 0
+  damage: 7
+  range: 4
+  rangeType: 1
+  areaRadius: 1
+  ignoreArmor: 0
+  isMultipleHit: 0
+  canHitAllies: 0
+  punchDistance: 2
+  punchDamage: 0
+  punchReturnDistance: 1
+  nextSpell: {fileID: 0}
+  nextSpellOrigin: 0
+  nextSpellDelay: 0
+  projectilePrefab: {fileID: 8241781037024382630, guid: 94b682359a1d63c4f83e8b9a4f25d24e, type: 3}
+  explosionPrefab: {fileID: 7718701054235509535, guid: c8ef84ead6bc0a649840ab9ed0f42e0e, type: 3}
+  projectileSpeed: 2
+  projectileHeight: 0.3
+  swayAmplitude: 1
+  explosionLifetime: 10

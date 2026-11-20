@@ -13,12 +13,13 @@ namespace Configs
         [SerializeField] private UnitStats stats = new()
         {
             maxHealth = 10,
-            damage = 10,
+            multiplier = 10,
             defence = 10,
             moveSpeed = 4,
         };
 
         [SerializeField] private float posY;
+        [SerializeField] private SpellConfigSo spellConfig;
         
         public string Name => characterName;
         public UnitClass Class => unitClass;
@@ -26,13 +27,14 @@ namespace Configs
         public UnitStats Stats => stats;
         public TeamSide TeamSide => teamSide;
         public float PosY => posY;
+        public SpellConfigSo SpellConfig => spellConfig;
     }
     
     [Serializable]
     public struct UnitStats
     {
         public int maxHealth;
-        public int damage;
+        public int multiplier;
         public int defence;
         public int moveSpeed;
     }
@@ -51,6 +53,7 @@ namespace Configs
     public enum TeamSide
     {
         Player,
-        Enemy
+        Enemy,
+        None
     }
 }

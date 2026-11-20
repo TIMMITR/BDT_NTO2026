@@ -16,7 +16,8 @@ namespace Features.UnitPack.Systems
         private Stash<GridComponent> _gridStash;
         private Stash<TransformComponent> _transformStash;
         private Stash<UnitAnimationComponent> _unitAnimationStash;
-        private Stash<MoveAnimationDataComponent> _animationDataStash;
+        private Stash<MoveAnimationDataComponent> _animationDataStash;  
+        private Stash<UnitComponent> _unitStash;
         
         public void OnAwake()
         {
@@ -27,6 +28,7 @@ namespace Features.UnitPack.Systems
             _transformStash = World.GetStash<TransformComponent>();
             _unitAnimationStash = World.GetStash<UnitAnimationComponent>();
             _animationDataStash = World.GetStash<MoveAnimationDataComponent>();
+            _unitStash = World.GetStash<UnitComponent>();
         }
 
         public void OnUpdate(float deltaTime)
@@ -48,8 +50,12 @@ namespace Features.UnitPack.Systems
 
                 var from = gridComp.ToWorldCoord(points[animationComp.index - 1]);
                 var to = gridComp.ToWorldCoord(points[animationComp.index]);
+
+                var baseY = _unitStash.Get(entity).posY;
+                from.y = baseY;
+                to.y = baseY;
                     
-                if (animationComp.isTurning)
+                if (!animationComp.isSlide && animationComp.isTurning)
                 {
                     if(!RotateToTarget(tr, to, rotateSpeed, deltaTime))
                         continue;
@@ -59,13 +65,13 @@ namespace Features.UnitPack.Systems
                     
                 animationComp.progress += deltaTime / moveDuration;
                 
-                MoveUnit(tr, from, to, animationComp.progress, jumpHeight);
+                MoveUnit(tr, from, to, animationComp.progress, animationComp.isSlide ? 0f : jumpHeight);
 
                 if (animationComp.progress >= 1f)
                 {
                     animationComp.progress = 0f;
                     animationComp.index++;
-                    animationComp.isTurning = true;
+                    animationComp.isTurning = !animationComp.isSlide;
 
                     if (animationComp.index >= animationComp.points.Count)
                     {

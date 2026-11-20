@@ -7,6 +7,15 @@ namespace Features.UnitPack.Requests
     {
         public int q;
         public int r;
-        public UnitConfig unitConfig; 
+        public UnitConfig unitConfig;
+        public bool isBlocked;
+
+        public UnitSpawnRequest(int q, int r, UnitConfig unitConfig, bool isBlocked)
+        {
+            this.q = q;
+            this.r = r;
+            this.unitConfig = unitConfig;
+            this.isBlocked = isBlocked;
+        }
     }
 }

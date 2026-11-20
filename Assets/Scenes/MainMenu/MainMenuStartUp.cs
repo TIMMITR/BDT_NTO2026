@@ -39,7 +39,8 @@ namespace Scenes.MainMenu
                 globalContext.worldSettings,
                 mainMenuContext.playerSpawnPoint));
             _initGroup.AddInitializer(new CameraSpawnSystem(
-                globalContext.prefabSettings));
+                globalContext.prefabSettings,
+                mainMenuContext.playerSpawnPoint));
             _initGroup.AddInitializer(new TransformCleanUpSystem());
             _initGroup.Initialize();
             

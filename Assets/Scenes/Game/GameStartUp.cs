@@ -1,12 +1,17 @@
 using Features.BattlePack;
 using Features.CameraPack.Systems;
 using Features.CellSelectionPack.Systems;
+using Features.CellTrackPack.Systems;
 using Features.DamagePack;
+using Features.EndTurnPack.Systems;
+using Features.FightPack.Systems;
 using Features.GridPack;
 using Features.StoryTalkPack.Systems;
 using Features.TypingPack.Systems;
 using Features.HealthPack;
 using Features.InputPack;
+using Features.KnockbackPack.Systems;
+using Features.LifetimePack.Systems;
 using Features.ManaPack;
 using Features.PlayerPack.Systems;
 using Features.QuickTalkPack.Systems;
@@ -44,7 +49,8 @@ namespace Scenes.Game
                 globalContext.worldSettings,
                 gameContext.playerSpawnPoint));
             _initGroup.AddInitializer(new CameraSpawnSystem(
-                globalContext.prefabSettings));
+                globalContext.prefabSettings,
+                gameContext.playerSpawnPoint));
             _initGroup.AddInitializer(new GridSystem(
                 globalContext.worldSettings)); 
             _initGroup.Initialize();
@@ -52,23 +58,38 @@ namespace Scenes.Game
             _updateGroup = _world.CreateSystemsGroup();
             _updateGroup.Initialize();
             _updateGroup.AddSystem(new InputSystem(_playerInputActions));
+            _updateGroup.AddSystem(new CameraTargetMoveSystem(
+                gameContext.cameraCorridorStart,
+                gameContext.cameraCorridorEnd));
             _updateGroup.AddSystem(new TargetSystem());
             _updateGroup.AddSystem(new RaycastSystem());
+            
             _updateGroup.AddSystem(new ChooseCellSystem());
+            _updateGroup.AddSystem(new TrackChosenUnitSystem());
             _updateGroup.AddSystem(new BattleSystem(gameContext.gamePlan));
+            
             _updateGroup.AddSystem(new SelectUnitSystem());
             _updateGroup.AddSystem(new UnitSpawnSystem());
             _updateGroup.AddSystem(new MoveCommandSystem());
             _updateGroup.AddSystem(new PathPreviewSystem());
-            _updateGroup.AddSystem(new ColorCellSystem(gameContext.highlightCellPool));
+            _updateGroup.AddSystem(new DelayAttackSystem());
+            _updateGroup.AddSystem(new ProjectileSystem());
+            _updateGroup.AddSystem(new AttackSystem());
+            _updateGroup.AddSystem(new ColorCellSystem(gameContext.highlightCellPool, globalContext.worldSettings.colorData));
             _updateGroup.AddSystem(new UnitAnimationSystem());
             _updateGroup.AddSystem(new ChangeAnimationDataSystem(gameContext.moveDataList));
+            _updateGroup.AddSystem(new PlayerPositionStateSystem());
+
+            _updateGroup.AddSystem(new KnockbackSystem());
+            _updateGroup.AddSystem(new LifetimeSystem());
             
             _updateGroup.AddSystem(new ManaSystem());
             _updateGroup.AddSystem(new DamageSystem());
             _updateGroup.AddSystem(new HealthSystem());
             _updateGroup.AddSystem(new SpeedSystem());
             _updateGroup.AddSystem(new ResetSpeedSystem());
+
+            _updateGroup.AddSystem(new EndTurnSystem());
             
             _updateGroup.AddSystem(new StoryTalkPlayerSystem(gameContext.introTalk));
             

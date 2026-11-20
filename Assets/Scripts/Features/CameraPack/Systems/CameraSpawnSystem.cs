@@ -12,12 +12,14 @@ namespace Features.CameraPack.Systems
     {
         public World World { get; set; }
 
-        private readonly PrefabSettingsSo _prefabSettings;
         private Filter _cameraFilter;
         private Filter _cameraTargetFilter;
-        public CameraSpawnSystem(PrefabSettingsSo prefabSettings)
+        private readonly PrefabSettingsSo _prefabSettings;
+        private readonly Transform _playerSpawnPoint;
+        public CameraSpawnSystem(PrefabSettingsSo prefabSettings, Transform playerSpawnPoint)
         {
             _prefabSettings = prefabSettings;
+            _playerSpawnPoint =  playerSpawnPoint;
         }
         
         public void OnAwake()
@@ -26,7 +28,7 @@ namespace Features.CameraPack.Systems
             _cameraFilter = World.Filter.With<CameraComponent>().Build();
             _cameraTargetFilter  = World.Filter.With<CameraTargetTag>().Build();
             
-            var cameraGameObject = Object.Instantiate(_prefabSettings.Get(PrefabType.Camera));
+            var cameraGameObject = Object.Instantiate(_prefabSettings.Get(PrefabType.Camera), _playerSpawnPoint.position, _playerSpawnPoint.rotation);
             
             var camera = cameraGameObject.GetComponentInChildren<Camera>();
             var target = cameraGameObject.GetComponentInChildren<CameraTargetView>();

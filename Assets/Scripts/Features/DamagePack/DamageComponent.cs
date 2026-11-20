@@ -4,6 +4,6 @@ namespace Features.DamagePack
 {
     public struct DamageComponent : IComponent
     {
-        public int baseDamage;
+        public int multiplier;
     }
 }

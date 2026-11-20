@@ -1,14 +1,21 @@
 using System.Collections.Generic;
+using System.IO;
+using Configs;
 using Features.CellSelectionPack.Components;
 using Features.CellSelectionPack.Requests;
+using Features.CellTrackPack.Events;
+using Features.FightPack;
+using Features.GridPack;
 using Features.GridPack.Components;
 using Features.GridPack.Data;
 using Features.PathFinderPack;
+using Features.SpellPack.Components;
 using Scellecs.Morpeh;
+using UnityEngine;
 
 namespace Features.CellSelectionPack.Systems
 {
-    public class PathPreviewSystem : ISystem
+    public class PathPreviewSystem : ISystem // todo этот скрипт надо зарефакторить, он выполняет несколько действий одновременно
     {
         public World World { get; set; }
 
@@ -20,6 +27,11 @@ namespace Features.CellSelectionPack.Systems
         
         private Stash<CellTileComponent> _cellTileStash;
         private Stash<CellPositionComponent> _positionStash;
+        
+        private Stash<SpellDataComponent> _spellDataStash;
+        private Stash<AttackDataComponent> _attackDataStash;
+        
+        private Event<CellChooseEvent> _cellChooseEvent;
         
         private Request<ColorCellRequest> _colorCellRequest;
         private Request<ClearColorsRequest> _clearColorsRequest;
@@ -39,6 +51,11 @@ namespace Features.CellSelectionPack.Systems
             _cellTileStash = World.GetStash<CellTileComponent>();
             _positionStash = World.GetStash<CellPositionComponent>();
             
+            _cellChooseEvent = World.GetEvent<CellChooseEvent>();
+            
+            _spellDataStash = World.GetStash<SpellDataComponent>();
+            _attackDataStash = World.GetStash<AttackDataComponent>();
+            
             _colorCellRequest = World.GetRequest<ColorCellRequest>();
             _clearColorsRequest = World.GetRequest<ClearColorsRequest>();
         }
@@ -47,46 +64,109 @@ namespace Features.CellSelectionPack.Systems
         {
             if (_gridFilter.IsEmpty()) return;
 
-            var gridEntity = _gridFilter.First();
-
-            Entity? unit = _selectedUnitStash.Has(gridEntity) ? _selectedUnitStash.Get(gridEntity).unit : null;
-
-            CellCoord? from = unit.HasValue && _positionStash.Has(unit.Value)
-                ? _positionStash.Get(unit.Value).coord : null;
-            CellCoord? to = _chosenCellStash.Has(gridEntity) ? _chosenCellStash.Get(gridEntity).cellCoord : null;
-
-            if (from == _lastFrom && to == _lastTo) return;
-            
-            _lastFrom = from;
-            _lastTo = to;
-
-            _clearColorsRequest.Publish(new ClearColorsRequest()); // полная чистка доски
-
-            if (from.HasValue)
-                _colorCellRequest.Publish(new ColorCellRequest {cellCoord = from.Value});
-            if (to.HasValue && !from.HasValue) // проверка на !from нужна,
-                                               // чтобы не отрисовывать выбранную клетку, при построении пути
-                _colorCellRequest.Publish(new ColorCellRequest {cellCoord = to.Value});
-
-            if (_selectedUnitStash.Has(gridEntity)) // нужно для очистки массива выбранных клеток
+            foreach (var evt in _cellChooseEvent.publishedChanges)
             {
-                ref var pickedCellForClear = ref _selectedUnitStash.Get(gridEntity);
-                pickedCellForClear.path.Clear();
+                var gridEntity = _gridFilter.First();
+
+                Entity? unit = _selectedUnitStash.Has(gridEntity) ? _selectedUnitStash.Get(gridEntity).unit : null;
+            
+                CellCoord? from = unit.HasValue && _positionStash.Has(unit.Value)
+                    ? _positionStash.Get(unit.Value).coord : null;
+                CellCoord? to = _chosenCellStash.Has(gridEntity) ? _chosenCellStash.Get(gridEntity).cellCoord : null;
+
+                if (from == _lastFrom && to == _lastTo) return;
+            
+                _lastFrom = from;
+                _lastTo = to;
+
+                _clearColorsRequest.Publish(new ClearColorsRequest()); // полная чистка доски
+
+                if (from.HasValue)
+                    _colorCellRequest.Publish(new ColorCellRequest(from.Value, ColorType.Clicked));
+                if (to.HasValue)
+                    _colorCellRequest.Publish(new ColorCellRequest(to.Value, ColorType.Chosen));
+
+                if (_selectedUnitStash.Has(gridEntity)) // нужно для очистки массива выбранных клеток
+                {
+                    ref var pickedCellForClear = ref _selectedUnitStash.Get(gridEntity);
+                    pickedCellForClear.path.Clear();
+                }
+
+                if (from == to || !from.HasValue || !to.HasValue) return;
+
+                ref var gridComp = ref _gridStash.Get(gridEntity);
+                ref var selectedUnitComp = ref _selectedUnitStash.Get(gridEntity);
+                var speed = selectedUnitComp.moveSpeed;
+                
+                if (evt.cellSide == TeamSide.Enemy || evt.cellSide == TeamSide.None)
+                {
+                    if(!_spellDataStash.Has(unit.Value))
+                        return;
+                    
+                    var spell = _spellDataStash.Get(unit.Value).spellData;
+                    
+                    _attackDataStash.Set(gridEntity, new AttackDataComponent(spell, from.Value, to.Value));
+                    ref var attackComp = ref _attackDataStash.Get(gridEntity);
+                    
+                    BuildAttackPath(ref gridComp, ref attackComp,speed, out var path);
+                    
+                    selectedUnitComp.path = path;
+                }
+                
             }
-
-            if (from == to || !from.HasValue || !to.HasValue) return;
-
-            ref var pickedCellComp = ref _selectedUnitStash.Get(gridEntity);
-            var speed = pickedCellComp.moveSpeed;
-            
-            BuildPreviewPath(gridEntity, from.Value, to.Value, speed, out var path);
-            
-            pickedCellComp.path = path; // todo возможно, стоит расчет пути вынести в отдельную систему
         }
 
-        private void BuildPreviewPath(Entity entity, CellCoord from, CellCoord to, int maxCost, out List<CellCoord> path)
+        private void BuildAttackPath(ref GridComponent gridComp, 
+            ref AttackDataComponent attackData,
+            int speed,
+            out List<CellCoord> resultPath)
         {
-            ref var gridComp = ref _gridStash.Get(entity);
+            var from = attackData.from;
+            var to = attackData.to;
+            var spell = attackData.spellConfig;
+            
+            var foundPath = PathFinder.GetPath(gridComp, from, to, _cellTileStash);
+            resultPath = new List<CellCoord> { from };
+
+            CellCoord best = default;
+            CellCoord bestDir = default;
+            var bestCost = int.MaxValue;
+ 
+            foreach (var pair in foundPath.cellsCost)
+            {
+                if (pair.Value > speed || pair.Value >= bestCost)
+                    continue;
+                if (!SpellArea.TryHitFrom(gridComp, _cellTileStash, spell, pair.Key, to, out var dir))
+                    continue;
+ 
+                best = pair.Key;
+                bestDir = dir;
+                bestCost = pair.Value;
+            }
+ 
+            if (bestCost == int.MaxValue) 
+                return;
+            
+            if (best != from)
+                resultPath.AddRange(PathFinder.ReconstructPath(foundPath, from, best)); // тут именно добавление,
+                                                                                        // т.к. иначе from не запишется
+            
+            attackData.dir = bestDir;
+            
+            foreach (var cell in resultPath)
+                _colorCellRequest.Publish(new ColorCellRequest(cell, ColorType.Path));
+
+            var attackPath = SpellArea.ReconstructPath(gridComp, _cellTileStash,
+                spell, 
+                best, to, bestDir);
+            
+            foreach (var cell in attackPath)
+                _colorCellRequest.Publish(new ColorCellRequest(cell, ColorType.Attack)); 
+        }
+        
+
+        private void BuildPreviewPath(ref GridComponent gridComp, CellCoord from, CellCoord to, int maxCost, out List<CellCoord> path)
+        {
             var pathReady = PathFinder.GetPath(gridComp, from, to, _cellTileStash);
             
             _fullPath = PathFinder.ReconstructPath(pathReady, from, to);
@@ -101,7 +181,7 @@ namespace Features.CellSelectionPack.Systems
                 if(pathReady.cellsCost[cell] > maxCost) break;
                 
                 path.Add(cell);
-                _colorCellRequest.Publish(new ColorCellRequest {cellCoord = cell});
+                _colorCellRequest.Publish(new ColorCellRequest(cell, ColorType.Path));
             }
         }
         

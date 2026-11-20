@@ -1,4 +1,5 @@
 using System;
+using Features.PathFinderPack;
 using UnityEngine;
 
 namespace Features.GridPack.Data
@@ -25,6 +26,26 @@ namespace Features.GridPack.Data
             var deltaR = R - hex.R;
             
             return (Mathf.Abs(deltaQ) + Mathf.Abs(deltaR) + Mathf.Abs(deltaQ + deltaR)) / 2;
+        }
+        
+        public CellCoord DirectionTo(CellCoord hex)
+        {
+            if (Equals(hex)) return default;
+ 
+            var best = default(CellCoord);
+            var bestDist = int.MaxValue;
+ 
+            foreach (var dir in PathFinder.Directions)
+            {
+                var dist = new CellCoord(Q + dir.Q, R + dir.R).DistanceTo(hex);
+                if (dist < bestDist)
+                {
+                    bestDist = dist;
+                    best = dir;
+                }
+            }
+ 
+            return best;
         }
         
         public Vector3 ToLocalPosition(float cellRadius) =>
