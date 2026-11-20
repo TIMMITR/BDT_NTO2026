@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0f2ab7e10239bad42a4af319b47d4a29, type: 3}
+  m_Name: Paladin
+  m_EditorClassIdentifier: 
+  characterName: Paladin
+  unitClass: 0
+  teamSide: 0
+  prefab: {fileID: 3427180298912217044, guid: f047eb44149428a408e29b035bbfdbe8, type: 3}
+  stats:
+    maxHealth: 12
+    multiplier: 10
+    defence: 2
+    moveSpeed: 3
+  posY: 0
+  spellConfig: {fileID: 11400000, guid: ed420db46f168ea4e92a83cad222a7cb, type: 2}
