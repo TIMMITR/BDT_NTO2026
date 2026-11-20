@@ -72,6 +72,9 @@ namespace Scenes.Game
             _updateGroup.AddSystem(new BattleSystem(gameContext.gamePlan));
 
             _updateGroup.AddSystem(new SpawnControlPointSystem());
+            _updateGroup.AddSystem(new CaptureControlPointSystem());
+            _updateGroup.AddSystem(new ActivateControlPointSystem());
+            _updateGroup.AddSystem(new ClearControlPointSystem());
             
             _updateGroup.AddSystem(new SelectUnitSystem());
             _updateGroup.AddSystem(new UnitSpawnSystem());

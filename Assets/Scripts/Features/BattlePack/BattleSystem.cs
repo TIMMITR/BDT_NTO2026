@@ -11,6 +11,7 @@ namespace Features.BattlePack
     {
         public World World { get; set; }
 
+        private Filter _battleFilter;
         
         private Stash<BattleComponent> _battleStash;
         
@@ -29,6 +30,8 @@ namespace Features.BattlePack
         
         public void OnAwake()
         {
+            _battleFilter = World.Filter.With<BattleComponent>().Build();
+            
             _battleStash = World.GetStash<BattleComponent>();
             
             _battleRequest = World.GetRequest<BattleRequest>();
@@ -39,6 +42,7 @@ namespace Features.BattlePack
             
             ref var battleComponent = ref _battleStash.Add(World.CreateEntity());
             battleComponent.currentBattleId = 0; 
+            battleComponent.battlePlan = _gamePlan.BattlePlans[0];
             
             _battleRequest.Publish(new BattleRequest{id = battleComponent.currentBattleId}, allowNextFrame: true);
         }
@@ -49,20 +53,26 @@ namespace Features.BattlePack
             {
                 if (request.id < 0 || request.id > _gamePlan.BattlePlans.Count)
                     continue;
+
+                var battle = _battleFilter.First();
+                ref var battleComp = ref _battleStash.Get(battle);
                 
                 var battlePlan = _gamePlan.BattlePlans[request.id];
 
+                battleComp.currentBattleId = request.id;
+                battleComp.battlePlan = battlePlan;
+                
                 foreach (var tile in battlePlan.Units)
                 {
                     _unitSpawnRequest.Publish(new UnitSpawnRequest
                     (
-                        tile.q, tile.r,
+                        new CellCoord(tile.q, tile.r),
                         tile.unitConfig,
                         tile.blocked
                     ));
                 }
 
-                foreach (var controlPoint in battlePlan.Controlpoints)
+                foreach (var controlPoint in battlePlan.ControlPoints)
                 {
                     _spawnControlPointRequest.Publish(new SpawnControlPointRequest
                     (

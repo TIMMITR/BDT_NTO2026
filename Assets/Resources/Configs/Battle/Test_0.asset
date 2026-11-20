@@ -23,5 +23,10 @@ MonoBehaviour:
     moveCost: 1
     blocked: 0
     unitConfig: {fileID: 11400000, guid: d39182b086eff0d41aa8624b9b55fb07, type: 2}
+  controlpoints:
+  - q: 0
+    r: 0
+    config:
+      prefab: {fileID: 9063286301332852021, guid: 29c316478a1a5a24aa80c22e8a5109b5, type: 3}
   quickTalks:
   - {fileID: 11400000, guid: 0e8183d4d2d24b243aa05c6605c10947, type: 2}

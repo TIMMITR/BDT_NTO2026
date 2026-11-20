@@ -10,6 +10,7 @@ namespace Features.BattlePack
     [CreateAssetMenu(fileName = "BattlePlan", menuName = "Plan/Battle Plan", order = 6)]
     public class BattlePlan : ScriptableObject
     {
+        [SerializeField] private EnemyConfigSo enemyConfig;
         [SerializeField] private List<BattleTileData> units = new()
         {
             new BattleTileData
@@ -21,14 +22,19 @@ namespace Features.BattlePack
                 unitConfig = null
             }
         };
-
         [SerializeField] private List<ControlPointTileData> controlpoints = new();
-
         [SerializeField] private List<QuickTalkSet> quickTalks = new();
+        [SerializeField] private List<UnitConfig> controlPointSpawnUnits = new();
 
+        [SerializeField] private int manaReward;
+        
+        public EnemyConfigSo EnemyConfig => enemyConfig;
         public IReadOnlyList<BattleTileData> Units => units;
-        public IReadOnlyList<ControlPointTileData> Controlpoints => controlpoints;
+        public IReadOnlyList<ControlPointTileData> ControlPoints => controlpoints;
         public IReadOnlyList<QuickTalkSet> QuickTalks => quickTalks;
+        public List<UnitConfig> ControlPointSpawnUnits => controlPointSpawnUnits;
+        
+        public int ManaReward => manaReward;
     }
     
     [Serializable]

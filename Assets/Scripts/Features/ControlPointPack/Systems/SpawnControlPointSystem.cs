@@ -1,7 +1,9 @@
+using Configs;
 using Features.ControlPointPack.Components;
 using Features.ControlPointPack.Requests;
 using Features.GridPack.Components;
 using Features.GridPack.Data;
+using Features.TransformPack;
 using Scellecs.Morpeh;
 using UnityEngine;
 
@@ -15,6 +17,8 @@ namespace Features.ControlPointPack.Systems
         
         private Stash<GridComponent> _gridStash;
         private Stash<ControlPointComponent> _controlPointStash;
+        private Stash<TransformComponent> _transformStash;
+        private Stash<CellTileComponent> _cellTileStash;
         
         private Request<SpawnControlPointRequest> _spawnControlPointRequest;
 
@@ -24,6 +28,8 @@ namespace Features.ControlPointPack.Systems
             
             _gridStash = World.GetStash<GridComponent>();
             _controlPointStash = World.GetStash<ControlPointComponent>();
+            _transformStash = World.GetStash<TransformComponent>();
+            _cellTileStash = World.GetStash<CellTileComponent>();
             
             _spawnControlPointRequest = World.GetRequest<SpawnControlPointRequest>();
         }
@@ -41,7 +47,10 @@ namespace Features.ControlPointPack.Systems
                 var obj = Object.Instantiate(config.prefab, coord, Quaternion.identity);
                 
                 var entity = World.CreateEntity();
-                _controlPointStash.Add(entity);
+                _controlPointStash.Add(entity, new ControlPointComponent(request.cellCoord, TeamSide.None));
+                _transformStash.Add(entity, new TransformComponent(obj.transform));
+                
+                _cellTileStash.Get(gridComp.cells[request.cellCoord]).blocked = true;
             }
         }
     
