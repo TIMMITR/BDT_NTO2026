@@ -35,6 +35,8 @@ namespace Features.StatePack.Systems
             
             _startEventsPhaseRequest = World.GetRequest<StartEventsPhaseRequest>();
             _endEventsPhaseRequest = World.GetRequest<EndEventsPhaseRequest>();
+
+            _turnPhaseStash.Add(World.CreateEntity());
         }
 
         public void OnUpdate(float deltaTime)

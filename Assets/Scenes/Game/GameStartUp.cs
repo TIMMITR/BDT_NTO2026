@@ -64,6 +64,8 @@ namespace Scenes.Game
             _updateGroup.AddSystem(new TargetSystem());
             _updateGroup.AddSystem(new RaycastSystem());
             
+            _updateGroup.AddSystem(new StateChangeSystem());
+            
             _updateGroup.AddSystem(new ChooseCellSystem());
             _updateGroup.AddSystem(new TrackChosenUnitSystem());
             _updateGroup.AddSystem(new BattleSystem(gameContext.gamePlan));
@@ -89,7 +91,6 @@ namespace Scenes.Game
             _updateGroup.AddSystem(new SpeedSystem());
             _updateGroup.AddSystem(new ResetSpeedSystem());
 
-            _updateGroup.AddSystem(new StateChangeSystem());
             
             _updateGroup.AddSystem(new StoryTalkPlayerSystem(gameContext.introTalk));
             

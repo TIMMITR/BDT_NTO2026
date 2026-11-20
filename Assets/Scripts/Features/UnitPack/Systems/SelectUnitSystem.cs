@@ -8,6 +8,8 @@ using Features.InputPack.Requests;
 using Features.PlayerPack;
 using Features.PlayerPack.Requests;
 using Features.SpeedPack;
+using Features.StatePack.Components;
+using Features.StatePack.Requests;
 using Features.UnitPack.Components;
 using Features.UnitPack.Requests;
 using Global;
@@ -20,7 +22,9 @@ namespace Features.UnitPack.Systems
         public World World { get; set; }
 
         private Filter _gridFilter;
-        private Filter _playerEndTurnFilter;
+        private Filter _turnPhaseFilter;
+        
+        private Stash<TurnPhaseComponent> _turnPhaseStash;
 
         private Stash<GridComponent> _gridStash;
         private Stash<ChosenCellComponent> _chosenCellStash;
@@ -38,7 +42,9 @@ namespace Features.UnitPack.Systems
         public void OnAwake()
         {
             _gridFilter = World.Filter.With<GridComponent>().Build();
-            _playerEndTurnFilter = World.Filter.With<PlayerTurnEndedTag>().Build();
+            _turnPhaseFilter = World.Filter.With<TurnPhaseComponent>().Build();
+            
+            _turnPhaseStash = World.GetStash<TurnPhaseComponent>();
 
             _gridStash = World.GetStash<GridComponent>();
             _chosenCellStash = World.GetStash<ChosenCellComponent>();
@@ -56,7 +62,9 @@ namespace Features.UnitPack.Systems
 
         public void OnUpdate(float deltaTime) // todo переписать
         {
-            if (!_playerEndTurnFilter.IsEmpty())
+            ref var turnPhaseComp = ref _turnPhaseStash.Get(_turnPhaseFilter.First());
+            
+            if(turnPhaseComp.phase != TurnPhase.Player)
                 return;
 
             var lmbClicked = false;

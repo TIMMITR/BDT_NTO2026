@@ -11,7 +11,7 @@ namespace Features.EndTurnPack.View
             if (World.Default == null) 
                 return;
             
-            World.Default.GetRequest<EndEventdPhaseRequest>().Publish(new EndEventdPhaseRequest());
+            World.Default.GetRequest<EndPlayerTurnRequest>().Publish(new EndPlayerTurnRequest());
         }
     }
 }
