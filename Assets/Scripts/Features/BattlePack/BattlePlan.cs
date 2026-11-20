@@ -27,14 +27,16 @@ namespace Features.BattlePack
         public IReadOnlyList<BattleTileData> Units => units;
         public IReadOnlyList<QuickTalkSet> QuickTalks => quickTalks;
     
-        [Serializable]
-        public struct BattleTileData
-        {
-            public int q;
-            public int r;
-            public int moveCost;
-            public bool blocked; // true если UnitConfig не пустой
-            public UnitConfig unitConfig; // может быть пустым
-        }
+        
+    }
+    
+    [Serializable]
+    public struct BattleTileData
+    {
+        public int q;
+        public int r;
+        public int moveCost;
+        public bool blocked; // если это препятствие
+        public UnitConfig unitConfig; // может быть пустым
     }
 }

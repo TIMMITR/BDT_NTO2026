@@ -1,7 +1,6 @@
 using Configs;
 using Features.CellSelectionPack.Components;
 using Features.CellSelectionPack.Requests;
-using Features.EndTurnPack.Requests;
 using Features.FightPack.Components;
 using Features.GridPack.Components;
 using Features.GridPack.Data;
@@ -21,7 +20,7 @@ namespace Features.UnitPack.Systems
         public World World { get; set; }
 
         private Filter _gridFilter;
-        private Filter _endTurnFilter;
+        private Filter _playerEndTurnFilter;
 
         private Stash<GridComponent> _gridStash;
         private Stash<ChosenCellComponent> _chosenCellStash;
@@ -39,7 +38,7 @@ namespace Features.UnitPack.Systems
         public void OnAwake()
         {
             _gridFilter = World.Filter.With<GridComponent>().Build();
-            _endTurnFilter = World.Filter.With<TurnEndedTag>().Build();
+            _playerEndTurnFilter = World.Filter.With<PlayerTurnEndedTag>().Build();
 
             _gridStash = World.GetStash<GridComponent>();
             _chosenCellStash = World.GetStash<ChosenCellComponent>();
@@ -57,7 +56,7 @@ namespace Features.UnitPack.Systems
 
         public void OnUpdate(float deltaTime) // todo переписать
         {
-            if (!_endTurnFilter.IsEmpty())
+            if (!_playerEndTurnFilter.IsEmpty())
                 return;
 
             var lmbClicked = false;

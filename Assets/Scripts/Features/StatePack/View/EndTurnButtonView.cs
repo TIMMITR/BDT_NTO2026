@@ -1,4 +1,4 @@
-using Features.EndTurnPack.Requests;
+using Features.StatePack.Requests;
 using Scellecs.Morpeh;
 using UnityEngine;
 
@@ -11,7 +11,7 @@ namespace Features.EndTurnPack.View
             if (World.Default == null) 
                 return;
             
-            World.Default.GetRequest<EndTurnRequest>().Publish(new EndTurnRequest());
+            World.Default.GetRequest<EndEventdPhaseRequest>().Publish(new EndEventdPhaseRequest());
         }
     }
 }
