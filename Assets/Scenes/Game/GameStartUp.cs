@@ -3,7 +3,6 @@ using Features.CameraPack.Systems;
 using Features.CellSelectionPack.Systems;
 using Features.CellTrackPack.Systems;
 using Features.DamagePack;
-using Features.EndTurnPack.Systems;
 using Features.FightPack.Systems;
 using Features.GridPack;
 using Features.StoryTalkPack.Systems;
@@ -18,6 +17,7 @@ using Features.QuickTalkPack.Systems;
 using Features.RaycastPack;
 using Features.ScenePack;
 using Features.SpeedPack.Systems;
+using Features.StatePack.Systems;
 using Features.TargetPack;
 using Features.UnitPack.Systems;
 using Scellecs.Morpeh;
@@ -64,6 +64,8 @@ namespace Scenes.Game
             _updateGroup.AddSystem(new TargetSystem());
             _updateGroup.AddSystem(new RaycastSystem());
             
+            _updateGroup.AddSystem(new StateChangeSystem());
+            
             _updateGroup.AddSystem(new ChooseCellSystem());
             _updateGroup.AddSystem(new TrackChosenUnitSystem());
             _updateGroup.AddSystem(new BattleSystem(gameContext.gamePlan));
@@ -89,7 +91,6 @@ namespace Scenes.Game
             _updateGroup.AddSystem(new SpeedSystem());
             _updateGroup.AddSystem(new ResetSpeedSystem());
 
-            _updateGroup.AddSystem(new EndTurnSystem());
             
             _updateGroup.AddSystem(new StoryTalkPlayerSystem(gameContext.introTalk));
             
