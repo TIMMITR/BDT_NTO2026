@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Configs;
 using Features.CellSelectionPack.Components;
 using Features.FightPack.Components;
@@ -22,7 +23,7 @@ namespace Features.FightPack.Systems
         private Stash<AttackDataComponent> _attackDataStash;
         private Stash<CellPositionComponent> _positionStash;
         
-        private Request<AttackOrderRequest> _attackOrderRequest;
+        private Request<ProjectileCastRequest> _projectileCastRequest;
 
         public void OnAwake()
         {
@@ -40,7 +41,7 @@ namespace Features.FightPack.Systems
             _attackDataStash = World.GetStash<AttackDataComponent>();
             _positionStash = World.GetStash<CellPositionComponent>();
             
-            _attackOrderRequest = World.GetRequest<AttackOrderRequest>();
+            _projectileCastRequest = World.GetRequest<ProjectileCastRequest>();
         }
 
         public void OnUpdate(float deltaTime)
@@ -68,10 +69,12 @@ namespace Features.FightPack.Systems
                     ? attackData.to 
                     : attackData.from;
 
+                List<AttackOrderRequest> orders = new();
+
                 foreach (var target in targets)
-                {
-                    _attackOrderRequest.Publish(new AttackOrderRequest(unit, target, origin));
-                }
+                    orders.Add(new AttackOrderRequest(unit, target, origin));
+                
+                _projectileCastRequest.Publish(new ProjectileCastRequest(attackData.from, attackData.to, attackData.spellConfig, orders));
                 
                 _delayStash.Remove(unit);
             }

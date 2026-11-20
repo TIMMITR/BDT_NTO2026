@@ -24,6 +24,14 @@ namespace Configs
         public SpellConfigSo nextSpell;
         public NextSpellOrigin nextSpellOrigin;
         public int nextSpellDelay; 
+        
+        [Header("Visual")]
+        public GameObject projectilePrefab;
+        public GameObject explosionPrefab;
+        public float projectileSpeed;
+        public float projectileHeight;
+        public float swayAmplitude;
+        public float explosionLifetime;
     }
 
     public enum SpellType
