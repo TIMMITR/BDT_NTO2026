@@ -1,9 +1,8 @@
 using Configs;
 using Features.CellSelectionPack.Components;
 using Features.CellSelectionPack.Requests;
-using Features.FightPack;
+using Features.EndTurnPack.Requests;
 using Features.FightPack.Components;
-using Features.FightPack.Requests;
 using Features.GridPack.Components;
 using Features.GridPack.Data;
 using Features.InputPack.Requests;
@@ -12,6 +11,7 @@ using Features.PlayerPack.Requests;
 using Features.SpeedPack;
 using Features.UnitPack.Components;
 using Features.UnitPack.Requests;
+using Global;
 using Scellecs.Morpeh;
 
 namespace Features.UnitPack.Systems
@@ -21,6 +21,7 @@ namespace Features.UnitPack.Systems
         public World World { get; set; }
 
         private Filter _gridFilter;
+        private Filter _endTurnFilter;
 
         private Stash<GridComponent> _gridStash;
         private Stash<ChosenCellComponent> _chosenCellStash;
@@ -29,7 +30,6 @@ namespace Features.UnitPack.Systems
         private Stash<SpeedComponent> _speedStash;
         private Stash<CellPositionComponent> _positionStash;
         private Stash<UnitAnimationComponent> _unitAnimationStash;
-        private Stash<CellTileComponent> _cellTileStash;
         private Stash<DelayAttackComponent> _delayAttackStash;
 
         private Request<LmbStartRequest> _lmbRequest;
@@ -39,6 +39,7 @@ namespace Features.UnitPack.Systems
         public void OnAwake()
         {
             _gridFilter = World.Filter.With<GridComponent>().Build();
+            _endTurnFilter = World.Filter.With<TurnEndedTag>().Build();
 
             _gridStash = World.GetStash<GridComponent>();
             _chosenCellStash = World.GetStash<ChosenCellComponent>();
@@ -47,7 +48,6 @@ namespace Features.UnitPack.Systems
             _speedStash = World.GetStash<SpeedComponent>();
             _positionStash = World.GetStash<CellPositionComponent>();
             _unitAnimationStash = World.GetStash<UnitAnimationComponent>();
-            _cellTileStash = World.GetStash<CellTileComponent>();
             _delayAttackStash = World.GetStash<DelayAttackComponent>();
 
             _lmbRequest = World.GetRequest<LmbStartRequest>();
@@ -57,7 +57,8 @@ namespace Features.UnitPack.Systems
 
         public void OnUpdate(float deltaTime) // todo переписать
         {
-            if (_gridFilter.IsEmpty()) return;
+            if (!_endTurnFilter.IsEmpty())
+                return;
 
             var lmbClicked = false;
             foreach (var request in _lmbRequest.Consume())
