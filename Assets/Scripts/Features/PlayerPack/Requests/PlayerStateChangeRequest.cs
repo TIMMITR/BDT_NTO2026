@@ -2,8 +2,5 @@
 
 namespace Features.PlayerPack.Requests
 {
-    public struct PlayerStateChangeRequest : IRequestData
-    {
-        public PlayerPositionState newPositionState;
-    }
+    public struct PlayerStateChangeRequest : IRequestData { }
 }

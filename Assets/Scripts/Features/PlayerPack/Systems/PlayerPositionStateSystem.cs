@@ -26,10 +26,10 @@ namespace Features.PlayerPack.Systems
         {
             if (_filter.IsEmpty()) return;
             
-            foreach (var request in _request.Consume())
+            foreach (var _ in _request.Consume())
             {
                 ref var playerPositionComponent = ref _stash.Get(_filter.First());
-                playerPositionComponent.positionState = request.newPositionState;
+                playerPositionComponent.positionState = !playerPositionComponent.positionState;
                 _event.NextFrame(new PlayerStateChangeEvent
                 {
                     newPositionState = playerPositionComponent.positionState

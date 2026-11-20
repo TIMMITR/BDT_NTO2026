@@ -4,6 +4,6 @@ namespace Features.PlayerPack.Events
 {
     public struct PlayerStateChangeEvent : IEventData
     {
-        public PlayerPositionState newPositionState;
+        public bool newPositionState;
     }
 }

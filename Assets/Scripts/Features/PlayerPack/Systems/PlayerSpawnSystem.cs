@@ -46,7 +46,7 @@ namespace Features.PlayerPack.Systems
             playerTransformComp.value = playerGameObject.transform;
             
             ref var playerPositionComponent = ref World.GetStash<PlayerPositionComponent>().Add(playerEntity);
-            playerPositionComponent.positionState = PlayerPositionState.Idle;
+            playerPositionComponent.positionState = false;
             playerPositionComponent.progress = 0f;
             
             World.GetStash<PlayerTag>().Add(playerEntity);

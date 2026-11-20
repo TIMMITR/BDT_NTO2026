@@ -68,15 +68,8 @@ namespace Features.UnitPack.Systems
                 return;
 
             var lmbClicked = false;
-            foreach (var request in _lmbRequest.Consume())
-            {
-                lmbClicked = true;
-                World.GetRequest<PlayerStateChangeRequest>().Publish(new PlayerStateChangeRequest
-                {
-                    newPositionState = PlayerPositionState.Battle
-                });
-            }
-
+            foreach (var _ in _lmbRequest.Consume()) lmbClicked = true;
+            
             var gridEntity = _gridFilter.First();
 
             if (!lmbClicked || !_chosenCellStash.Has(gridEntity)) return;

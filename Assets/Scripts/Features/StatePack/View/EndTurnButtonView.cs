@@ -2,7 +2,7 @@ using Features.StatePack.Requests;
 using Scellecs.Morpeh;
 using UnityEngine;
 
-namespace Features.EndTurnPack.View
+namespace Features.StatePack.View
 {
     public class EndTurnButtonView : MonoBehaviour
     {

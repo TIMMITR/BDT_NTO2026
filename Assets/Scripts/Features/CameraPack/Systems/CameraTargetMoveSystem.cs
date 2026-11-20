@@ -63,7 +63,7 @@ namespace Features.CameraPack.Systems
 
             ref var positionComponent = ref _positionStash.Get(_playerFilter.First());
 
-            if (positionComponent.positionState == PlayerPositionState.Idle)
+            if (!positionComponent.positionState)
             {
                 target.SetPositionAndRotation(_homePosition, _homeRotation);
                 return;
