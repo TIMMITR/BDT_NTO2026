@@ -1,5 +1,6 @@
 using Features.CellSelectionPack.Components;
 using Features.GridPack.Components;
+using Features.GridPack.Data;
 using Features.PlayerPack;
 using Features.TransformPack;
 using Global;
@@ -73,10 +74,10 @@ namespace Features.CameraPack.Systems
 
             var gridEntity = _gridFilter.First();
 
-            if (!_chosenCellStash.Has(gridEntity)) return;
-
             ref var grid = ref _gridStash.Get(gridEntity);
-            var chosenCoord = _chosenCellStash.Get(gridEntity).cellCoord;
+            var chosenCoord = _chosenCellStash.Has(gridEntity)
+                ? _chosenCellStash.Get(gridEntity).cellCoord
+                : GetFallbackCellCoord(gridEntity);
 
             var originDepth = 0;
 
@@ -84,10 +85,11 @@ namespace Features.CameraPack.Systems
             {
                 ref var selected = ref _selectedUnitStash.Get(gridEntity);
 
-                if (!_cellPositionStash.Has(selected.unit)) return;
-
-                var unitCoord = _cellPositionStash.Get(selected.unit).coord;
-                originDepth = 2 * unitCoord.R + unitCoord.Q;
+                if (_cellPositionStash.Has(selected.unit))
+                {
+                    var unitCoord = _cellPositionStash.Get(selected.unit).coord;
+                    originDepth = 2 * unitCoord.R + unitCoord.Q;
+                }
             }
 
             var chosenDepth = 2 * chosenCoord.R + chosenCoord.Q;
@@ -100,6 +102,19 @@ namespace Features.CameraPack.Systems
             var position = Vector3.Lerp(_corridorStart.position, _corridorEnd.position, t);
             var rotation = Quaternion.Slerp(_corridorStart.rotation, _corridorEnd.rotation, t);
             target.SetPositionAndRotation(position, rotation);
+        }
+
+        private CellCoord GetFallbackCellCoord(Entity gridEntity)
+        {
+            if (_selectedUnitStash.Has(gridEntity))
+            {
+                var selected = _selectedUnitStash.Get(gridEntity);
+
+                if (_cellPositionStash.Has(selected.unit))
+                    return _cellPositionStash.Get(selected.unit).coord;
+            }
+
+            return default;
         }
 
         public void Dispose() { }

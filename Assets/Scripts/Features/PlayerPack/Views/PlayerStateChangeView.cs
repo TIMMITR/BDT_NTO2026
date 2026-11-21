@@ -8,8 +8,11 @@ namespace Features.PlayerPack.Views
     {
         public void OnChangeCameraStateClicked()
         {
-            if (World.Default == null) 
+            if (World.Default == null)
+            {
+                Debug.LogError("PlayerStateChangeView.OnChangeCameraStateClicked() World.Default == null");
                 return;
+            }
             
             World.Default.GetRequest<PlayerStateChangeRequest>().Publish(new PlayerStateChangeRequest());
         }
