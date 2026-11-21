@@ -1,5 +1,4 @@
 using Features.DamagePack;
-using Features.FightPack.Events;
 using Features.FightPack.Requests;
 using Features.GridPack.Components;
 using Features.GridPack.Data;
@@ -21,7 +20,6 @@ namespace Features.FightPack.Systems
         private Request<KnockbackRequest> _knockbackRequest;
         private Request<AttackOrderRequest> _attackRequest;
         private Request<DamageRequest> _damageRequest;
-        private Event<UnitAttackedEvent> _unitAttackedEvent;
         
         public void OnAwake()
         {
@@ -31,7 +29,6 @@ namespace Features.FightPack.Systems
             _knockbackRequest = World.GetRequest<KnockbackRequest>();
             _attackRequest = World.GetRequest<AttackOrderRequest>();
             _damageRequest = World.GetRequest<DamageRequest>();
-            _unitAttackedEvent = World.GetEvent<UnitAttackedEvent>();
         }
 
         public void OnUpdate(float deltaTime)
@@ -42,7 +39,6 @@ namespace Features.FightPack.Systems
                 var spellData = spell.spellData;
                 
                 _damageRequest.Publish(new DamageRequest(request.source, request.target, spellData.damage));
-                _unitAttackedEvent.NextFrame(new UnitAttackedEvent(request.source, request.target));
 
                 if (spell.spellData.punchDistance > 0)
                 {

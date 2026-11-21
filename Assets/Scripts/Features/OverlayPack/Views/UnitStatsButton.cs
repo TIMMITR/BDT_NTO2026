@@ -1,29 +1,31 @@
-﻿using UnityEngine;
-using UnityEngine.UI;
+﻿using Scellecs.Morpeh;
+using UnityEngine;
 
 namespace Features.OverlayPack.Views
 {
-    public sealed class UnitStatsButton : MonoBehaviour
+    public class UnitStatsButton : MonoBehaviour
     {
-        [SerializeField] private Button button;
-        [SerializeField] private HeroSlotView heroSlot;
-
-        private void Awake()
-        {
-            if (button != null)
-                button.onClick.AddListener(OnUnitStats);
-        }
-
+        public int id; // номер героя 
+        public bool activeStats; // открыт ли он
+        public Vector2 position; // координаты по x для закрытого и открытого состояния
+        
         public void OnUnitStats()
         {
-            if (heroSlot != null)
-                heroSlot.Toggle();
+            if (World.Default == null) 
+                return;
+            
+            World.Default.GetRequest<UnitStatsRequest>().Publish(new UnitStatsRequest
+            {
+                id = id,
+                activeStats =activeStats
+            });
         }
+        
+    }
 
-        private void OnDestroy()
-        {
-            if (button != null)
-                button.onClick.RemoveListener(OnUnitStats);
-        }
+    public struct UnitStatsRequest : IRequestData
+    {
+        public int id;
+        public bool activeStats;
     }
 }
