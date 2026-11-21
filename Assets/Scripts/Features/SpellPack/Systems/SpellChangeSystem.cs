@@ -45,9 +45,17 @@ namespace Features.SpellPack.Systems
                     continue;
                 
                 ref var list = ref _spellListStash.Get(unit);
-                
-                list.currentIndex = request.index;
-                _spellStash.Set(unit, new SpellDataComponent(list.spellList[request.index]));
+
+                if (list.currentIndex == request.index && _spellStash.Has(unit))
+                {
+                    list.currentIndex = -1;
+                    _spellStash.Remove(unit);
+                }
+                else
+                {
+                    list.currentIndex = request.index;
+                    _spellStash.Set(unit, new SpellDataComponent(list.spellList[request.index]));
+                }
             }
         }
     

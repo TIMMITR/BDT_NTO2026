@@ -19,6 +19,7 @@ using Features.QuickTalkPack.Systems;
 using Features.RaycastPack;
 using Features.ScenePack;
 using Features.SpeedPack.Systems;
+using Features.SpellPack.Systems;
 using Features.StatePack.Systems;
 using Features.TargetPack;
 using Features.UnitPack.Systems;
@@ -101,6 +102,7 @@ namespace Scenes.Game
 
             _updateGroup.AddSystem(new EnemyAISystem());
 
+            _updateGroup.AddSystem(new SpellChangeSystem());
             
             _updateGroup.AddSystem(new StoryTalkPlayerSystem(gameContext.introTalk));
             

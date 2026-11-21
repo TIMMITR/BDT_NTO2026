@@ -1,18 +1,16 @@
 using Configs;
 using Features.CellSelectionPack.Components;
+using Features.CellSelectionPack.Events;
 using Features.CellSelectionPack.Requests;
 using Features.FightPack.Components;
 using Features.GridPack.Components;
 using Features.GridPack.Data;
 using Features.InputPack.Requests;
-using Features.PlayerPack;
-using Features.PlayerPack.Requests;
 using Features.SpeedPack;
+using Features.SpellPack.Components;
 using Features.StatePack.Components;
-using Features.StatePack.Requests;
 using Features.UnitPack.Components;
 using Features.UnitPack.Requests;
-using Global;
 using Scellecs.Morpeh;
 
 namespace Features.UnitPack.Systems
@@ -34,10 +32,13 @@ namespace Features.UnitPack.Systems
         private Stash<CellPositionComponent> _positionStash;
         private Stash<UnitAnimationComponent> _unitAnimationStash;
         private Stash<DelayAttackComponent> _delayAttackStash;
+        private Stash<SpellDataComponent> _spellDataStash;
 
         private Request<LmbStartRequest> _lmbRequest;
         private Request<MoveUnitRequest> _moveUnitRequest;
         private Request<ColorCellRequest> _colorCellRequest;
+
+        private Event<CellChooseChangedEvent> _cellChoosedChangedEvent;
 
         public void OnAwake()
         {
@@ -54,10 +55,13 @@ namespace Features.UnitPack.Systems
             _positionStash = World.GetStash<CellPositionComponent>();
             _unitAnimationStash = World.GetStash<UnitAnimationComponent>();
             _delayAttackStash = World.GetStash<DelayAttackComponent>();
+            _spellDataStash = World.GetStash<SpellDataComponent>();
 
             _lmbRequest = World.GetRequest<LmbStartRequest>();
             _moveUnitRequest = World.GetRequest<MoveUnitRequest>();
             _colorCellRequest = World.GetRequest<ColorCellRequest>();
+
+            _cellChoosedChangedEvent = World.GetEvent<CellChooseChangedEvent>();
         }
 
         public void OnUpdate(float deltaTime) // todo переписать
@@ -88,13 +92,20 @@ namespace Features.UnitPack.Systems
                 // если второй клеткой выбран союзный юнит, то перезаписываем данные для нового юнита
                 if (teamSide == TeamSide.Player)
                 {
+                    if (unit == selected.unit)
+                    {
+                        _selectedUnitStash.Remove(gridEntity);
+                        _cellChoosedChangedEvent.NextFrame(new CellChooseChangedEvent(clicked));
+                        return;
+                    }
+                    
                     if (TryGetPlayerSpeed(unit, out var moveSpeed))
                     {
                         _selectedUnitStash.Set(gridEntity, new SelectedUnitComponent(unit, teamSide, moveSpeed, selected.path));
                         return;
                     }
                 }
-                else
+                else if (_spellDataStash.Has(selected.unit))
                 {
                     _delayAttackStash.Set(selected.unit, new DelayAttackComponent(unit));
                 }

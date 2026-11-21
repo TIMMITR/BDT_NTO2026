@@ -1,17 +1,14 @@
 using System.Collections.Generic;
-using System.IO;
 using Configs;
 using Features.CellSelectionPack.Components;
 using Features.CellSelectionPack.Requests;
 using Features.CellTrackPack.Events;
 using Features.FightPack;
-using Features.GridPack;
 using Features.GridPack.Components;
 using Features.GridPack.Data;
 using Features.PathFinderPack;
 using Features.SpellPack.Components;
 using Scellecs.Morpeh;
-using UnityEngine;
 
 namespace Features.CellSelectionPack.Systems
 {
@@ -38,6 +35,7 @@ namespace Features.CellSelectionPack.Systems
 
         private CellCoord? _lastFrom; 
         private CellCoord? _lastTo;
+        private SpellConfigSo _lastSpell;
 
         private List<CellCoord> _fullPath = new();
 
@@ -74,10 +72,15 @@ namespace Features.CellSelectionPack.Systems
                     ? _positionStash.Get(unit.Value).coord : null;
                 CellCoord? to = _chosenCellStash.Has(gridEntity) ? _chosenCellStash.Get(gridEntity).cellCoord : null;
 
-                if (from == _lastFrom && to == _lastTo) return;
+                var activeSpell = unit.HasValue && _spellDataStash.Has(unit.Value)
+                    ? _spellDataStash.Get(unit.Value).spellData
+                    : null;
+                
+                if (from == _lastFrom && to == _lastTo && activeSpell == _lastSpell) return;
             
                 _lastFrom = from;
                 _lastTo = to;
+                _lastSpell = activeSpell;
 
                 _clearColorsRequest.Publish(new ClearColorsRequest()); // полная чистка доски
 
@@ -100,17 +103,21 @@ namespace Features.CellSelectionPack.Systems
                 
                 if (evt.cellSide == TeamSide.Enemy || evt.cellSide == TeamSide.None)
                 {
-                    if(!_spellDataStash.Has(unit.Value))
-                        return;
+                    if (activeSpell != null)
+                    {
+                        _attackDataStash.Set(gridEntity, new AttackDataComponent(activeSpell, from.Value, to.Value));
+                        ref var attackComp = ref _attackDataStash.Get(gridEntity);
                     
-                    var spell = _spellDataStash.Get(unit.Value).spellData;
+                        BuildAttackPath(ref gridComp, ref attackComp,speed, out var path);
                     
-                    _attackDataStash.Set(gridEntity, new AttackDataComponent(spell, from.Value, to.Value));
-                    ref var attackComp = ref _attackDataStash.Get(gridEntity);
-                    
-                    BuildAttackPath(ref gridComp, ref attackComp,speed, out var path);
-                    
-                    selectedUnitComp.path = path;
+                        selectedUnitComp.path = path;
+                    }
+                    else
+                    {   
+                        BuildPreviewPath(ref gridComp, from.Value, to.Value, speed, out var path);
+                        
+                        selectedUnitComp.path = path;
+                    }
                 }
                 
             }
