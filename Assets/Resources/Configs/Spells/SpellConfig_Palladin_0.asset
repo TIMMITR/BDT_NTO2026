@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   spellType: 0
   damage: 3
-  range: 1
+  range: 3
   rangeType: 0
   areaRadius: 1
   ignoreArmor: 0
@@ -26,9 +26,9 @@ MonoBehaviour:
   nextSpell: {fileID: 0}
   nextSpellOrigin: 0
   nextSpellDelay: 0
-  projectilePrefab: {fileID: 0}
+  projectilePrefab: {fileID: 7930793049123211480, guid: 1ef7ec3d82f43ef47972c6ca18356b03, type: 3}
   explosionPrefab: {fileID: 0}
   projectileSpeed: 0
-  projectileHeight: 0
+  projectileHeight: 0.5
   swayAmplitude: 0
   explosionLifetime: 0

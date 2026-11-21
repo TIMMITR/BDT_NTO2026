@@ -35,7 +35,7 @@ MonoBehaviour:
     blocked: 0
     unitConfig: {fileID: 11400000, guid: 3bddafe26b13a444f92c91c32f4bc2c8, type: 2}
   - q: -1
-    r: 4
+    r: 3
     moveCost: 1
     blocked: 0
     unitConfig: {fileID: 11400000, guid: 3bddafe26b13a444f92c91c32f4bc2c8, type: 2}
@@ -59,6 +59,16 @@ MonoBehaviour:
     moveCost: 1
     blocked: 0
     unitConfig: {fileID: 11400000, guid: 3bddafe26b13a444f92c91c32f4bc2c8, type: 2}
+  - q: -2
+    r: 5
+    moveCost: 1
+    blocked: 0
+    unitConfig: {fileID: 11400000, guid: 2fe87d62f0add3e42996d44db5b37a1e, type: 2}
+  - q: 2
+    r: 3
+    moveCost: 1
+    blocked: 0
+    unitConfig: {fileID: 11400000, guid: 2fe87d62f0add3e42996d44db5b37a1e, type: 2}
   controlpoints:
   - q: -4
     r: 4

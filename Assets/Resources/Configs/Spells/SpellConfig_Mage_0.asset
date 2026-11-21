@@ -14,15 +14,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   spellType: 0
   damage: 7
-  range: 4
+  range: 2
   rangeType: 1
   areaRadius: 1
   ignoreArmor: 0
   isMultipleHit: 0
   canHitAllies: 0
-  punchDistance: 2
-  punchDamage: 0
-  punchReturnDistance: 1
+  punchDistance: 1
+  punchDamage: 1
+  punchReturnDistance: 0
   nextSpell: {fileID: 0}
   nextSpellOrigin: 0
   nextSpellDelay: 0

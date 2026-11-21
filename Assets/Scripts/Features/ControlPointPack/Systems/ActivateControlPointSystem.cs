@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using Configs;
 using Features.BattlePack;
@@ -32,6 +31,7 @@ namespace Features.ControlPointPack.Systems
         private Stash<UnitComponent> _unitStash;
         private Stash<ControlPointComponent> _controlPointStash;
         private Stash<ControlPointActivatedTag> _controlPointActivatedTag;
+        private Stash<CellTileComponent> _cellTileStash;
 
         private Event<PhaseChangedEvent> _phaseChangedEvent;
         
@@ -54,6 +54,7 @@ namespace Features.ControlPointPack.Systems
             _unitStash = World.GetStash<UnitComponent>();
             _controlPointStash = World.GetStash<ControlPointComponent>();
             _controlPointActivatedTag = World.GetStash<ControlPointActivatedTag>();
+            _cellTileStash = World.GetStash<CellTileComponent>();
             
             _phaseChangedEvent = World.GetEvent<PhaseChangedEvent>();
             
@@ -92,33 +93,37 @@ namespace Features.ControlPointPack.Systems
                         var grid = _gridFilter.First();
                         ref var gridComp = ref _gridStash.Get(grid);
 
-                        var spawnCoord = FindRelevantCell(gridComp, controlPointComp.cellCoord);
-                        var config = spawnUnits[Random.Range(0, spawnUnits.Count)];
+                        var spawnCoord = FindRelevantCell(gridComp, controlPointComp.cellCoord); // todo добавить возможность спавна на нескольких клетках
 
-                        if (spawnCoord != default(CellCoord))
+                        if (spawnCoord.HasValue)
                         {
-                            _unitSpawnRequest.Publish(new UnitSpawnRequest(spawnCoord, config, true, false));
+                            var config = spawnUnits[Random.Range(0, spawnUnits.Count)];
+                            _unitSpawnRequest.Publish(new UnitSpawnRequest(spawnCoord.Value, config, false, false));
                         }
                     }
-                
-                    _controlPointActivatedTag.Add(controlPoint);
+                    
+                    _controlPointActivatedTag.Add(controlPoint); // todo возможно стоит вынести в отдельный цикл
                 }
             }
         }
 
-        private CellCoord FindRelevantCell(GridComponent gridComp, CellCoord from)
+        private CellCoord? FindRelevantCell(GridComponent gridComp, CellCoord from)
         {
             foreach (var dir in PathFinder.Directions)
             {
                 var coord = new CellCoord(from.Q + dir.Q, from.R + dir.R);
-
-                var hasUnit = GridOccupancy.TryGetUnit(gridComp, _unitStash, coord, out var unit);
-
-                if (!hasUnit)
-                    return coord;
+                
+                if(!gridComp.cells.TryGetValue(coord, out var cell))
+                    continue;
+                if (gridComp.takenCells.ContainsKey(coord))
+                    continue;
+                if (_cellTileStash.Get(cell).blocked)
+                    continue;
+                
+                return coord;
             }
-
-            return default;
+            
+            return null;
         }
 
         public void Dispose()

@@ -49,6 +49,14 @@ namespace Features.StatePack.Systems
                         _startEventsPhaseRequest.Publish(new StartEventsPhaseRequest(), allowNextFrame: true);
                         break;
                     
+                    case (TurnPhase.Events, TurnType.Start):
+                        _endEventsPhaseRequest.Publish(new EndEventsPhaseRequest(), allowNextFrame: true);
+                        break;
+ 
+                    case (TurnPhase.Events, TurnType.End):
+                        _startPlayerTurnRequest.Publish(new StartPlayerTurnRequest(), allowNextFrame: true);
+                        break;
+                    
                 }
             }
         }

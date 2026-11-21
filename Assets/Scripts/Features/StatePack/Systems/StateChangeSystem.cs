@@ -59,6 +59,9 @@ namespace Features.StatePack.Systems
             
             foreach (var _ in _endPlayerTurnRequest.Consume())
             {
+                if (turnPhaseComp.phase != TurnPhase.Player)
+                    continue;
+                
                 Debug.Log("Player phase ended");
                 
                 turnPhaseComp.phase = TurnPhase.None;

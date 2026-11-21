@@ -55,7 +55,7 @@ namespace Features.FightPack.Systems
 
                 attackData.from = _positionStash.Get(unit).coord;
 
-                if (!SpellArea.TryHitFrom(gridComp, _cellTileStash, //todo возможно стоит попробовать избежать пересчитывания
+                if (!SpellArea.TryHitFrom(gridComp, _cellTileStash, // todo возможно стоит попробовать избежать пересчитывания
                         attackData.spellConfig,
                         attackData.from, attackData.to, 
                         out attackData.dir))
@@ -64,7 +64,8 @@ namespace Features.FightPack.Systems
                     continue;
                 }
                 
-                var targets = SpellArea.CollectTargets(gridComp, _cellTileStash, _unitStash, attackData, TeamSide.Player);
+                var casterSide = _unitStash.Get(unit).teamSide;
+                var targets = SpellArea.CollectTargets(gridComp, _cellTileStash, _unitStash, attackData, casterSide);
                 var origin = attackData.spellConfig.rangeType == SpellRangeType.Area 
                     ? attackData.to 
                     : attackData.from;

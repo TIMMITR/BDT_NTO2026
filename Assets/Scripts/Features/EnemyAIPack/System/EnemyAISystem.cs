@@ -167,6 +167,9 @@ namespace Features.EnemyAIPack.System
             if (!TryFindPlayer(gridComp, from, out var target))
                 return false;
             
+            if (!_spellStash.Has(unit))
+                return false;
+            
             var spell = _spellStash.Get(unit).spellData;
 
             if (from.DistanceTo(target) <= spell.range)
@@ -220,7 +223,7 @@ namespace Features.EnemyAIPack.System
         
         private bool TryGetRingCells(GridComponent gridComp, CellCoord center, int radius, out List<CellCoord> resultPath)
         {
-            resultPath = null;
+            resultPath = new List<CellCoord>();
             
             foreach (var coord in gridComp.cells.Keys)
             {
@@ -230,7 +233,7 @@ namespace Features.EnemyAIPack.System
                     resultPath.Add(coord);
             }
             
-            return resultPath != null;
+            return resultPath.Count >= 0;
         }
 
         private void Attack(Entity gridEntity, Entity unit, SpellConfigSo spell, CellCoord from, CellCoord target)
