@@ -17,9 +17,9 @@ MonoBehaviour:
   teamSide: 1
   prefab: {fileID: 2706171105917789830, guid: 9de0d4fb05e3d4844a0589ce46e7b030, type: 3}
   stats:
-    maxHealth: 100
+    maxHealth: 20
     multiplier: 0
-    defence: 5
+    defence: 3
     moveSpeed: 0
   posY: 0.3
   spellList: []

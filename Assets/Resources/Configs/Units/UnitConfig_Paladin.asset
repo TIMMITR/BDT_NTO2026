@@ -18,9 +18,9 @@ MonoBehaviour:
   prefab: {fileID: 3427180298912217044, guid: f047eb44149428a408e29b035bbfdbe8, type: 3}
   stats:
     maxHealth: 12
-    multiplier: 10
-    defence: 2
-    moveSpeed: 3
+    multiplier: 1
+    defence: 8
+    moveSpeed: 2
   posY: 0.15
   spellList:
   - {fileID: 11400000, guid: ed420db46f168ea4e92a83cad222a7cb, type: 2}
