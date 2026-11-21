@@ -30,6 +30,8 @@ namespace Features.CameraPack.Systems
         private Vector3 _homePosition;
         private Quaternion _homeRotation;
         private bool _homeCached;
+        private bool _init;
+        private CellCoord _prevCellCoord;
 
         public CameraTargetMoveSystem(Transform corridorStart, Transform corridorEnd)
         {
@@ -62,6 +64,8 @@ namespace Features.CameraPack.Systems
                 _homePosition = target.position;
                 _homeRotation = target.rotation;
                 _homeCached = true;
+                _init = false;
+                Debug.Log("dfsdf");
             }
 
             ref var positionComponent = ref _positionStash.Get(_playerFilter.First());
@@ -75,9 +79,25 @@ namespace Features.CameraPack.Systems
             var gridEntity = _gridFilter.First();
 
             ref var grid = ref _gridStash.Get(gridEntity);
-            var chosenCoord = _chosenCellStash.Has(gridEntity)
-                ? _chosenCellStash.Get(gridEntity).cellCoord
-                : new CellCoord(0, 0);
+
+            
+                
+            CellCoord chosenCoord;
+            if (_chosenCellStash.Has(gridEntity) && _init)
+            {
+                chosenCoord = _chosenCellStash.Get(gridEntity).cellCoord;
+                _prevCellCoord = chosenCoord;
+            }
+            else if (!_chosenCellStash.Has(gridEntity) && _init)
+            {
+                chosenCoord = _prevCellCoord;
+            }
+            else
+            {
+                chosenCoord = new CellCoord(0, 0);
+                Debug.Log("dfsdf56756756");
+                _init = true;
+            }
 
             var focusDepth = (float)(2 * chosenCoord.R + chosenCoord.Q);
 
