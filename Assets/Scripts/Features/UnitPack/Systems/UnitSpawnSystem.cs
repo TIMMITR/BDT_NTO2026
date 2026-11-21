@@ -2,7 +2,6 @@ using Configs;
 using Features.DamagePack;
 using Features.GridPack;
 using Features.GridPack.Components;
-using Features.GridPack.Data;
 using Features.HealthPack;
 using Features.MeshPack;
 using Features.SpeedPack;
@@ -10,6 +9,7 @@ using Features.SpellPack.Components;
 using Features.TransformPack;
 using Features.UnitPack.Components;
 using Features.UnitPack.Requests;
+using Global;
 using Scellecs.Morpeh;
 using UnityEngine;
 
@@ -22,6 +22,7 @@ namespace Features.UnitPack.Systems
         private Filter _gridFilter;
         
         private Stash<SpellDataComponent> _spellStash;
+        private Stash<SpellListComponent> _spellListStash;
         
         private Stash<GridComponent> _gridStash;
         private Stash<TransformComponent> _transformStash;
@@ -34,6 +35,7 @@ namespace Features.UnitPack.Systems
         private Stash<DefenceComponent> _defenceStash;
         private Stash<DamageComponent> _damageStash;
         private Stash<SpeedComponent> _speedStash;
+        private Stash<BaseTag> _baseTagStash;
         
         private Request<UnitSpawnRequest> _request;
         
@@ -52,8 +54,10 @@ namespace Features.UnitPack.Systems
             _defenceStash = World.GetStash<DefenceComponent>();
             _damageStash = World.GetStash<DamageComponent>();
             _speedStash = World.GetStash<SpeedComponent>();
+            _baseTagStash = World.GetStash<BaseTag>();
             
             _spellStash = World.GetStash<SpellDataComponent>();
+            _spellListStash = World.GetStash<SpellListComponent>();
             
             _request = World.GetRequest<UnitSpawnRequest>();
         }
@@ -72,15 +76,25 @@ namespace Features.UnitPack.Systems
                 spawnPos.y = unitConfig.PosY;
                 
                 Entity newUnit = World.CreateEntity();
-                var unitObj = Object.Instantiate(unitConfig.Prefab, spawnPos, Quaternion.identity);
+                var unitObj = Object.Instantiate(unitConfig.Prefab, spawnPos, Quaternion.Euler(0f, unitConfig.SpawnRotationY, 0f));
                 var mr = unitObj.GetComponent<MeshRenderer>();
                 
                 _meshRendererStash.Add(newUnit, new MeshRendererComponent { value = mr });
                 _transformStash.Add(newUnit, new TransformComponent { value = unitObj.transform });
-                _spellStash.Add(newUnit, new SpellDataComponent(unitConfig.SpellConfig));
+
+                var spells = unitConfig.SpellList;
+
+                if (spells.Count > 0) // todo для сооружений без спелов
+                {
+                    _spellListStash.Add(newUnit, new SpellListComponent(spells));
+                    _spellStash.Add(newUnit, new SpellDataComponent(spells[0]));
+                }
                 
                 ApplyUnitComponents(newUnit, unitConfig);
 
+                if (request.isBase)
+                    _baseTagStash.Add(newUnit);
+                
                 GridOccupancy.Place(ref gridComp, _tileStash, _positionStash, newUnit, cellCoord, request.isBlocked);
             }
         }

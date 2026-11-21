@@ -68,7 +68,8 @@ namespace Features.BattlePack
                     (
                         new CellCoord(tile.q, tile.r),
                         tile.unitConfig,
-                        tile.blocked
+                        tile.blocked,
+                        false
                     ));
                 }
 
@@ -80,6 +81,14 @@ namespace Features.BattlePack
                         new CellCoord(controlPoint.q, controlPoint.r)
                     ));
                 }
+
+                _unitSpawnRequest.Publish(new UnitSpawnRequest
+                (
+                    new CellCoord(battlePlan.BaseCoordQ, battlePlan.BaseCoordR),
+                    battlePlan.BaseConfig,
+                    true,
+                    true
+                ));    
                 
                 _battleEvent.NextFrame(new BattleEvent()); // начинается бой
                 

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Configs
@@ -19,7 +20,8 @@ namespace Configs
         };
 
         [SerializeField] private float posY;
-        [SerializeField] private SpellConfigSo spellConfig;
+        [SerializeField] private List<SpellConfigSo> spellList;
+        [SerializeField] private float spawnRotationY;
         
         public string Name => characterName;
         public UnitClass Class => unitClass;
@@ -27,7 +29,8 @@ namespace Configs
         public UnitStats Stats => stats;
         public TeamSide TeamSide => teamSide;
         public float PosY => posY;
-        public SpellConfigSo SpellConfig => spellConfig;
+        public List<SpellConfigSo> SpellList => spellList;
+        public float SpawnRotationY => spawnRotationY;
     }
     
     [Serializable]
@@ -47,7 +50,9 @@ namespace Configs
         // под управлением противника
         Skeleton, 
         Ranger,
-        Warlock
+        Warlock,
+        // статичные объекты
+        Base
     }
     
     public enum TeamSide

@@ -1,6 +1,7 @@
 ﻿using Features.PlayerPack.Events;
 using Features.PlayerPack.Requests;
 using Scellecs.Morpeh;
+using UnityEngine;
 
 namespace Features.PlayerPack.Systems
 {
@@ -30,6 +31,7 @@ namespace Features.PlayerPack.Systems
             {
                 ref var playerPositionComponent = ref _stash.Get(_filter.First());
                 playerPositionComponent.positionState = !playerPositionComponent.positionState;
+                
                 _event.NextFrame(new PlayerStateChangeEvent
                 {
                     newPositionState = playerPositionComponent.positionState

@@ -70,5 +70,9 @@ MonoBehaviour:
       prefab: {fileID: 9063286301332852021, guid: 29c316478a1a5a24aa80c22e8a5109b5, type: 3}
   quickTalks:
   - {fileID: 11400000, guid: 0e8183d4d2d24b243aa05c6605c10947, type: 2}
-  controlPointSpawnUnits: []
-  manaReward: 0
+  controlPointSpawnUnits:
+  - {fileID: 11400000, guid: 3bddafe26b13a444f92c91c32f4bc2c8, type: 2}
+  baseCoordQ: 0
+  baseCoordR: 5
+  baseConfig: {fileID: 11400000, guid: 620efb042bf8b134dbf37ac0f17ba942, type: 2}
+  manaReward: 1

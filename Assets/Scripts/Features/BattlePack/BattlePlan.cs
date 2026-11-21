@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Configs;
+using Features.GridPack.Data;
 using Features.QuickTalkPack.Data;
 //using Features.QuickTalkPack.Data;
 using UnityEngine;
@@ -26,6 +27,10 @@ namespace Features.BattlePack
         [SerializeField] private List<QuickTalkSet> quickTalks = new();
         [SerializeField] private List<UnitConfig> controlPointSpawnUnits = new();
 
+        [SerializeField] private int baseCoordQ;
+        [SerializeField] private int baseCoordR;
+        [SerializeField] private UnitConfig baseConfig;
+
         [SerializeField] private int manaReward;
         
         public EnemyConfigSo EnemyConfig => enemyConfig;
@@ -33,6 +38,10 @@ namespace Features.BattlePack
         public IReadOnlyList<ControlPointTileData> ControlPoints => controlpoints;
         public IReadOnlyList<QuickTalkSet> QuickTalks => quickTalks;
         public List<UnitConfig> ControlPointSpawnUnits => controlPointSpawnUnits;
+        
+        public int BaseCoordQ => baseCoordQ;
+        public int BaseCoordR => baseCoordR;
+        public UnitConfig BaseConfig => baseConfig;
         
         public int ManaReward => manaReward;
     }

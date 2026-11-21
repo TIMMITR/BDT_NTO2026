@@ -6,6 +6,7 @@ namespace Global
     public struct CameraTag : IComponent { }
     public struct PlayerTargetTag : IComponent { }
     public struct CameraTargetTag : IComponent { }
+    public struct BaseTag : IComponent { }
     
     public struct SimpleAnimationActiveTag : IComponent { }
     

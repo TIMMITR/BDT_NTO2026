@@ -97,7 +97,7 @@ namespace Features.ControlPointPack.Systems
 
                         if (spawnCoord != default(CellCoord))
                         {
-                            _unitSpawnRequest.Publish(new UnitSpawnRequest(spawnCoord, config, false));
+                            _unitSpawnRequest.Publish(new UnitSpawnRequest(spawnCoord, config, true, false));
                         }
                     }
                 

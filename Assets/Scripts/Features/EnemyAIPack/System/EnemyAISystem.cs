@@ -29,6 +29,7 @@ namespace Features.EnemyAIPack.System
         private Filter _controlPointFilter;
         private Filter _battleFilter;
         private Filter _movingFilter;
+        private Filter _baseFilter;
         
         private Stash<GridComponent> _gridStash;
         private Stash<CellPositionComponent> _positionStash;
@@ -53,6 +54,7 @@ namespace Features.EnemyAIPack.System
         
         private float _attackWeight;
         private float _captureWeight;
+        private float _defenceWeight;
         
         private bool _isActive;
         private int _currentIndex;
@@ -69,6 +71,7 @@ namespace Features.EnemyAIPack.System
             _controlPointFilter = World.Filter.With<ControlPointComponent>().Build();
             _battleFilter = World.Filter.With<BattleComponent>().Build();
             _movingFilter = World.Filter.With<UnitAnimationComponent>().Build();
+            _baseFilter = World.Filter.With<BaseTag>().Build();
             
             _gridStash = World.GetStash<GridComponent>();
             _positionStash = World.GetStash<CellPositionComponent>();
@@ -126,8 +129,9 @@ namespace Features.EnemyAIPack.System
 
             var attackChance = (1 + Random.value) * _attackWeight;
             var captureChance = (1 + Random.value) * _captureWeight;
+            var defenceChance = (1 + Random.value) * _defenceWeight;
 
-            var maxChance = Mathf.Max(attackChance, captureChance); // todo надо будет при добавлении доп весов
+            var maxChance = Mathf.Max(attackChance, captureChance, defenceChance); // todo надо будет при добавлении доп весов
 
             if (Mathf.Approximately(captureChance, maxChance) && TryCapture(gridComp, from, unit)) 
                 // для избежания погрешности float
@@ -139,6 +143,11 @@ namespace Features.EnemyAIPack.System
             {
                 _attackWeight -= _config.AttackReduceValue;
                 Debug.Log($"Enemy has chosen to go to the player unit. Current attack weight: {_attackWeight}");
+            }
+            else if (Mathf.Approximately(defenceChance, maxChance) && TryDefend(gridComp, from, unit))
+            {
+                _defenceWeight -= _config.DefenceReduceValue;
+                Debug.Log($"Enemy has chosen to defend the base. Current defence weight: {_defenceWeight}");
             }
         }
 
@@ -172,6 +181,56 @@ namespace Features.EnemyAIPack.System
                 Attack(gridEntity, unit, spell, from, target);
 
             return true;
+        }
+        
+        private bool TryDefend(GridComponent gridComp, CellCoord from, Entity unit)
+        {
+            var baseCoord = _positionStash.Get(_baseFilter.First()).coord;
+            var radius = _config.DefenceRadius;
+
+            if (from.DistanceTo(baseCoord) <= radius)
+                return true;
+
+            var speed = _speedStash.Get(unit).currentSpeed;
+            if (speed <= 0) 
+                return false;
+
+            List<CellCoord> resultPath = null;
+            bool gotRingCells = TryGetRingCells(gridComp, baseCoord, radius, out var ringCells);
+
+            if (!gotRingCells)
+                return false;
+            
+            foreach (var cell in ringCells)
+            {
+                if (!IsFreeCell(gridComp, cell)) continue;
+
+                var path = BuildPath(gridComp, from, cell, speed);
+                if (path != null && (resultPath == null || path.Count < resultPath.Count))
+                    resultPath = path;
+            }
+
+            if (resultPath == null)
+                return false;
+            
+            _moveUnitRequest.Publish(new MoveUnitRequest(unit, resultPath));
+            
+            return true;
+        }
+        
+        private bool TryGetRingCells(GridComponent gridComp, CellCoord center, int radius, out List<CellCoord> resultPath)
+        {
+            resultPath = null;
+            
+            foreach (var coord in gridComp.cells.Keys)
+            {
+                if (center.DistanceTo(coord) != radius) 
+                    continue;
+                if (IsFreeCell(gridComp, coord))
+                    resultPath.Add(coord);
+            }
+            
+            return resultPath != null;
         }
 
         private void Attack(Entity gridEntity, Entity unit, SpellConfigSo spell, CellCoord from, CellCoord target)
@@ -271,6 +330,8 @@ namespace Features.EnemyAIPack.System
             if (path.Count <= 1)
                 return null;
             
+            path.Insert(0, from);
+            
             while (path.Count - 1 > speed)
                 path.RemoveAt(path.Count - 1);
             
@@ -293,6 +354,7 @@ namespace Features.EnemyAIPack.System
 
             _attackWeight = _config.AttackWeight;
             _captureWeight = _config.CaptureWeight;
+            _defenceWeight = _config.DefenceWeight;
             
             _isActive = true;
         }
