@@ -22,5 +22,5 @@ MonoBehaviour:
     defence: 5
     moveSpeed: 0
   posY: 0.3
-  spellConfig: {fileID: 0}
+  spellList: []
   spawnRotationY: 0

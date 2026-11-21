@@ -22,4 +22,6 @@ MonoBehaviour:
     defence: 2
     moveSpeed: 3
   posY: 0.15
-  spellConfig: {fileID: 11400000, guid: dbb1b68a724ef034483f73fe6929fdb6, type: 2}
+  spellList:
+  - {fileID: 11400000, guid: ed420db46f168ea4e92a83cad222a7cb, type: 2}
+  spawnRotationY: 0
