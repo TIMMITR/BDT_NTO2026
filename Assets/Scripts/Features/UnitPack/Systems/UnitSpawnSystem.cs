@@ -87,7 +87,9 @@ namespace Features.UnitPack.Systems
                 if (spells.Count > 0) // todo для сооружений без спелов
                 {
                     _spellListStash.Add(newUnit, new SpellListComponent(spells));
-                    _spellStash.Add(newUnit, new SpellDataComponent(spells[0]));
+                    
+                    if(unitConfig.TeamSide == TeamSide.Enemy)
+                        _spellStash.Add(newUnit, new SpellDataComponent(spells[0]));
                 }
                 
                 ApplyUnitComponents(newUnit, unitConfig);

@@ -12,7 +12,7 @@ namespace Features.SpellPack.Components
         public SpellListComponent(List<SpellConfigSo> spellList)
         {
             this.spellList = spellList;
-            currentIndex = 0;
+            currentIndex = -1;
         }
     }
 }

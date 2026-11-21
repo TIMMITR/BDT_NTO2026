@@ -62,7 +62,13 @@ namespace Features.FightPack.Systems
             from.y += spell.projectileHeight;
             to.y += spell.projectileHeight;
             
-            var obj = Object.Instantiate(spell.projectilePrefab, from, Quaternion.identity);
+            var dir = to - from;
+            dir.y = 0f;
+            var rot = dir.sqrMagnitude > 0.0001f
+                ? Quaternion.LookRotation(dir.normalized)
+                : Quaternion.identity;
+            
+            var obj = Object.Instantiate(spell.projectilePrefab, from, rot);
             
             var entity = World.CreateEntity();
             _transformStash.Add(entity, new TransformComponent(obj.transform));
