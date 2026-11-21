@@ -21,5 +21,5 @@ MonoBehaviour:
     multiplier: 10
     defence: 2
     moveSpeed: 3
-  posY: 0
+  posY: 0.15
   spellConfig: {fileID: 11400000, guid: dbb1b68a724ef034483f73fe6929fdb6, type: 2}

@@ -29,6 +29,8 @@ namespace Features.StatePack.Systems
             _startPlayerTurnRequest = World.GetRequest<StartPlayerTurnRequest>();
             
             _phaseChangedEvent = World.GetEvent<PhaseChangedEvent>();
+
+            _startPlayerTurnRequest.Publish(new StartPlayerTurnRequest(), allowNextFrame: true);
         }
 
         public void OnUpdate(float deltaTime)
@@ -39,12 +41,12 @@ namespace Features.StatePack.Systems
                 {
                     case (TurnPhase.Player, TurnType.End):
                         _resetSpeedRequest.Publish(new ResetSpeedRequest());
-                        _startEnemyTurnRequest.Publish(new StartEnemyTurnRequest());
+                        _startEnemyTurnRequest.Publish(new StartEnemyTurnRequest(), allowNextFrame: true);
                         break;
                     
                     case (TurnPhase.Enemy, TurnType.End):
                         _resetSpeedRequest.Publish(new ResetSpeedRequest());
-                        _startEventsPhaseRequest.Publish(new StartEventsPhaseRequest());
+                        _startEventsPhaseRequest.Publish(new StartEventsPhaseRequest(), allowNextFrame: true);
                         break;
                     
                 }

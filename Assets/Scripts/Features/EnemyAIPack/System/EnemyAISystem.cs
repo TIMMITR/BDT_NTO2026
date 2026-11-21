@@ -14,6 +14,7 @@ using Features.StatePack.Events;
 using Features.StatePack.Requests;
 using Features.UnitPack.Components;
 using Features.UnitPack.Requests;
+using Global;
 using Scellecs.Morpeh;
 using UnityEngine;
 
@@ -27,6 +28,7 @@ namespace Features.EnemyAIPack.System
         private Filter _gridFilter;
         private Filter _controlPointFilter;
         private Filter _battleFilter;
+        private Filter _movingFilter;
         
         private Stash<GridComponent> _gridStash;
         private Stash<CellPositionComponent> _positionStash;
@@ -66,6 +68,7 @@ namespace Features.EnemyAIPack.System
             _gridFilter = World.Filter.With<GridComponent>().Build();
             _controlPointFilter = World.Filter.With<ControlPointComponent>().Build();
             _battleFilter = World.Filter.With<BattleComponent>().Build();
+            _movingFilter = World.Filter.With<UnitAnimationComponent>().Build();
             
             _gridStash = World.GetStash<GridComponent>();
             _positionStash = World.GetStash<CellPositionComponent>();
@@ -98,7 +101,7 @@ namespace Features.EnemyAIPack.System
                 Debug.Log("Все юниты уничтожены");
                 _isActive = false;
                 _units.Clear();
-                _endTurnRequest.Publish(new EndEnemyTurnRequest());
+                _endTurnRequest.Publish(new EndEnemyTurnRequest(), allowNextFrame: true);
                 return;
             }
             
@@ -106,8 +109,12 @@ namespace Features.EnemyAIPack.System
 
             if (_unitAnimationStash.Has(unit) || _delayAttackStash.Has(unit))
                 return;
+
+            if (!_movingFilter.IsEmpty())
+                return;
             
             Iterate(unit);
+            
             _currentIndex++;
         }
 
@@ -122,14 +129,16 @@ namespace Features.EnemyAIPack.System
 
             var maxChance = Mathf.Max(attackChance, captureChance); // todo надо будет при добавлении доп весов
 
-            if (Mathf.Approximately(attackChance, maxChance) && TryCapture(gridComp, from, unit)) 
+            if (Mathf.Approximately(captureChance, maxChance) && TryCapture(gridComp, from, unit)) 
                 // для избежания погрешности float
             {
                 _captureWeight -= _config.CaptureReduceValue;
+                Debug.Log($"Enemy has chosen to go to the control point. Current capture weight: {_captureWeight}");
             }
-            else if (Mathf.Approximately(captureChance, maxChance) && TryAttack(gridComp, gridEntity, from, unit))
+            else if (Mathf.Approximately(attackChance, maxChance) && TryAttack(gridComp, gridEntity, from, unit)) // todo избавиться от первого условия (система весов не работает)
             {
                 _attackWeight -= _config.AttackReduceValue;
+                Debug.Log($"Enemy has chosen to go to the player unit. Current attack weight: {_attackWeight}");
             }
         }
 
@@ -140,7 +149,7 @@ namespace Features.EnemyAIPack.System
             if (!TryGetPathToPoint(gridComp, from, speed, out var resultPath))
                 return false;
             
-            _moveUnitRequest.Publish(new MoveUnitRequest(unit, resultPath));
+            _moveUnitRequest.Publish(new MoveUnitRequest(unit, resultPath), allowNextFrame: true); 
             return true;
         }
 
@@ -218,7 +227,7 @@ namespace Features.EnemyAIPack.System
             if (resultPath == null)
                 return from;
             
-            _moveUnitRequest.Publish(new MoveUnitRequest(unit, resultPath));
+            _moveUnitRequest.Publish(new MoveUnitRequest(unit, resultPath), allowNextFrame: true); // todo возможно, стоит избавиться от allowNextFrame
             return resultPath[^1];
         }
 
