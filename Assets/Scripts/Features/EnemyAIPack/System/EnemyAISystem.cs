@@ -1,11 +1,15 @@
 using System.Collections.Generic;
 using Configs;
+using Features.BattlePack;
+using Features.CellSelectionPack.Components;
 using Features.ControlPointPack.Components;
+using Features.FightPack.Components;
 using Features.GridPack.Components;
 using Features.GridPack.Data;
 using Features.PathFinderPack;
 using Features.SpeedPack;
 using Features.SpeedPack.Requests;
+using Features.SpellPack.Components;
 using Features.StatePack.Components;
 using Features.StatePack.Events;
 using Features.StatePack.Requests;
@@ -23,21 +27,27 @@ namespace Features.EnemyAIPack.System
         private Filter _unitFilter;
         private Filter _gridFilter;
         private Filter _controlPointFilter;
+        private Filter _battleFilter;
         
         private Stash<GridComponent> _gridStash;
         private Stash<CellPositionComponent> _positionStash;
         private Stash<CellTileComponent> _cellTileStash;
         private Stash<ControlPointComponent> _controlPointStash;
         private Stash<SpeedComponent> _speedStash;
+        private Stash<UnitComponent> _unitStash;
+        private Stash<SpellDataComponent> _spellStash;
+        private Stash<AttackDataComponent> _attackStash;
+        private Stash<DelayAttackComponent> _delayAttackStash;
+        private Stash<BattleComponent> _battleStash;
         
         private Event<PhaseChangedEvent> _phaseChangedEvent;
 
         private Request<EndEnemyTurnRequest> _endTurnRequest;
         private Request<MoveUnitRequest> _moveUnitRequest;
         
-        private readonly EnemyConfigSo _config;
+        private EnemyConfigSo _config;
 
-        private List<Entity> _units;
+        private List<Entity> _units = new();
         
         private float _attackWeight;
         private float _captureWeight;
@@ -50,24 +60,23 @@ namespace Features.EnemyAIPack.System
             && !gridComp.takenCells.ContainsKey(coord)
             && !_cellTileStash.Get(cell).blocked;
 
-        public EnemyAISystem(EnemyConfigSo config)
-        {
-            _config = config;
-            
-            _units = new List<Entity>();
-        }
-
         public void OnAwake()
         {
             _unitFilter = World.Filter.With<UnitComponent>().Build();
             _gridFilter = World.Filter.With<GridComponent>().Build();
             _controlPointFilter = World.Filter.With<ControlPointComponent>().Build();
+            _battleFilter = World.Filter.With<BattleComponent>().Build();
             
             _gridStash = World.GetStash<GridComponent>();
             _positionStash = World.GetStash<CellPositionComponent>();
             _cellTileStash = World.GetStash<CellTileComponent>();
             _controlPointStash = World.GetStash<ControlPointComponent>();
             _speedStash = World.GetStash<SpeedComponent>();
+            _unitStash = World.GetStash<UnitComponent>();
+            _spellStash = World.GetStash<SpellDataComponent>();
+            _attackStash = World.GetStash<AttackDataComponent>();
+            _delayAttackStash = World.GetStash<DelayAttackComponent>();
+            _battleStash = World.GetStash<BattleComponent>();
             
             _phaseChangedEvent = World.GetEvent<PhaseChangedEvent>();
             _moveUnitRequest = World.GetRequest<MoveUnitRequest>();
@@ -106,11 +115,15 @@ namespace Features.EnemyAIPack.System
 
             var maxChance = Mathf.Max(attackChance, captureChance); // todo надо будет при добавлении доп весов
 
-            if (Mathf.Approximately(attackChance, maxChance)) // для избежания погрешности float
+            if (Mathf.Approximately(attackChance, maxChance) && TryCapture(gridComp, from, unit)) 
+                // для избежания погрешности float
             {
-                TryCapture(gridComp, from, unit);
+                _captureWeight -= _config.CaptureReduceValue;
             }
-
+            else if (Mathf.Approximately(captureChance, maxChance) && TryAttack(gridComp, gridEntity, from, unit))
+            {
+                _attackWeight -= _config.AttackReduceValue;
+            }
         }
 
         private bool TryCapture(GridComponent gridComp, CellCoord from, Entity unit)
@@ -122,6 +135,84 @@ namespace Features.EnemyAIPack.System
             
             _moveUnitRequest.Publish(new MoveUnitRequest(unit, resultPath));
             return true;
+        }
+
+        private bool TryAttack(GridComponent gridComp, Entity gridEntity, CellCoord from, Entity unit)
+        {
+            if (!TryFindPlayer(gridComp, from, out var target))
+                return false;
+            
+            var spell = _spellStash.Get(unit).spellData;
+
+            if (from.DistanceTo(target) <= spell.range)
+            {
+                Attack(gridEntity, unit, spell, from, target);
+                return true;
+            }
+
+            var newPos = MoveToTarget(gridComp, from, target, unit);
+            
+            if(newPos.DistanceTo(target) <= spell.range)
+                Attack(gridEntity, unit, spell, from, target);
+
+            return true;
+        }
+
+        private void Attack(Entity gridEntity, Entity unit, SpellConfigSo spell, CellCoord from, CellCoord target)
+        {
+            _attackStash.Set(gridEntity, new AttackDataComponent(spell, from, target));
+            _delayAttackStash.Add(unit, new DelayAttackComponent(unit));
+        }
+
+        private bool TryFindPlayer(GridComponent gridComp, CellCoord from, out CellCoord target)
+        {
+            var champion = int.MaxValue;
+            target = default;
+
+            foreach (var unit in _unitFilter)
+            {
+                if (_unitStash.Get(unit).teamSide != TeamSide.Player)
+                    continue;
+                
+                var coord = _positionStash.Get(unit).coord;
+                var dist = from.DistanceTo(coord);
+
+                if (dist < champion)
+                {
+                    champion = dist;
+                    target = coord;
+                }
+            }
+
+            return champion < int.MaxValue;
+        }
+
+        private CellCoord MoveToTarget(GridComponent gridComp, CellCoord from, CellCoord targetCoord, Entity unit)
+        {
+            var speed = _speedStash.Get(unit).currentSpeed;
+
+            if (speed <= 0)
+                return from;
+
+            List<CellCoord> resultPath = new();
+
+            foreach (var dir in PathFinder.Directions)
+            {
+                var next = new CellCoord(targetCoord.Q + dir.Q, targetCoord.R + dir.R);
+                if (!IsFreeCell(gridComp, next))
+                    continue;
+
+                var path = BuildPath(gridComp, from, next, speed);
+                    
+                if (path.Count < resultPath.Count)
+                    resultPath = path;
+            }
+
+            if (resultPath.Count <= 1)
+                return from;
+            
+            _moveUnitRequest.Publish(new MoveUnitRequest(unit, resultPath));
+            return resultPath[^1];
         }
 
         private bool TryGetPathToPoint(GridComponent gridComp, CellCoord from, int speed, out List<CellCoord> resultPath)
@@ -173,6 +264,11 @@ namespace Features.EnemyAIPack.System
             {
                 _units.Add(unit);
             }
+
+            var battle = _battleFilter.First();
+            ref var battleComp = ref _battleStash.Get(battle);
+            
+            _config = battleComp.battlePlan.EnemyConfig;
 
             _attackWeight = _config.AttackWeight;
             _captureWeight = _config.CaptureWeight;

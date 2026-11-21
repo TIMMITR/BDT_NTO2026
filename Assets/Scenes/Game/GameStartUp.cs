@@ -4,6 +4,7 @@ using Features.CellSelectionPack.Systems;
 using Features.CellTrackPack.Systems;
 using Features.ControlPointPack.Systems;
 using Features.DamagePack;
+using Features.EnemyAIPack.System;
 using Features.FightPack.Systems;
 using Features.GridPack;
 using Features.StoryTalkPack.Systems;
@@ -97,6 +98,8 @@ namespace Scenes.Game
             _updateGroup.AddSystem(new HealthSystem());
             _updateGroup.AddSystem(new SpeedSystem());
             _updateGroup.AddSystem(new ResetSpeedSystem());
+
+            _updateGroup.AddSystem(new EnemyAISystem());
 
             
             _updateGroup.AddSystem(new StoryTalkPlayerSystem(gameContext.introTalk));

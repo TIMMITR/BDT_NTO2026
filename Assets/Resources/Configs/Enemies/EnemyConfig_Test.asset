@@ -12,4 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 496eb44e4608e2e4f8f2e64f7c538f14, type: 3}
   m_Name: EnemyConfig_Test
   m_EditorClassIdentifier: 
-  crystalSpawnUnits: []
+  attackWeight: 1
+  attackReduceValue: 0.2
+  captureWeight: 3
+  captureReduceValue: 0.3

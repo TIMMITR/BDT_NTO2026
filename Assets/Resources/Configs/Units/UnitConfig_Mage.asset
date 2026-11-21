@@ -10,15 +10,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0f2ab7e10239bad42a4af319b47d4a29, type: 3}
-  m_Name: Test_1
+  m_Name: UnitConfig_Mage
   m_EditorClassIdentifier: 
-  characterName: 
-  unitClass: 2
-  teamSide: 1
-  prefab: {fileID: 5304423242275499964, guid: 80db1b3a812fd8540b77c7de554a4c9b, type: 3}
+  characterName: Wizard
+  unitClass: 1
+  teamSide: 0
+  prefab: {fileID: 7254909309299036303, guid: ba9f549629afbc24fb830b7779a83639, type: 3}
   stats:
     maxHealth: 10
-    damage: 10
+    multiplier: 10
     defence: 10
-    moveSpeed: 2
-  posY: 0.2
+    moveSpeed: 4
+  posY: 0.15
+  spellConfig: {fileID: 11400000, guid: dbb1b68a724ef034483f73fe6929fdb6, type: 2}

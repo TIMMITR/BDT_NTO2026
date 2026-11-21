@@ -10,16 +10,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0f2ab7e10239bad42a4af319b47d4a29, type: 3}
-  m_Name: Test_0
+  m_Name: UnitConfig_Skeleton
   m_EditorClassIdentifier: 
-  characterName: Test
-  unitClass: 0
-  teamSide: 0
-  prefab: {fileID: 4047062368776174659, guid: 47e5d33e07dad074bbfd9798e106e2b3, type: 3}
+  characterName: Skeleton
+  unitClass: 2
+  teamSide: 1
+  prefab: {fileID: 3710387246263817297, guid: 60be97b8e7a4f8144a63b3a61e41fcce, type: 3}
   stats:
     maxHealth: 10
     multiplier: 10
     defence: 10
-    moveSpeed: 3
-  posY: 0.4
+    moveSpeed: 4
+  posY: 0.15
   spellConfig: {fileID: 11400000, guid: dbb1b68a724ef034483f73fe6929fdb6, type: 2}
