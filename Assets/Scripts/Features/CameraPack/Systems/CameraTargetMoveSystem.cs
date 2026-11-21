@@ -1,9 +1,7 @@
-using Configs;
+using Features.CellSelectionPack.Components;
 using Features.GridPack.Components;
-using Features.GridPack.Data;
 using Features.PlayerPack;
 using Features.TransformPack;
-using Features.UnitPack.Components;
 using Global;
 using Scellecs.Morpeh;
 using UnityEngine;
@@ -24,7 +22,9 @@ namespace Features.CameraPack.Systems
         private Stash<PlayerPositionComponent> _positionStash;
         private Stash<TransformComponent> _transformStash;
         private Stash<GridComponent> _gridStash;
-        private Stash<UnitComponent> _unitStash;
+        private Stash<ChosenCellComponent> _chosenCellStash;
+        private Stash<SelectedUnitComponent> _selectedUnitStash;
+        private Stash<CellPositionComponent> _cellPositionStash;
 
         private Vector3 _homePosition;
         private Quaternion _homeRotation;
@@ -45,12 +45,14 @@ namespace Features.CameraPack.Systems
             _positionStash = World.GetStash<PlayerPositionComponent>();
             _transformStash = World.GetStash<TransformComponent>();
             _gridStash = World.GetStash<GridComponent>();
-            _unitStash = World.GetStash<UnitComponent>();
+            _chosenCellStash = World.GetStash<ChosenCellComponent>();
+            _selectedUnitStash = World.GetStash<SelectedUnitComponent>();
+            _cellPositionStash = World.GetStash<CellPositionComponent>();
         }
 
-        public void OnUpdate(float deltaTime) // todo переделать под активного героя
+        public void OnUpdate(float deltaTime)
         {
-            if (_playerFilter.IsEmpty() || _playerTargetFilter.IsEmpty()) return;
+            if (_playerFilter.IsEmpty() || _playerTargetFilter.IsEmpty() || _gridFilter.IsEmpty()) return;
 
             var target = _transformStash.Get(_playerTargetFilter.First()).value;
 
@@ -69,11 +71,28 @@ namespace Features.CameraPack.Systems
                 return;
             }
 
-            if (!TryGetNearestPlayerCell(out var nearestDepth)) return;
+            var gridEntity = _gridFilter.First();
 
-            ref var grid = ref _gridStash.Get(_gridFilter.First());
+            if (!_chosenCellStash.Has(gridEntity)) return;
 
-            var t = Mathf.Clamp01((nearestDepth + 2 * grid.gridRadius) / (4f * grid.gridRadius));
+            ref var grid = ref _gridStash.Get(gridEntity);
+            var chosenCoord = _chosenCellStash.Get(gridEntity).cellCoord;
+
+            var originDepth = 0;
+
+            if (_selectedUnitStash.Has(gridEntity))
+            {
+                ref var selected = ref _selectedUnitStash.Get(gridEntity);
+
+                if (!_cellPositionStash.Has(selected.unit)) return;
+
+                var unitCoord = _cellPositionStash.Get(selected.unit).coord;
+                originDepth = 2 * unitCoord.R + unitCoord.Q;
+            }
+
+            var chosenDepth = 2 * chosenCoord.R + chosenCoord.Q;
+
+            var t = Mathf.Clamp01(0.5f + (chosenDepth - originDepth) / (4f * grid.gridRadius));
             positionComponent.progress = t;
 
             t = Mathf.SmoothStep(0f, 1f, t);
@@ -81,34 +100,6 @@ namespace Features.CameraPack.Systems
             var position = Vector3.Lerp(_corridorStart.position, _corridorEnd.position, t);
             var rotation = Quaternion.Slerp(_corridorStart.rotation, _corridorEnd.rotation, t);
             target.SetPositionAndRotation(position, rotation);
-        }
-
-        private bool TryGetNearestPlayerCell(out int nearestDepth)
-        {
-            ref var grid = ref _gridStash.Get(_gridFilter.First());
-
-            nearestDepth = 0;
-            var nearest = new CellCoord();
-            var found = false;
-
-            foreach (var pair in grid.takenCells)
-            {
-                if (!_unitStash.Has(pair.Value)) continue;
-                if (_unitStash.Get(pair.Value).teamSide != TeamSide.Player) continue;
-                
-                var depth = 2 * pair.Key.R + pair.Key.Q;
-
-                if (!found || depth < nearestDepth ||
-                    (depth == nearestDepth && pair.Key.R < nearest.R) ||
-                    (depth == nearestDepth && pair.Key.R == nearest.R && pair.Key.Q < nearest.Q))
-                {
-                    nearestDepth = depth;
-                    nearest = pair.Key;
-                    found = true;
-                }
-            }
-
-            return found;
         }
 
         public void Dispose() { }

@@ -59,9 +59,6 @@ namespace Scenes.Game
             _updateGroup = _world.CreateSystemsGroup();
             _updateGroup.Initialize();
             _updateGroup.AddSystem(new InputSystem(_playerInputActions));
-            _updateGroup.AddSystem(new CameraTargetMoveSystem(
-                gameContext.cameraCorridorStart,
-                gameContext.cameraCorridorEnd));
             _updateGroup.AddSystem(new TargetSystem());
             _updateGroup.AddSystem(new RaycastSystem());
             
@@ -69,6 +66,9 @@ namespace Scenes.Game
             _updateGroup.AddSystem(new StateBundleSystem());
             
             _updateGroup.AddSystem(new ChooseCellSystem());
+            _updateGroup.AddSystem(new CameraTargetMoveSystem(
+                gameContext.cameraCorridorStart,
+                gameContext.cameraCorridorEnd));
             _updateGroup.AddSystem(new TrackChosenUnitSystem());
             _updateGroup.AddSystem(new BattleSystem(gameContext.gamePlan));
 
