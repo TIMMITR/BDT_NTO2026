@@ -6,14 +6,14 @@ namespace Configs
     [CreateAssetMenu(fileName = "EnemyConfig_", menuName = "Enemy/New Enemy Config")]
     public class EnemyConfigSo : ScriptableObject
     {
-        [SerializeField] private int attackWeight;
-        [SerializeField] private int attackReduceValue;
-        [SerializeField] private int captureWeight;
-        [SerializeField] private int captureReduceValue;
+        [SerializeField] private float attackWeight;
+        [SerializeField] private float attackReduceValue;
+        [SerializeField] private float captureWeight;
+        [SerializeField] private float captureReduceValue;
 
-        public int AttackWeight => attackWeight;
-        public int AttackReduceValue => attackReduceValue;
-        public int CaptureWeight => captureWeight;
-        public int CaptureReduceValue => captureReduceValue;
+        public float AttackWeight => attackWeight;
+        public float AttackReduceValue => attackReduceValue;
+        public float CaptureWeight => captureWeight;
+        public float CaptureReduceValue => captureReduceValue;
     }
 }

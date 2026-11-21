@@ -8,4 +8,5 @@ namespace Global
     public struct CameraTargetTag : IComponent { }
     
     public struct SimpleAnimationActiveTag : IComponent { }
+    
 }

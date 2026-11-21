@@ -23,6 +23,8 @@ namespace Features.CellSelectionPack.Systems
         private Event<CellChooseChangedEvent> _cellChooseChanged;
         
         private CellCoord _lastCoord;
+
+        private bool _hasChanged;
     
         public void OnAwake()
         {
@@ -54,21 +56,26 @@ namespace Features.CellSelectionPack.Systems
 
             var gridEntity = _gridFilter.First();
             ref var gridComp = ref _gridStash.Get(gridEntity);
+
+            if (!raycastComp.hasHit)
+            {
+                _chosenCellStash.Remove(gridEntity);
+                _hasChanged = false;
+                return;
+            }
+            
             var transCoord = gridComp.FromWorldCoord(hitPoint);
 
             if (gridComp.cells.ContainsKey(transCoord))
-            {
                 _chosenCellStash.Set(gridEntity, new ChosenCellComponent{cellCoord = transCoord});
-            }
             else
-            {
                 _chosenCellStash.Remove(gridEntity);
-            }
             
-            if(_lastCoord != transCoord)
+            if(_lastCoord != transCoord || !_hasChanged)
                 _cellChooseChanged.NextFrame(new CellChooseChangedEvent(transCoord));
             
             _lastCoord = transCoord;
+            _hasChanged = true;
         }
         
         public void Dispose() {}

@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0f2ab7e10239bad42a4af319b47d4a29, type: 3}
-  m_Name: Paladin
+  m_Name: UnitConfig_Paladin
   m_EditorClassIdentifier: 
   characterName: Paladin
   unitClass: 0
@@ -21,5 +21,5 @@ MonoBehaviour:
     multiplier: 10
     defence: 2
     moveSpeed: 3
-  posY: 0
-  spellConfig: {fileID: 11400000, guid: ed420db46f168ea4e92a83cad222a7cb, type: 2}
+  posY: 0.15
+  spellConfig: {fileID: 11400000, guid: dbb1b68a724ef034483f73fe6929fdb6, type: 2}
