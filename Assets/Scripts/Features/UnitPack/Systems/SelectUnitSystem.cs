@@ -36,6 +36,7 @@ namespace Features.UnitPack.Systems
         private Stash<DelayAttackComponent> _delayAttackStash;
 
         private Request<LmbStartRequest> _lmbRequest;
+        private Request<PickUnitRequest> _pickUnitRequest;
         private Request<MoveUnitRequest> _moveUnitRequest;
         private Request<ColorCellRequest> _colorCellRequest;
 
@@ -56,21 +57,42 @@ namespace Features.UnitPack.Systems
             _delayAttackStash = World.GetStash<DelayAttackComponent>();
 
             _lmbRequest = World.GetRequest<LmbStartRequest>();
+            _pickUnitRequest = World.GetRequest<PickUnitRequest>();
             _moveUnitRequest = World.GetRequest<MoveUnitRequest>();
             _colorCellRequest = World.GetRequest<ColorCellRequest>();
         }
 
         public void OnUpdate(float deltaTime) // todo переписать
         {
+            if (_turnPhaseFilter.IsEmpty() || _gridFilter.IsEmpty())
+                return;
+
             ref var turnPhaseComp = ref _turnPhaseStash.Get(_turnPhaseFilter.First());
+            var gridEntity = _gridFilter.First();
+
+            foreach (var request in _pickUnitRequest.Consume())
+            {
+                if (turnPhaseComp.phase != TurnPhase.Player ||
+                    !_unitStash.Has(request.unit) || _unitAnimationStash.Has(request.unit))
+                    continue;
+
+                if (_unitStash.Get(request.unit).teamSide != TeamSide.Player ||
+                    !TryGetPlayerSpeed(request.unit, out var moveSpeed))
+                    continue;
+
+                _selectedUnitStash.Set(gridEntity,
+                    new SelectedUnitComponent(request.unit, TeamSide.Player, moveSpeed));
+
+                if (_positionStash.Has(request.unit))
+                    _colorCellRequest.Publish(new ColorCellRequest(
+                        _positionStash.Get(request.unit).coord, ColorType.Clicked));
+            }
             
             if(turnPhaseComp.phase != TurnPhase.Player)
                 return;
 
             var lmbClicked = false;
             foreach (var _ in _lmbRequest.Consume()) lmbClicked = true;
-            
-            var gridEntity = _gridFilter.First();
 
             if (!lmbClicked || !_chosenCellStash.Has(gridEntity)) return;
             

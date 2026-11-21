@@ -5,6 +5,11 @@ namespace Configs
     [CreateAssetMenu(fileName = "SpellConfig_", menuName = "Spell/New Spell Config")]
     public class SpellConfigSo : ScriptableObject
     {
+        [Header("UI")]
+        public string displayName;
+        [Min(0)] public int manaCost;
+        public Sprite icon;
+
         [Header("General")]
         public SpellType spellType;
         public int damage;
@@ -14,6 +19,8 @@ namespace Configs
         public bool ignoreArmor;
         public bool isMultipleHit;
         public bool canHitAllies;
+
+        public string DisplayName => string.IsNullOrWhiteSpace(displayName) ? name : displayName;
  
         [Header("Punch")]
         public int punchDistance;

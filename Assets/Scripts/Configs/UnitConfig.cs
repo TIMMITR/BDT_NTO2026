@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Configs
@@ -19,7 +20,8 @@ namespace Configs
         };
 
         [SerializeField] private float posY;
-        [SerializeField] private SpellConfigSo spellConfig;
+        [HideInInspector, SerializeField] private SpellConfigSo spellConfig;
+        [SerializeField] private SpellConfigSo[] spells;
         
         public string Name => characterName;
         public UnitClass Class => unitClass;
@@ -28,6 +30,18 @@ namespace Configs
         public TeamSide TeamSide => teamSide;
         public float PosY => posY;
         public SpellConfigSo SpellConfig => spellConfig;
+        public IReadOnlyList<SpellConfigSo> Spells
+        {
+            get
+            {
+                if (spells != null && spells.Length > 0)
+                    return spells;
+
+                return spellConfig != null
+                    ? new[] { spellConfig }
+                    : Array.Empty<SpellConfigSo>();
+            }
+        }
     }
     
     [Serializable]

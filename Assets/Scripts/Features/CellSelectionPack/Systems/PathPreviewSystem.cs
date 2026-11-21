@@ -1,17 +1,14 @@
 using System.Collections.Generic;
-using System.IO;
 using Configs;
 using Features.CellSelectionPack.Components;
 using Features.CellSelectionPack.Requests;
 using Features.CellTrackPack.Events;
 using Features.FightPack;
-using Features.GridPack;
 using Features.GridPack.Components;
 using Features.GridPack.Data;
 using Features.PathFinderPack;
 using Features.SpellPack.Components;
 using Scellecs.Morpeh;
-using UnityEngine;
 
 namespace Features.CellSelectionPack.Systems
 {
@@ -38,6 +35,7 @@ namespace Features.CellSelectionPack.Systems
 
         private CellCoord? _lastFrom; 
         private CellCoord? _lastTo;
+        private SpellConfigSo _lastSpell;
 
         private List<CellCoord> _fullPath = new();
 
@@ -73,11 +71,15 @@ namespace Features.CellSelectionPack.Systems
                 CellCoord? from = unit.HasValue && _positionStash.Has(unit.Value)
                     ? _positionStash.Get(unit.Value).coord : null;
                 CellCoord? to = _chosenCellStash.Has(gridEntity) ? _chosenCellStash.Get(gridEntity).cellCoord : null;
+                var currentSpell = unit.HasValue && _spellDataStash.Has(unit.Value)
+                    ? _spellDataStash.Get(unit.Value).spellData
+                    : null;
 
-                if (from == _lastFrom && to == _lastTo) return;
+                if (from == _lastFrom && to == _lastTo && currentSpell == _lastSpell) return;
             
                 _lastFrom = from;
                 _lastTo = to;
+                _lastSpell = currentSpell;
 
                 _clearColorsRequest.Publish(new ClearColorsRequest()); // полная чистка доски
 

@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 20c9569e8c5c9294a969bd8f09829ba4, type: 3}
   m_Name: Test_0
   m_EditorClassIdentifier: 
+  enemyConfig: {fileID: 0}
   units:
   - q: -3
     r: 3
@@ -22,6 +23,11 @@ MonoBehaviour:
     r: 0
     moveCost: 1
     blocked: 0
+    unitConfig: {fileID: 11400000, guid: 6c195a114e37aa34ca6db95b2d78be66, type: 2}
+  - q: 2
+    r: 2
+    moveCost: 1
+    blocked: 0
     unitConfig: {fileID: 11400000, guid: d39182b086eff0d41aa8624b9b55fb07, type: 2}
   controlpoints:
   - q: 0
@@ -30,3 +36,5 @@ MonoBehaviour:
       prefab: {fileID: 9063286301332852021, guid: 29c316478a1a5a24aa80c22e8a5109b5, type: 3}
   quickTalks:
   - {fileID: 11400000, guid: 0e8183d4d2d24b243aa05c6605c10947, type: 2}
+  controlPointSpawnUnits: []
+  manaReward: 0
