@@ -25,7 +25,7 @@ MonoBehaviour:
     blocked: 0
     unitConfig: {fileID: 11400000, guid: 6c195a114e37aa34ca6db95b2d78be66, type: 2}
   - q: -3
-    r: -5
+    r: 5
     moveCost: 1
     blocked: 0
     unitConfig: {fileID: 11400000, guid: 3bddafe26b13a444f92c91c32f4bc2c8, type: 2}

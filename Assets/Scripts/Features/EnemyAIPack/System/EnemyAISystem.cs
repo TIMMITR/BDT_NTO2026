@@ -8,7 +8,6 @@ using Features.GridPack.Components;
 using Features.GridPack.Data;
 using Features.PathFinderPack;
 using Features.SpeedPack;
-using Features.SpeedPack.Requests;
 using Features.SpellPack.Components;
 using Features.StatePack.Components;
 using Features.StatePack.Events;
@@ -39,6 +38,7 @@ namespace Features.EnemyAIPack.System
         private Stash<AttackDataComponent> _attackStash;
         private Stash<DelayAttackComponent> _delayAttackStash;
         private Stash<BattleComponent> _battleStash;
+        private Stash<UnitAnimationComponent> _unitAnimationStash;
         
         private Event<PhaseChangedEvent> _phaseChangedEvent;
 
@@ -77,9 +77,11 @@ namespace Features.EnemyAIPack.System
             _attackStash = World.GetStash<AttackDataComponent>();
             _delayAttackStash = World.GetStash<DelayAttackComponent>();
             _battleStash = World.GetStash<BattleComponent>();
+            _unitAnimationStash = World.GetStash<UnitAnimationComponent>();
             
             _phaseChangedEvent = World.GetEvent<PhaseChangedEvent>();
             _moveUnitRequest = World.GetRequest<MoveUnitRequest>();
+            _endTurnRequest = World.GetRequest<EndEnemyTurnRequest>();
         }
 
         public void OnUpdate(float deltaTime)
@@ -94,11 +96,16 @@ namespace Features.EnemyAIPack.System
             if (_units.Count == 0 || _currentIndex >= _units.Count)
             {
                 Debug.Log("Все юниты уничтожены");
+                _isActive = false;
+                _units.Clear();
                 _endTurnRequest.Publish(new EndEnemyTurnRequest());
                 return;
             }
             
             var unit = _units[_currentIndex];
+
+            if (_unitAnimationStash.Has(unit) || _delayAttackStash.Has(unit))
+                return;
             
             Iterate(unit);
             _currentIndex++;
@@ -108,7 +115,7 @@ namespace Features.EnemyAIPack.System
         {
             var gridEntity = _gridFilter.First();
             ref var gridComp = ref _gridStash.Get(gridEntity);
-            var from = _positionStash.Get(gridEntity).coord;
+            var from = _positionStash.Get(unit).coord;
 
             var attackChance = (1 + Random.value) * _attackWeight;
             var captureChance = (1 + Random.value) * _captureWeight;
@@ -194,7 +201,7 @@ namespace Features.EnemyAIPack.System
             if (speed <= 0)
                 return from;
 
-            List<CellCoord> resultPath = new();
+            List<CellCoord> resultPath = null;
 
             foreach (var dir in PathFinder.Directions)
             {
@@ -204,11 +211,11 @@ namespace Features.EnemyAIPack.System
 
                 var path = BuildPath(gridComp, from, next, speed);
                     
-                if (path.Count < resultPath.Count)
+                if (path != null && ( resultPath == null || path.Count < resultPath.Count))
                     resultPath = path;
             }
 
-            if (resultPath.Count <= 1)
+            if (resultPath == null)
                 return from;
             
             _moveUnitRequest.Publish(new MoveUnitRequest(unit, resultPath));
@@ -217,7 +224,7 @@ namespace Features.EnemyAIPack.System
 
         private bool TryGetPathToPoint(GridComponent gridComp, CellCoord from, int speed, out List<CellCoord> resultPath)
         {
-            resultPath = new List<CellCoord>();
+            resultPath = null;
             
             if (speed <= 0)
                 return false;
@@ -235,17 +242,20 @@ namespace Features.EnemyAIPack.System
 
                     var path = BuildPath(gridComp, from, next, speed);
                     
-                    if (path.Count < resultPath.Count)
+                    if (path != null && (resultPath == null || path.Count < resultPath.Count))
                         resultPath = path;
                 }
             }
             
-            return resultPath.Count > 0;
+            return resultPath != null;
         }
 
         private List<CellCoord> BuildPath(GridComponent gridComp, CellCoord from, CellCoord to, int speed)
         {
             var ready = PathFinder.GetPath(gridComp, from, to, _cellTileStash);
+
+            if (!ready.path.ContainsKey(to))
+                return null;
             
             var path = PathFinder.ReconstructPath(ready, from, to);
 
@@ -260,11 +270,13 @@ namespace Features.EnemyAIPack.System
 
         private void BeginPhase()
         {
+            _units.Clear();
+            _currentIndex = 0;
+            
             foreach (var unit in _unitFilter)
-            {
-                _units.Add(unit);
-            }
-
+                if (_unitStash.Get(unit).teamSide == TeamSide.Enemy)
+                    _units.Add(unit);
+            
             var battle = _battleFilter.First();
             ref var battleComp = ref _battleStash.Get(battle);
             

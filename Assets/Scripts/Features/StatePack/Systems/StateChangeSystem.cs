@@ -59,7 +59,7 @@ namespace Features.StatePack.Systems
             
             foreach (var _ in _endPlayerTurnRequest.Consume())
             {
-                Debug.Log("Player phase ender");
+                Debug.Log("Player phase ended");
                 
                 turnPhaseComp.phase = TurnPhase.None;
                 _phaseChangedEvent.NextFrame(new PhaseChangedEvent(TurnPhase.Player, TurnType.End));
@@ -75,7 +75,7 @@ namespace Features.StatePack.Systems
             
             foreach (var _ in _endEnemyTurnRequest.Consume())
             {
-                Debug.Log("Enemy phase ender");
+                Debug.Log("Enemy phase ended");
                 
                 turnPhaseComp.phase = TurnPhase.None;
                 _phaseChangedEvent.NextFrame(new PhaseChangedEvent(TurnPhase.Enemy, TurnType.End));
@@ -91,7 +91,7 @@ namespace Features.StatePack.Systems
             
             foreach (var _ in _endEventsPhaseRequest.Consume())
             {
-                Debug.Log("Events phase ender");
+                Debug.Log("Events phase ended");
                 
                 turnPhaseComp.phase = TurnPhase.None;
                 _phaseChangedEvent.NextFrame(new PhaseChangedEvent(TurnPhase.Events, TurnType.End));
