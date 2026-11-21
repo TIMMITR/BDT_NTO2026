@@ -10,7 +10,7 @@ namespace Features.GridPack.Components
         public float cellRadius;
         public int gridRadius;
         
-        public Dictionary<CellCoord, Entity> cells;
+        public Dictionary<CellCoord, Entity> cells; // todo возможно не стоит хранить их тут, а просто пользоваться CellTileComp
         public Dictionary<CellCoord, Entity> takenCells; // todo можно будет попробовать разделить клетки занимаемые игроком и врагом
 
         public GridComponent(float cellRadius, int gridRadius)

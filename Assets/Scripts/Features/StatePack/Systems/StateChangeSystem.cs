@@ -1,4 +1,5 @@
 using Features.StatePack.Components;
+using Features.StatePack.Events;
 using Features.StatePack.Requests;
 using Global;
 using Scellecs.Morpeh;
@@ -20,6 +21,8 @@ namespace Features.StatePack.Systems
         private Request<EndEnemyTurnRequest> _endEnemyTurnRequest;
         private Request<StartEventsPhaseRequest> _startEventsPhaseRequest;
         private Request<EndEventsPhaseRequest> _endEventsPhaseRequest;
+        
+        private Event<PhaseChangedEvent> _phaseChangedEvent;
 
         public void OnAwake()
         {
@@ -36,6 +39,8 @@ namespace Features.StatePack.Systems
             _startEventsPhaseRequest = World.GetRequest<StartEventsPhaseRequest>();
             _endEventsPhaseRequest = World.GetRequest<EndEventsPhaseRequest>();
 
+            _phaseChangedEvent = World.GetEvent<PhaseChangedEvent>();
+            
             _turnPhaseStash.Add(World.CreateEntity());
         }
 
@@ -49,6 +54,7 @@ namespace Features.StatePack.Systems
                 Debug.Log("Player phase started");
                 
                 turnPhaseComp.phase = TurnPhase.Player;
+                _phaseChangedEvent.NextFrame(new PhaseChangedEvent(TurnPhase.Player, TurnType.Start));
             }
             
             foreach (var _ in _endPlayerTurnRequest.Consume())
@@ -56,13 +62,15 @@ namespace Features.StatePack.Systems
                 Debug.Log("Player phase ender");
                 
                 turnPhaseComp.phase = TurnPhase.None;
+                _phaseChangedEvent.NextFrame(new PhaseChangedEvent(TurnPhase.Player, TurnType.End));
             }
             
             foreach (var _ in _startEnemyTurnRequest.Consume())
             {
                 Debug.Log("Enemy phase started");
                 
-                turnPhaseComp.phase = TurnPhase.Player;
+                turnPhaseComp.phase = TurnPhase.Enemy;
+                _phaseChangedEvent.NextFrame(new PhaseChangedEvent(TurnPhase.Enemy, TurnType.Start));
             }
             
             foreach (var _ in _endEnemyTurnRequest.Consume())
@@ -70,13 +78,15 @@ namespace Features.StatePack.Systems
                 Debug.Log("Enemy phase ender");
                 
                 turnPhaseComp.phase = TurnPhase.None;
+                _phaseChangedEvent.NextFrame(new PhaseChangedEvent(TurnPhase.Enemy, TurnType.End));
             }
             
             foreach (var _ in _startEventsPhaseRequest.Consume())
             {
                 Debug.Log("Events phase started");
                 
-                turnPhaseComp.phase = TurnPhase.Player;
+                turnPhaseComp.phase = TurnPhase.Events;
+                _phaseChangedEvent.NextFrame(new PhaseChangedEvent(TurnPhase.Events, TurnType.Start));
             }
             
             foreach (var _ in _endEventsPhaseRequest.Consume())
@@ -84,6 +94,7 @@ namespace Features.StatePack.Systems
                 Debug.Log("Events phase ender");
                 
                 turnPhaseComp.phase = TurnPhase.None;
+                _phaseChangedEvent.NextFrame(new PhaseChangedEvent(TurnPhase.Events, TurnType.End));
             }
         }
         

@@ -4,6 +4,7 @@ namespace Features.BattlePack
 {
     public struct BattleComponent : IComponent
     {
-        public int currentBattleId;
+        public BattlePlan battlePlan;
+        public int currentBattleId; //todo возможно, стоит убрать
     }
 }

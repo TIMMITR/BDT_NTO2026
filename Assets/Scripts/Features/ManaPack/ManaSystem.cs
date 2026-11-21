@@ -29,7 +29,8 @@ namespace Features.ManaPack
         {
             foreach (var request in _manaChangeRequest.Consume())
             {
-                if (!_manaStash.Has(request.entity)) continue;
+                if (!_manaStash.Has(request.entity)) 
+                    continue;
 
                 ref var manaComponent = ref _manaStash.Get(request.entity);
 

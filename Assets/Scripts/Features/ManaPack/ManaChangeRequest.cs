@@ -6,5 +6,11 @@ namespace Features.ManaPack
     {
         public int amount;
         public Entity entity;
+
+        public ManaChangeRequest(int amount, Entity entity)
+        {
+            this.amount = amount;
+            this.entity = entity;
+        }
     }
 }

@@ -67,7 +67,7 @@ namespace Features.UnitPack.Systems
                 
                 var unitConfig = request.unitConfig;
                 
-                var cellCoord = new CellCoord(request.q, request.r);
+                var cellCoord = request.cellCoord;
                 var spawnPos = gridComp.ToWorldCoord(cellCoord);
                 spawnPos.y = unitConfig.PosY;
                 
