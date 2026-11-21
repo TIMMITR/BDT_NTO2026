@@ -1,7 +1,7 @@
 using Features.InputPack.Requests;
 using Global;
 using Scellecs.Morpeh;
-using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 
 namespace Features.InputPack
@@ -30,6 +30,8 @@ namespace Features.InputPack
 
         public InputSystem(PlayerInputActions playerInputActions)
         { _playerInputActions = playerInputActions; }
+        
+        private static bool IsPointerOverUI() => EventSystem.current.IsPointerOverGameObject();
         
         public void OnAwake()
         {
@@ -62,7 +64,7 @@ namespace Features.InputPack
             if (_escAction.WasPerformedThisFrame())
                 _escRequest.Publish(new EscRequest());
             
-            if (_lmbAction.WasPressedThisFrame())
+            if (_lmbAction.WasPressedThisFrame() && !IsPointerOverUI())
                 _lmbStartRequest.Publish(new LmbStartRequest());
 
             if (_lmbAction.WasReleasedThisFrame())
