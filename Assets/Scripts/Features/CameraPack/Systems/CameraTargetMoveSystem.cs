@@ -65,7 +65,6 @@ namespace Features.CameraPack.Systems
                 _homeRotation = target.rotation;
                 _homeCached = true;
                 _init = false;
-                Debug.Log("dfsdf");
             }
 
             ref var positionComponent = ref _positionStash.Get(_playerFilter.First());
@@ -80,8 +79,6 @@ namespace Features.CameraPack.Systems
 
             ref var grid = ref _gridStash.Get(gridEntity);
 
-            
-                
             CellCoord chosenCoord;
             if (_chosenCellStash.Has(gridEntity) && _init)
             {
@@ -95,7 +92,6 @@ namespace Features.CameraPack.Systems
             else
             {
                 chosenCoord = new CellCoord(0, 0);
-                Debug.Log("dfsdf56756756");
                 _init = true;
             }
 
