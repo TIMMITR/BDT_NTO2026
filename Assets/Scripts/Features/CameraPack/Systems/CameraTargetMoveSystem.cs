@@ -77,9 +77,9 @@ namespace Features.CameraPack.Systems
             ref var grid = ref _gridStash.Get(gridEntity);
             var chosenCoord = _chosenCellStash.Has(gridEntity)
                 ? _chosenCellStash.Get(gridEntity).cellCoord
-                : GetFallbackCellCoord(gridEntity);
+                : new CellCoord(0, 0);
 
-            var originDepth = 0;
+            var focusDepth = (float)(2 * chosenCoord.R + chosenCoord.Q);
 
             if (_selectedUnitStash.Has(gridEntity))
             {
@@ -88,13 +88,12 @@ namespace Features.CameraPack.Systems
                 if (_cellPositionStash.Has(selected.unit))
                 {
                     var unitCoord = _cellPositionStash.Get(selected.unit).coord;
-                    originDepth = 2 * unitCoord.R + unitCoord.Q;
+                    var unitDepth = 2 * unitCoord.R + unitCoord.Q;
+                    focusDepth = (focusDepth + unitDepth) * 0.5f;
                 }
             }
 
-            var chosenDepth = 2 * chosenCoord.R + chosenCoord.Q;
-
-            var t = Mathf.Clamp01(0.5f + (chosenDepth - originDepth) / (4f * grid.gridRadius));
+            var t = Mathf.Clamp01(0.5f + focusDepth / (4f * grid.gridRadius));
             positionComponent.progress = t;
 
             t = Mathf.SmoothStep(0f, 1f, t);
@@ -102,19 +101,6 @@ namespace Features.CameraPack.Systems
             var position = Vector3.Lerp(_corridorStart.position, _corridorEnd.position, t);
             var rotation = Quaternion.Slerp(_corridorStart.rotation, _corridorEnd.rotation, t);
             target.SetPositionAndRotation(position, rotation);
-        }
-
-        private CellCoord GetFallbackCellCoord(Entity gridEntity)
-        {
-            if (_selectedUnitStash.Has(gridEntity))
-            {
-                var selected = _selectedUnitStash.Get(gridEntity);
-
-                if (_cellPositionStash.Has(selected.unit))
-                    return _cellPositionStash.Get(selected.unit).coord;
-            }
-
-            return default;
         }
 
         public void Dispose() { }
