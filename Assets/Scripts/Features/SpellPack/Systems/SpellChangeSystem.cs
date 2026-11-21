@@ -1,33 +1,40 @@
-using Configs;
 using Features.SpellPack.Components;
+using Features.SpellPack.Requests;
 using Scellecs.Morpeh;
 
 namespace Features.SpellPack.Systems
 {
-    public class SpellChangeSystem : ISystem //todo пока что просто заглушка, потом нузжно будет норм систему написать
+    public sealed class SpellChangeSystem : ISystem
     {
         public World World { get; set; }
 
         private Stash<SpellDataComponent> _spellStash;
-
-        private readonly SpellConfigSo _spellConfig;
-
-        public SpellChangeSystem(SpellConfigSo spellConfig)
-        {
-            _spellConfig = spellConfig;
-        }
+        private Request<SpellChangeRequest> _spellChangeRequest;
         
         public void OnAwake()
         {
             _spellStash = World.GetStash<SpellDataComponent>();
-            
-            var spellEnt = World.CreateEntity();
-            _spellStash.Add(spellEnt, new SpellDataComponent(_spellConfig));
+            _spellChangeRequest = World.GetRequest<SpellChangeRequest>();
         }
 
         public void OnUpdate(float deltaTime)
         {
-            
+            foreach (var request in _spellChangeRequest.Consume())
+            {
+                if (!_spellStash.Has(request.unit))
+                    continue;
+
+                ref var spellData = ref _spellStash.Get(request.unit);
+                if (request.spellIndex < 0 || request.spellIndex >= spellData.availableSpells.Count)
+                    continue;
+
+                var spell = spellData.availableSpells[request.spellIndex];
+                if (spell == null)
+                    continue;
+
+                spellData.selectedSpellIndex = request.spellIndex;
+                spellData.spellData = spell;
+            }
         }
     
         public void Dispose() { }

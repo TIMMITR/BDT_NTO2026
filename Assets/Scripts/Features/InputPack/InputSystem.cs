@@ -2,6 +2,7 @@ using Features.InputPack.Requests;
 using Global;
 using Scellecs.Morpeh;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 
 namespace Features.InputPack
@@ -61,6 +62,9 @@ namespace Features.InputPack
             
             if (_escAction.WasPerformedThisFrame())
                 _escRequest.Publish(new EscRequest());
+
+            if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject())
+                return;
             
             if (_lmbAction.WasPressedThisFrame())
                 _lmbStartRequest.Publish(new LmbStartRequest());

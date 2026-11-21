@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Features.GamePack;
+using Features.OverlayPack.Views;
 using Features.StoryTalkPack.Data;
 using UnityEngine;
 
@@ -26,6 +27,10 @@ namespace Scenes.Game
         
         [Header("Unit Settings")]
         public List<AnimationData> moveDataList;
+
+        [Header("Battle UI")]
+        public HeroSlotView[] heroSlots = Array.Empty<HeroSlotView>();
+        public SpellSlotView[] spellSlots = Array.Empty<SpellSlotView>();
     }
 
     [Serializable]

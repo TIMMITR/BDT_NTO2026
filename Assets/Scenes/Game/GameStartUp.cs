@@ -14,11 +14,13 @@ using Features.InputPack;
 using Features.KnockbackPack.Systems;
 using Features.LifetimePack.Systems;
 using Features.ManaPack;
+using Features.OverlayPack.Systems;
 using Features.PlayerPack.Systems;
 using Features.QuickTalkPack.Systems;
 using Features.RaycastPack;
 using Features.ScenePack;
 using Features.SpeedPack.Systems;
+using Features.SpellPack.Systems;
 using Features.StatePack.Systems;
 using Features.TargetPack;
 using Features.UnitPack.Systems;
@@ -79,7 +81,9 @@ namespace Scenes.Game
             _updateGroup.AddSystem(new ClearControlPointSystem());
             
             _updateGroup.AddSystem(new SelectUnitSystem());
+            _updateGroup.AddSystem(new SpellChangeSystem());
             _updateGroup.AddSystem(new UnitSpawnSystem());
+            _updateGroup.AddSystem(new BattleUISystem(gameContext.heroSlots, gameContext.spellSlots));
             _updateGroup.AddSystem(new MoveCommandSystem());
             _updateGroup.AddSystem(new PathPreviewSystem());
             _updateGroup.AddSystem(new DelayAttackSystem());

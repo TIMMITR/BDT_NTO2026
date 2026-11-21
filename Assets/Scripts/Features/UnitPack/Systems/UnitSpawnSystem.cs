@@ -77,7 +77,7 @@ namespace Features.UnitPack.Systems
                 
                 _meshRendererStash.Add(newUnit, new MeshRendererComponent { value = mr });
                 _transformStash.Add(newUnit, new TransformComponent { value = unitObj.transform });
-                _spellStash.Add(newUnit, new SpellDataComponent(unitConfig.SpellConfig));
+                _spellStash.Add(newUnit, new SpellDataComponent(unitConfig.Spells));
                 
                 ApplyUnitComponents(newUnit, unitConfig);
 
