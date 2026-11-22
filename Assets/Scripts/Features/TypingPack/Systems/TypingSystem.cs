@@ -1,4 +1,5 @@
 using Configs;
+using Features.OverlayPack.Views;
 using Features.TypingPack.Components;
 using Features.TypingPack.Events;
 using Features.TypingPack.Requests;
@@ -16,6 +17,8 @@ namespace Features.TypingPack.Systems
         private Request<TypingStartRequest> _showLineRequest;
         private Request<TypingSkipRequest> _skipRequest;
         private Event<TypingEndEvent> _lineFinishedEvent;
+        private Request<BattleUiRequest> _battleUIRequest;
+        
 
         private readonly WorldSettingsSo _settings;
 
@@ -32,6 +35,8 @@ namespace Features.TypingPack.Systems
             _showLineRequest = World.GetRequest<TypingStartRequest>();
             _skipRequest = World.GetRequest<TypingSkipRequest>();
             _lineFinishedEvent = World.GetEvent<TypingEndEvent>();
+            _battleUIRequest = World.GetRequest<BattleUiRequest>();
+            
 
             if (_filter.IsEmpty())
                 _typingStash.Add(World.CreateEntity());
@@ -51,6 +56,7 @@ namespace Features.TypingPack.Systems
                  typing.isTyping = true;
                  typing.stayTime = 0f;
                  typing.active = true;
+                _battleUIRequest.Publish(new BattleUiRequest {active = false});
              }
         
              foreach (var _ in _skipRequest.Consume())
@@ -70,7 +76,6 @@ namespace Features.TypingPack.Systems
              }
         
              if (!typing.active) return;
-        
              if (typing.isTyping)
              {
                  typing.visibleChars += _settings.dialogueCharsPerSecond * deltaTime;

@@ -216,7 +216,7 @@ namespace Features.EnemyAIPack.System
             if (resultPath == null)
                 return false;
             
-            _moveUnitRequest.Publish(new MoveUnitRequest(unit, resultPath));
+            _moveUnitRequest.Publish(new MoveUnitRequest(unit, resultPath), allowNextFrame: true);
             
             return true;
         }

@@ -59,7 +59,7 @@ namespace Features.TypingPack.Views
             return speaker switch
             {
                 Speaker.Warlock => "Колдун",
-                Speaker.Verity => "Верити",
+                Speaker.Virete => "Вирете",
                 _ => string.Empty
             };
         }

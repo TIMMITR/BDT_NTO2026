@@ -1,3 +1,4 @@
+using Features.OverlayPack.Views;
 using Features.StoryTalkPack.Data;
 using Features.StoryTalkPack.Events;
 using Features.StoryTalkPack.Requests;
@@ -18,6 +19,8 @@ namespace Features.StoryTalkPack.Systems
         private Event<TypingEndEvent> _typingEndEvent;
         private Event<StoryTalkStartEvent> _talkStartedEvent;
         private Event<StoryTalkFinishEvent> _talkFinishedEvent;
+        private Request<BattleUiRequest> _battleUIRequest;
+        
 
         private readonly StoryTalk _introTalk;
 
@@ -37,6 +40,9 @@ namespace Features.StoryTalkPack.Systems
             _typingEndEvent = World.GetEvent<TypingEndEvent>();
             _talkStartedEvent = World.GetEvent<StoryTalkStartEvent>();
             _talkFinishedEvent = World.GetEvent<StoryTalkFinishEvent>();
+            _battleUIRequest = World.GetRequest<BattleUiRequest>();
+            
+            //_showTalkRequest.Publish(new StoryTalkShowRequest{ talk = _introTalk}, allowNextFrame:true);
         }
 
         public void OnUpdate(float deltaTime)
@@ -81,6 +87,8 @@ namespace Features.StoryTalkPack.Systems
             var finished = _activeTalk;
             _activeTalk = null;
             _lineIndex = 0;
+            _battleUIRequest.Publish(new BattleUiRequest {active = true});
+
             _talkFinishedEvent.NextFrame(new StoryTalkFinishEvent { talk = finished });
         }
 
