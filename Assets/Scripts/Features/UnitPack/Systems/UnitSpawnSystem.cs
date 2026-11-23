@@ -96,7 +96,7 @@ namespace Features.UnitPack.Systems
                     if (unitConfig.TeamSide == TeamSide.Enemy)
                         _spellStash.Add(newUnit, new SpellDataComponent(spells[0]));
                 }
-
+                
                 if (unitConfig.TeamSide == TeamSide.Player)
                 {
                     _registerEvent.NextFrame(new RegisterUnitEvent

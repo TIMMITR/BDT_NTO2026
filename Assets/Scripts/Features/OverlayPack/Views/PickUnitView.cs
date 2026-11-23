@@ -14,7 +14,6 @@ namespace Features.OverlayPack.Views
         
         public void CloseStats(){
             statsPanel.gameObject.SetActive(false);
-    
         }
     }
     

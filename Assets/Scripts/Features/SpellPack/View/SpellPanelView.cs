@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 namespace Features.SpellPack.View
 {
-    public sealed class SpellBarView : MonoBehaviour
+    public sealed class SpellPanelView : MonoBehaviour
     {
         [SerializeField] private List<Button> spellButtons;
 
