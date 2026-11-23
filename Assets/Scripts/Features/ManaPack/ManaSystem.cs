@@ -1,6 +1,7 @@
 using System;
 using Features.ManaPack.Events;
 using Scellecs.Morpeh;
+using UnityEngine;
 
 namespace Features.ManaPack
 {
@@ -41,10 +42,8 @@ namespace Features.ManaPack
                 }
 
                 manaComponent.currentMana = Math.Clamp(manaComponent.currentMana + request.amount, 0, manaComponent.maxMana);
-
                 _manaChangeSuccessEvent.NextFrame(new ManaChangedEvent
                 {
-                    entity = request.entity,
                     newAmount = manaComponent.currentMana
                 });
             }

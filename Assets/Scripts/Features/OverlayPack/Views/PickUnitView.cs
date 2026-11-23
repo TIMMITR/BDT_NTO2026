@@ -1,28 +1,22 @@
-﻿using Scellecs.Morpeh;
-using UnityEngine;
+﻿using UnityEngine;
+using UnityEngine.UI;
 
 namespace Features.OverlayPack.Views
 {
     public class PickUnitView : MonoBehaviour
     {
-        public int id; // номер героя 
+        public Button pickUnitButton;
+        public RectTransform statsPanel;
         
-        public void OnPickUnit()
-        {
-            if (World.Default == null) 
-                return;
-            
-            World.Default.GetRequest<PickUnitRequest>().Publish(new PickUnitRequest
-            {
-                id = id
-            });
+        public void OpenStats(){
+            statsPanel.gameObject.SetActive(true);
         }
         
-        
+        public void CloseStats(){
+            statsPanel.gameObject.SetActive(false);
+    
+        }
     }
+    
 
-    public struct PickUnitRequest : IRequestData
-    {
-        public int id; // я не уверен как тут выбор сделать, где-то нужно запоминать героя
-    }
 }

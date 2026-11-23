@@ -12,6 +12,7 @@ using Features.StatePack.Components;
 using Features.UnitPack.Components;
 using Features.UnitPack.Requests;
 using Scellecs.Morpeh;
+using UnityEngine;
 
 namespace Features.UnitPack.Systems
 {
@@ -37,6 +38,7 @@ namespace Features.UnitPack.Systems
         private Request<LmbStartRequest> _lmbRequest;
         private Request<MoveUnitRequest> _moveUnitRequest;
         private Request<ColorCellRequest> _colorCellRequest;
+        private Request<SelectUnitRequest> _selectUnitRequest;
 
         private Event<CellChooseChangedEvent> _cellChoosedChangedEvent;
 
@@ -60,6 +62,7 @@ namespace Features.UnitPack.Systems
             _lmbRequest = World.GetRequest<LmbStartRequest>();
             _moveUnitRequest = World.GetRequest<MoveUnitRequest>();
             _colorCellRequest = World.GetRequest<ColorCellRequest>();
+            _selectUnitRequest = World.GetRequest<SelectUnitRequest>();
 
             _cellChoosedChangedEvent = World.GetEvent<CellChooseChangedEvent>();
         }
@@ -71,10 +74,23 @@ namespace Features.UnitPack.Systems
             if(turnPhaseComp.phase != TurnPhase.Player)
                 return;
 
+            
             var lmbClicked = false;
             foreach (var _ in _lmbRequest.Consume()) lmbClicked = true;
             
             var gridEntity = _gridFilter.First();
+
+            foreach (var request in _selectUnitRequest.Consume())
+            {
+                Debug.Log("fbcb");
+                if (_selectedUnitStash.Has(gridEntity))
+                {
+                    ref var selected = ref _selectedUnitStash.Get(gridEntity);
+                    selected.unit = request.unit; // бля бро как этот скрипт работает нахрен
+                }
+            }
+            // todo бро переделай это пж
+            // по сути система рабоатет, но тут не куда вставить принудительный селект юнита, пока что так оставлю
 
             if (!lmbClicked || !_chosenCellStash.Has(gridEntity)) return;
             
@@ -111,7 +127,7 @@ namespace Features.UnitPack.Systems
                 }
 
                 // двигаем
-                if (selected.path != null && selected.path.Count > 1)
+                if (selected.path is { Count: > 1 })
                 {
                     _moveUnitRequest.Publish(new MoveUnitRequest(selected.unit, selected.path));
                 }
@@ -135,9 +151,7 @@ namespace Features.UnitPack.Systems
 
         private TeamSide TryGetUnit(GridComponent gridComp, CellCoord cellCoord, out Entity unit)
         {
-            if (!gridComp.takenCells.TryGetValue(cellCoord, out unit))
-                return TeamSide.None;
-            if (_unitAnimationStash.Has(unit))
+            if (!gridComp.takenCells.TryGetValue(cellCoord, out unit) || _unitAnimationStash.Has(unit))
                 return TeamSide.None;
 
             ref var unitComp = ref _unitStash.Get(unit);
@@ -148,10 +162,7 @@ namespace Features.UnitPack.Systems
         private bool TryGetPlayerSpeed(Entity unit, out int moveSpeed)
         {
             moveSpeed = _speedStash.Get(unit).currentSpeed;
-            if (moveSpeed <= 0)
-                return false;
-            
-            return true;
+            return moveSpeed > 0;
         }
 
         public void Dispose() {}

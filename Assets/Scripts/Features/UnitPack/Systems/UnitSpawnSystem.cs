@@ -8,6 +8,7 @@ using Features.SpeedPack;
 using Features.SpellPack.Components;
 using Features.TransformPack;
 using Features.UnitPack.Components;
+using Features.UnitPack.Events;
 using Features.UnitPack.Requests;
 using Global;
 using Scellecs.Morpeh;
@@ -39,6 +40,8 @@ namespace Features.UnitPack.Systems
         
         private Request<UnitSpawnRequest> _request;
         
+        private Event<RegisterUnitEvent> _registerEvent;
+        
         public void OnAwake()
         {
             _gridFilter = World.Filter.With<GridComponent>().Build();
@@ -60,6 +63,8 @@ namespace Features.UnitPack.Systems
             _spellListStash = World.GetStash<SpellListComponent>();
             
             _request = World.GetRequest<UnitSpawnRequest>();
+            
+            _registerEvent = World.GetEvent<RegisterUnitEvent>();
         }
 
         public void OnUpdate(float deltaTime)
@@ -88,8 +93,16 @@ namespace Features.UnitPack.Systems
                 {
                     _spellListStash.Add(newUnit, new SpellListComponent(spells));
                     
-                    if(unitConfig.TeamSide == TeamSide.Enemy)
+                    if (unitConfig.TeamSide == TeamSide.Enemy)
                         _spellStash.Add(newUnit, new SpellDataComponent(spells[0]));
+                }
+
+                if (unitConfig.TeamSide == TeamSide.Player)
+                {
+                    _registerEvent.NextFrame(new RegisterUnitEvent
+                    {
+                        unit = newUnit
+                    });
                 }
                 
                 ApplyUnitComponents(newUnit, unitConfig);
