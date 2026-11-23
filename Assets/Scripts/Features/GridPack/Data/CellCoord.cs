@@ -1,5 +1,5 @@
 using System;
-using Features.PathFinderPack;
+using Features.CalcPack;
 using UnityEngine;
 
 namespace Features.GridPack.Data
@@ -10,6 +10,9 @@ namespace Features.GridPack.Data
     {
         public int Q { get; }
         public int R { get; }
+        
+        public static CellCoord operator+ (CellCoord a, CellCoord b) => new CellCoord(a.Q + b.Q, a.R + b.R);
+        public static CellCoord operator- (CellCoord a, CellCoord b) => new CellCoord(a.Q - b.Q, a.R - b.R);
 
         private const float CellTransMultiplier1 = 1.5f; // todo вынести в настройки
         private const float CellTransMultiplier2 = 0.5f;
@@ -35,7 +38,7 @@ namespace Features.GridPack.Data
             var best = default(CellCoord);
             var bestDist = int.MaxValue;
  
-            foreach (var dir in PathFinder.Directions)
+            foreach (var dir in HexMath.Directions)
             {
                 var dist = new CellCoord(Q + dir.Q, R + dir.R).DistanceTo(hex);
                 if (dist < bestDist)

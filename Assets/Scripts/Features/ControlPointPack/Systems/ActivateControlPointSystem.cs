@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Configs;
 using Features.BattlePack;
+using Features.CalcPack;
 using Features.ControlPointPack.Components;
 using Features.GridPack;
 using Features.GridPack.Components;
@@ -109,7 +110,7 @@ namespace Features.ControlPointPack.Systems
 
         private CellCoord? FindRelevantCell(GridComponent gridComp, CellCoord from)
         {
-            foreach (var dir in PathFinder.Directions)
+            foreach (var dir in HexMath.Directions)
             {
                 var coord = new CellCoord(from.Q + dir.Q, from.R + dir.R);
                 

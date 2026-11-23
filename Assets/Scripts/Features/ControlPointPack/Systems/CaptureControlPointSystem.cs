@@ -1,4 +1,5 @@
 using Configs;
+using Features.CalcPack;
 using Features.ControlPointPack.Components;
 using Features.ControlPointPack.Events;
 using Features.GridPack;
@@ -58,7 +59,7 @@ namespace Features.ControlPointPack.Systems
                     ref var controlPointComp = ref _controlPointStash.Get(controlPoint);
                     var coord = controlPointComp.cellCoord;
             
-                    foreach (var dir in PathFinder.Directions)
+                    foreach (var dir in HexMath.Directions)
                     {
                         var neighbor = new CellCoord(coord.Q + dir.Q, coord.R + dir.R);
 

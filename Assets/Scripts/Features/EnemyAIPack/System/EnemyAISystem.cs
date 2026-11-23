@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Configs;
 using Features.BattlePack;
+using Features.CalcPack;
 using Features.CellSelectionPack.Components;
 using Features.ControlPointPack.Components;
 using Features.FightPack.Components;
@@ -274,7 +275,7 @@ namespace Features.EnemyAIPack.System
 
             List<CellCoord> resultPath = null;
 
-            foreach (var dir in PathFinder.Directions)
+            foreach (var dir in HexMath.Directions)
             {
                 var next = new CellCoord(targetCoord.Q + dir.Q, targetCoord.R + dir.R);
                 if (!IsFreeCell(gridComp, next))
@@ -305,7 +306,7 @@ namespace Features.EnemyAIPack.System
                 ref var controlPointComp = ref _controlPointStash.Get(controlPoint);
                 var coord = controlPointComp.cellCoord;
 
-                foreach (var dir in PathFinder.Directions)
+                foreach (var dir in HexMath.Directions)
                 {
                     var next = new CellCoord(coord.Q + dir.Q, coord.R + dir.R);
                     if (!IsFreeCell(gridComp, next))

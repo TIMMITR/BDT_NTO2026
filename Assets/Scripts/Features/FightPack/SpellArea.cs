@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Configs;
+using Features.CalcPack;
 using Features.CellSelectionPack.Components;
 using Features.GridPack.Components;
 using Features.GridPack.Data;
@@ -200,7 +201,7 @@ namespace Features.FightPack
         {
             direction = default;
 
-            foreach (var dir in PathFinder.Directions)
+            foreach (var dir in HexMath.Directions)
             {
                 var cell = from;
 

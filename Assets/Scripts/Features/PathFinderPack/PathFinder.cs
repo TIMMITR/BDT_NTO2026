@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Features.CalcPack;
 using Features.GridPack.Components;
 using Features.GridPack.Data;
 using Scellecs.Morpeh;
@@ -8,15 +9,7 @@ namespace Features.PathFinderPack
 {
     public static class PathFinder
     {
-        public static CellCoord[] Directions =
-        {
-            new(1,0),
-            new(1, -1),
-            new(0, -1),
-            new(-1, 0),
-            new(-1, 1),
-            new(0, 1),
-        };
+        
         
         public static PassReady GetPath(GridComponent grid, CellCoord from, CellCoord to, Stash<CellTileComponent> stash)
         {
@@ -38,7 +31,7 @@ namespace Features.PathFinderPack
             {
                 var currentCell = GetMin(candidates);
 
-                foreach (var dir in Directions)
+                foreach (var dir in HexMath.Directions)
                 {
                     var next = new CellCoord(currentCell.coord.Q + dir.Q, currentCell.coord.R + dir.R);
 
