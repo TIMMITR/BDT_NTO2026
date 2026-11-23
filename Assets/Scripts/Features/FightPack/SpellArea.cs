@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Configs;
 using Features.CalcPack;
 using Features.CellSelectionPack.Components;
+using Features.GridPack;
 using Features.GridPack.Components;
 using Features.GridPack.Data;
 using Features.PathFinderPack;
@@ -85,7 +86,7 @@ namespace Features.FightPack
             return cells;
         }
         
-        private static void ReconstructLine(GridComponent grid, Stash<CellTileComponent> tiles,
+        private static void ReconstructLine(GridComponent gridComp, Stash<CellTileComponent> tiles,
             SpellConfigSo spell,
             CellCoord from, CellCoord direction, List<CellCoord> cells)
         {
@@ -95,17 +96,17 @@ namespace Features.FightPack
             {
                 cell = new CellCoord(cell.Q + direction.Q, cell.R + direction.R);
  
-                if (!grid.cells.TryGetValue(cell, out var cellEntity))
+                if (!gridComp.cells.TryGetValue(cell, out var cellEntity))
                     break;
  
                 cells.Add(cell);            
  
-                if (!spell.isMultipleHit && grid.takenCells.ContainsKey(cell))
+                if (!spell.isMultipleHit && GridData.HasUnit(gridComp, cell))
                     break;
             }
         }
         
-        private static void ReconstructArea(GridComponent grid, 
+        private static void ReconstructArea(GridComponent gridComp, 
             SpellConfigSo spell,
             CellCoord center, List<CellCoord> cells)
         {
@@ -120,13 +121,13 @@ namespace Features.FightPack
                 {
                     var cell = new CellCoord(center.Q + dq, center.R + dr);
                     
-                    if (grid.cells.ContainsKey(cell))
+                    if (gridComp.cells.ContainsKey(cell))
                         cells.Add(cell);
                 }
             }
         }
 
-        private static void CollectLineTarget(GridComponent grid, Stash<CellTileComponent> tiles, Stash<UnitComponent> units,
+        private static void CollectLineTarget(GridComponent gridComp, Stash<CellTileComponent> tiles, Stash<UnitComponent> units,
             SpellConfigSo spell,
             CellCoord from, CellCoord to, CellCoord direction,
             List<Entity> targets,
@@ -138,17 +139,11 @@ namespace Features.FightPack
             {
                 cell = new CellCoord(cell.Q + direction.Q, cell.R + direction.R);
 
-                if (!grid.cells.TryGetValue(cell, out var cellEntity)) 
-                    break;
-
-                if (tiles.Get(cellEntity).blocked)
-                    break;
-                
-                if (!grid.takenCells.TryGetValue(cell, out var unit))
-                    continue;
-                
-                if (!units.Has(unit))
+                if (!GridData.IsFreeCell(gridComp, tiles, cell))
                     return;
+                
+                if (!GridData.TryGetUnit(gridComp, units, cell, out var unit))
+                    continue;
                 
                 ref var unitComp = ref units.Get(unit);
                 
@@ -162,7 +157,7 @@ namespace Features.FightPack
             }
         }
         
-        private static void CollectAreaTarget(GridComponent grid, Stash<CellTileComponent> tiles, Stash<UnitComponent> units,
+        private static void CollectAreaTarget(GridComponent gridComp, Stash<CellTileComponent> tiles, Stash<UnitComponent> units,
             SpellConfigSo spell,
             CellCoord center,
             List<Entity> targets,
@@ -178,12 +173,9 @@ namespace Features.FightPack
                 for (var dr = rMin; dr <= rMax; dr++)
                 {
                     var cell = new CellCoord(center.Q + dq, center.R + dr);
- 
-                    if (!grid.takenCells.TryGetValue(cell, out var unit)) 
-                        continue;
-                    
-                    if(!units.Has(unit))
-                        continue;
+
+                    if (!GridData.TryGetUnit(gridComp, units, cell, out var unit))
+                        return;
                     
                     ref var unitComp = ref units.Get(unit);
                     
@@ -195,7 +187,7 @@ namespace Features.FightPack
             }
         }
 
-        private static bool TryLineTarget(GridComponent grid, Stash<CellTileComponent> tiles,
+        private static bool TryLineTarget(GridComponent gridComp, Stash<CellTileComponent> tiles,
             CellCoord from, CellCoord to, SpellConfigSo spell,
             out CellCoord direction)
         {
@@ -215,11 +207,10 @@ namespace Features.FightPack
                         return true;
                     }
 
-                    if (!grid.cells.TryGetValue(cell, out var cellEntity))
-                        break;
-                    if (tiles.Get(cellEntity).blocked)
-                        break;
-                    if (!spell.isMultipleHit && grid.takenCells.ContainsKey(cell))
+                    if (!GridData.IsFreeCell(gridComp, tiles, cell))
+                        return false;
+                    
+                    if (!spell.isMultipleHit)
                         break;
                 }
             }

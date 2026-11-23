@@ -61,12 +61,10 @@ namespace Features.ControlPointPack.Systems
             
                     foreach (var dir in HexMath.Directions)
                     {
-                        var neighbor = new CellCoord(coord.Q + dir.Q, coord.R + dir.R);
+                        var neighbor = coord + dir;
 
-                        if (!GridOccupancy.TryGetUnit(gridComp, _unitStash, neighbor, out var unit))
+                        if (!GridData.TryGetUnit(gridComp, _unitStash, neighbor, out var unit, out var side))
                             continue;
-                        
-                        var side = _unitStash.Get(unit).teamSide;
 
                         if(side == TeamSide.Player)
                             hasPlayer = true;

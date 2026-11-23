@@ -29,22 +29,13 @@ namespace Features.GridPack
             CellCoord to)
         {
             grid.takenCells.Remove(from);
-            //tiles.Get(grid.cells[from]).blocked = false;
  
             grid.takenCells[to] = unit;
-            //tiles.Get(grid.cells[to]).blocked = true;
  
             ref var pos = ref positions.Get(unit);
             pos.coord = to;
         }
         
-        public static bool TryGetUnit(
-            GridComponent grid,
-            Stash<UnitComponent> units,
-            CellCoord at,
-            out Entity unit)
-        {
-            return grid.takenCells.TryGetValue(at, out unit) && units.Has(unit);
-        }
+        // возможно стоит добавить удаление 
     }
 }

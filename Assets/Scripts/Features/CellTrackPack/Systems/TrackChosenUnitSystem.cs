@@ -39,18 +39,9 @@ namespace Features.CellTrackPack.Systems
                 var gridEntity = _gridFilter.First();
                 ref var gridComp = ref _gridStash.Get(gridEntity);
 
-                var cellSide = TeamSide.None;
-
-                if (GridOccupancy.TryGetUnit(gridComp, _unitComponentStash, cellChangeEvent.cellCoord, out var unit))
-                {
-                    var unitComp = _unitComponentStash.Get(unit);
+                GridData.TryGetUnit(gridComp, _unitComponentStash, cellChangeEvent.cellCoord, out var unit, out var side);
                     
-                    cellSide = unitComp.teamSide;
-                }
-                
-                //Debug.Log(cellSide);
-                
-                _cellChooseEvent.NextFrame(new CellChooseEvent(cellSide));
+                _cellChooseEvent.NextFrame(new CellChooseEvent(side));
             }
         }
     

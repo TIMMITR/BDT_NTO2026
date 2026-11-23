@@ -5,6 +5,7 @@ using Features.CalcPack;
 using Features.CellSelectionPack.Components;
 using Features.ControlPointPack.Components;
 using Features.FightPack.Components;
+using Features.GridPack;
 using Features.GridPack.Components;
 using Features.GridPack.Data;
 using Features.PathFinderPack;
@@ -59,11 +60,6 @@ namespace Features.EnemyAIPack.System
         
         private bool _isActive;
         private int _currentIndex;
-
-        private bool IsFreeCell(GridComponent gridComp, CellCoord coord) => // todo надо определиться где писать свойства
-            gridComp.cells.TryGetValue(coord, out var cell)
-            && !gridComp.takenCells.ContainsKey(coord)
-            && !_cellTileStash.Get(cell).blocked;
 
         public void OnAwake()
         {
@@ -207,7 +203,7 @@ namespace Features.EnemyAIPack.System
             
             foreach (var cell in ringCells)
             {
-                if (!IsFreeCell(gridComp, cell)) continue;
+                if (!GridData.IsFreeCell(gridComp, _cellTileStash, cell)) continue;
 
                 var path = BuildPath(gridComp, from, cell, speed);
                 if (path != null && (resultPath == null || path.Count < resultPath.Count))
@@ -230,7 +226,7 @@ namespace Features.EnemyAIPack.System
             {
                 if (center.DistanceTo(coord) != radius) 
                     continue;
-                if (IsFreeCell(gridComp, coord))
+                if (GridData.IsFreeCell(gridComp, _cellTileStash, coord))
                     resultPath.Add(coord);
             }
             
@@ -278,7 +274,7 @@ namespace Features.EnemyAIPack.System
             foreach (var dir in HexMath.Directions)
             {
                 var next = new CellCoord(targetCoord.Q + dir.Q, targetCoord.R + dir.R);
-                if (!IsFreeCell(gridComp, next))
+                if (!GridData.IsFreeCell(gridComp, _cellTileStash, next))
                     continue;
 
                 var path = BuildPath(gridComp, from, next, speed);
@@ -309,7 +305,7 @@ namespace Features.EnemyAIPack.System
                 foreach (var dir in HexMath.Directions)
                 {
                     var next = new CellCoord(coord.Q + dir.Q, coord.R + dir.R);
-                    if (!IsFreeCell(gridComp, next))
+                    if (!GridData.IsFreeCell(gridComp, _cellTileStash, next))
                         continue;
 
                     var path = BuildPath(gridComp, from, next, speed);

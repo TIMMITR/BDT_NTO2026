@@ -3,6 +3,7 @@ using Features.CellSelectionPack.Components;
 using Features.CellSelectionPack.Events;
 using Features.CellSelectionPack.Requests;
 using Features.FightPack.Components;
+using Features.GridPack;
 using Features.GridPack.Components;
 using Features.GridPack.Data;
 using Features.InputPack.Requests;
@@ -133,18 +134,6 @@ namespace Features.UnitPack.Systems
             }
         }
 
-        private TeamSide TryGetUnit(GridComponent gridComp, CellCoord cellCoord, out Entity unit)
-        {
-            if (!gridComp.takenCells.TryGetValue(cellCoord, out unit))
-                return TeamSide.None;
-            if (_unitAnimationStash.Has(unit))
-                return TeamSide.None;
-
-            ref var unitComp = ref _unitStash.Get(unit);
-            
-            return unitComp.teamSide;
-        }
-
         private bool TryGetPlayerSpeed(Entity unit, out int moveSpeed)
         {
             moveSpeed = _speedStash.Get(unit).currentSpeed;
@@ -152,6 +141,14 @@ namespace Features.UnitPack.Systems
                 return false;
             
             return true;
+        }
+        
+        private TeamSide TryGetUnit(GridComponent gridComp, CellCoord cellCoord, out Entity unit) // свой метод, чтобы нельзя было выбрать unit в полете
+        {
+            if (!GridData.TryGetUnit(gridComp, _unitStash, cellCoord, out unit, out var side))
+                return TeamSide.None;
+ 
+            return _unitAnimationStash.Has(unit) ? TeamSide.None : side;
         }
 
         public void Dispose() {}

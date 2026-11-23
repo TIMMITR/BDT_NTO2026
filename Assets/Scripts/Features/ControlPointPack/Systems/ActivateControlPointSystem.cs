@@ -112,14 +112,10 @@ namespace Features.ControlPointPack.Systems
         {
             foreach (var dir in HexMath.Directions)
             {
-                var coord = new CellCoord(from.Q + dir.Q, from.R + dir.R);
-                
-                if(!gridComp.cells.TryGetValue(coord, out var cell))
-                    continue;
-                if (gridComp.takenCells.ContainsKey(coord))
-                    continue;
-                if (_cellTileStash.Get(cell).blocked)
-                    continue;
+                var coord = from + dir;
+
+                if (!GridData.IsFreeCell(gridComp, _cellTileStash, coord))
+                    return null;
                 
                 return coord;
             }

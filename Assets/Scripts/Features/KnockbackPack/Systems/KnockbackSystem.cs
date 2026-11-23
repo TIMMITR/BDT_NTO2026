@@ -71,7 +71,7 @@ namespace Features.KnockbackPack.Systems
             }
         }
 
-        private List<CellCoord> BuildKnockbackPath(GridComponent grid,
+        private List<CellCoord> BuildKnockbackPath(GridComponent gridComp,
             CellCoord from, CellCoord dir,
             int distance, int returnDistance, out bool collided)
         {
@@ -81,12 +81,12 @@ namespace Features.KnockbackPack.Systems
 
             for (int i = 0; i < distance; i++)
             {
-                var next = new CellCoord(cell.Q + dir.Q, cell.R + dir.R);
+                var next = cell + dir;
 
-                if (!grid.cells.TryGetValue(next, out var cellEntity))
+                if (!gridComp.cells.TryGetValue(next, out var cellEntity))
                     break;
 
-                if (_cellTileStash.Get(cellEntity).blocked || grid.takenCells.ContainsKey(next))
+                if (!GridData.IsFreeCell(gridComp, _cellTileStash, next))
                 {
                     collided = true;
                     break;
@@ -100,14 +100,14 @@ namespace Features.KnockbackPack.Systems
             {
                 for (var i = 0; i < returnDistance; i++)
                 {
-                    var next = new CellCoord(cell.Q - dir.Q, cell.R - dir.R);
+                    var next = cell - dir;
 
-                    if (!IsFree(grid, next, from))
+                    if (!IsFree(gridComp, next, from))
                     {
                         dir = new CellCoord(-dir.Q, -dir.R);
-                        next = new CellCoord(cell.Q + dir.Q, cell.R + dir.R);
+                        next = cell + dir;
                         
-                        if (!IsFree(grid, next, from))
+                        if (!IsFree(gridComp, next, from))
                             break;
                     }
                     
@@ -119,10 +119,9 @@ namespace Features.KnockbackPack.Systems
             return path;
         }
         
-        private bool IsFree(GridComponent grid, CellCoord cell, CellCoord self) =>
-            grid.cells.TryGetValue(cell, out var cellEntity) &&
-            !_cellTileStash.Get(cellEntity).blocked &&
-            (!grid.takenCells.ContainsKey(cell) || cell == self);
+        private bool IsFree(GridComponent grid, CellCoord cell, CellCoord self) => cell == self 
+            ? GridData.IsFreeCell(grid, _cellTileStash, cell) 
+            : GridData.HasBuilding(grid, _cellTileStash, cell);
         
         public void Dispose() { }
     }

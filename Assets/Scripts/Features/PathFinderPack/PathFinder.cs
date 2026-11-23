@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Features.CalcPack;
+using Features.GridPack;
 using Features.GridPack.Components;
 using Features.GridPack.Data;
 using Scellecs.Morpeh;
@@ -11,7 +12,7 @@ namespace Features.PathFinderPack
     {
         
         
-        public static PassReady GetPath(GridComponent grid, CellCoord from, CellCoord to, Stash<CellTileComponent> stash)
+        public static PassReady GetPath(GridComponent gridComp, CellCoord from, CellCoord to, Stash<CellTileComponent> stash)
         {
             PassReady result = new()
             {
@@ -35,7 +36,7 @@ namespace Features.PathFinderPack
                 {
                     var next = new CellCoord(currentCell.coord.Q + dir.Q, currentCell.coord.R + dir.R);
 
-                    if (!grid.cells.TryGetValue(next, out var cell))
+                    if (!gridComp.cells.TryGetValue(next, out var cell))
                         continue;
 
                     int cost = 0;
@@ -49,7 +50,7 @@ namespace Features.PathFinderPack
                         continue;
                     }
                     
-                    if (grid.takenCells.ContainsKey(next))
+                    if (GridData.HasUnit(gridComp, next))
                         continue;
                     
                     int newCost = result.cellsCost[currentCell.coord] + cost;
