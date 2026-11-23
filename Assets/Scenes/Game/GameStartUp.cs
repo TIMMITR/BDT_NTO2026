@@ -12,6 +12,7 @@ using Features.StoryTalkPack.Systems;
 using Features.TypingPack.Systems;
 using Features.HealthPack;
 using Features.InputPack;
+using Features.ItemsPack.Cards;
 using Features.KnockbackPack.Systems;
 using Features.LifetimePack.Systems;
 using Features.ManaPack;
@@ -79,6 +80,8 @@ namespace Scenes.Game
             _updateGroup.AddSystem(new CaptureControlPointSystem());
             _updateGroup.AddSystem(new ActivateControlPointSystem());
             _updateGroup.AddSystem(new ClearControlPointSystem());
+
+            _updateGroup.AddSystem(new CardsSystem(globalContext.cardsConfig));
             
             _updateGroup.AddSystem(new SelectUnitSystem());
             _updateGroup.AddSystem(new UnitSpawnSystem());

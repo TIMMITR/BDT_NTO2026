@@ -8,5 +8,6 @@ namespace Scenes
         public WorldSettingsSo worldSettings;
         public PrefabSettingsSo prefabSettings;
         public TransitionsSettingsSo transitionSettings;
+        public CardsConfigSo cardsConfig;
     }
 }

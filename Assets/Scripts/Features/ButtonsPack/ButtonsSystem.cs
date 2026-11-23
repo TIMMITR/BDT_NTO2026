@@ -3,7 +3,6 @@ using Features.InputPack.Requests;
 using Features.RaycastPack;
 using Features.ScenePack;
 using Scellecs.Morpeh;
-using UnityEngine;
 
 namespace Features.ButtonsPack
 {
@@ -15,7 +14,7 @@ namespace Features.ButtonsPack
         private Stash<RaycastComponent> _raycastStash;
         private Request<SceneRequest> _sceneRequest;
         
-        private Request<LmbStartRequest> _lmbStartRequest;
+        private Event<LmbStartEvent> _lmbStartRequest;
         
         private readonly string _gameSceneName;
         public ButtonsSystem(string gameSceneName)
@@ -27,12 +26,12 @@ namespace Features.ButtonsPack
             _filter = World.Filter.With<RaycastComponent>().Build();
             _raycastStash = World.GetStash<RaycastComponent>();
             _sceneRequest = World.GetRequest<SceneRequest>();
-            _lmbStartRequest = World.GetRequest<LmbStartRequest>();
+            _lmbStartRequest = World.GetEvent<LmbStartEvent>();
         }
 
         public void OnUpdate(float deltaTime)
         {
-            foreach (var _ in _lmbStartRequest.Consume())
+            foreach (var _ in _lmbStartRequest.publishedChanges)
             {
                 ref var raycastComponent = ref _raycastStash.Get(_filter.First());
                 if (!raycastComponent.hasHit) return;

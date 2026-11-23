@@ -35,7 +35,7 @@ namespace Features.UnitPack.Systems
         private Stash<DelayAttackComponent> _delayAttackStash;
         private Stash<SpellDataComponent> _spellDataStash;
 
-        private Request<LmbStartRequest> _lmbRequest;
+        private Event<LmbStartEvent> _lmbEvent;
         private Request<MoveUnitRequest> _moveUnitRequest;
         private Request<ColorCellRequest> _colorCellRequest;
         private Request<SelectUnitRequest> _selectUnitRequest;
@@ -59,7 +59,7 @@ namespace Features.UnitPack.Systems
             _delayAttackStash = World.GetStash<DelayAttackComponent>();
             _spellDataStash = World.GetStash<SpellDataComponent>();
 
-            _lmbRequest = World.GetRequest<LmbStartRequest>();
+            _lmbEvent = World.GetEvent<LmbStartEvent>();
             _moveUnitRequest = World.GetRequest<MoveUnitRequest>();
             _colorCellRequest = World.GetRequest<ColorCellRequest>();
             _selectUnitRequest = World.GetRequest<SelectUnitRequest>();
@@ -76,7 +76,7 @@ namespace Features.UnitPack.Systems
 
             
             var lmbClicked = false;
-            foreach (var _ in _lmbRequest.Consume()) lmbClicked = true;
+            foreach (var _ in _lmbEvent.publishedChanges) lmbClicked = true;
             
             var gridEntity = _gridFilter.First();
 
@@ -86,7 +86,7 @@ namespace Features.UnitPack.Systems
                 if (_selectedUnitStash.Has(gridEntity))
                 {
                     ref var selected = ref _selectedUnitStash.Get(gridEntity);
-                    selected.unit = request.unit; // бля бро как этот скрипт работает нахрен
+                    selected.unit = request.unit; // бро как этот скрипт работает нахрен
                 }
             }
             // todo бро переделай это пж

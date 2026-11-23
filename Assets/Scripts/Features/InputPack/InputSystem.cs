@@ -15,8 +15,8 @@ namespace Features.InputPack
         
         private Request<EscRequest> _escRequest;
         
-        private Request<LmbStartRequest> _lmbStartRequest;
-        private Request<LmbEndRequest> _lmbEndRequest;
+        private Event<LmbStartEvent> _lmbStartEvent;
+        private Event<LmbEndEvent> _lmbEndEvent;
         
         private Request<RmbStartRequest> _rmbStartRequest;
         private Request<RmbEndRequest> _rmbEndRequest;
@@ -40,8 +40,8 @@ namespace Features.InputPack
             
             _escRequest = World.GetRequest<EscRequest>();
             
-            _lmbStartRequest = World.GetRequest<LmbStartRequest>();
-            _lmbEndRequest = World.GetRequest<LmbEndRequest>();
+            _lmbStartEvent = World.GetEvent<LmbStartEvent>();
+            _lmbEndEvent = World.GetEvent<LmbEndEvent>();
             
             _rmbStartRequest = World.GetRequest<RmbStartRequest>();
             _rmbEndRequest = World.GetRequest<RmbEndRequest>();
@@ -65,10 +65,10 @@ namespace Features.InputPack
                 _escRequest.Publish(new EscRequest());
             
             if (_lmbAction.WasPressedThisFrame() && !IsPointerOverUI())
-                _lmbStartRequest.Publish(new LmbStartRequest());
+                _lmbStartEvent.NextFrame(new LmbStartEvent());
 
             if (_lmbAction.WasReleasedThisFrame())
-                _lmbEndRequest.Publish(new LmbEndRequest());
+                _lmbEndEvent.NextFrame(new LmbEndEvent());
 
             if (_rmbAction.WasPressedThisFrame())
                 _rmbStartRequest.Publish(new RmbStartRequest());
