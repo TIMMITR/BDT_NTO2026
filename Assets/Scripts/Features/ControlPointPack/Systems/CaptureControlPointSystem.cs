@@ -48,7 +48,7 @@ namespace Features.ControlPointPack.Systems
                 if (evt.phase == TurnPhase.Events)
                     continue;
                 
-                var gridEntity = _gridFilter.First();
+                var gridEntity = _gridFilter.First();   
                 ref var gridComp = ref _gridStash.Get(gridEntity);
                 
                 foreach (var controlPoint in _controlPointFilter)
@@ -59,11 +59,9 @@ namespace Features.ControlPointPack.Systems
                     ref var controlPointComp = ref _controlPointStash.Get(controlPoint);
                     var coord = controlPointComp.cellCoord;
             
-                    foreach (var dir in HexMath.Directions)
+                    foreach (var neighbour in HexMath.GetNeighbours(coord))
                     {
-                        var neighbor = coord + dir;
-
-                        if (!GridData.TryGetUnit(gridComp, _unitStash, neighbor, out var unit, out var side))
+                        if (!GridData.TryGetUnit(gridComp, _unitStash, neighbour, out var unit, out var side))
                             continue;
 
                         if(side == TeamSide.Player)

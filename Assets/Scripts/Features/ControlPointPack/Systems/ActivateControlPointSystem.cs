@@ -110,14 +110,12 @@ namespace Features.ControlPointPack.Systems
 
         private CellCoord? FindRelevantCell(GridComponent gridComp, CellCoord from)
         {
-            foreach (var dir in HexMath.Directions)
+            foreach (var neighbour in HexMath.GetNeighbours(from))
             {
-                var coord = from + dir;
-
-                if (!GridData.IsFreeCell(gridComp, _cellTileStash, coord))
+                if (!GridData.IsFreeCell(gridComp, _cellTileStash, neighbour))
                     return null;
                 
-                return coord;
+                return neighbour;
             }
             
             return null;

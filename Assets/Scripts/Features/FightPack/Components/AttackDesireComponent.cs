@@ -4,7 +4,7 @@ using Scellecs.Morpeh;
 
 namespace Features.FightPack.Components
 {
-    public class AttackDesireComponent : IComponent
+    public struct AttackDesireComponent : IComponent
     {
         public CellCoord target;
         public SpellConfigSo spellConfig;

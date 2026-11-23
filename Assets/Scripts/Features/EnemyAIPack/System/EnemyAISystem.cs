@@ -271,13 +271,12 @@ namespace Features.EnemyAIPack.System
 
             List<CellCoord> resultPath = null;
 
-            foreach (var dir in HexMath.Directions)
+            foreach (var neighbour in HexMath.GetNeighbours(targetCoord))
             {
-                var next = new CellCoord(targetCoord.Q + dir.Q, targetCoord.R + dir.R);
-                if (!GridData.IsFreeCell(gridComp, _cellTileStash, next))
+                if (!GridData.IsFreeCell(gridComp, _cellTileStash, neighbour))
                     continue;
 
-                var path = BuildPath(gridComp, from, next, speed);
+                var path = BuildPath(gridComp, from, neighbour, speed);
                     
                 if (path != null && ( resultPath == null || path.Count < resultPath.Count))
                     resultPath = path;
@@ -302,13 +301,12 @@ namespace Features.EnemyAIPack.System
                 ref var controlPointComp = ref _controlPointStash.Get(controlPoint);
                 var coord = controlPointComp.cellCoord;
 
-                foreach (var dir in HexMath.Directions)
+                foreach (var neighbour in HexMath.GetNeighbours(coord))
                 {
-                    var next = new CellCoord(coord.Q + dir.Q, coord.R + dir.R);
-                    if (!GridData.IsFreeCell(gridComp, _cellTileStash, next))
+                    if (!GridData.IsFreeCell(gridComp, _cellTileStash, neighbour))
                         continue;
 
-                    var path = BuildPath(gridComp, from, next, speed);
+                    var path = BuildPath(gridComp, from, neighbour, speed);
                     
                     if (path != null && (resultPath == null || path.Count < resultPath.Count))
                         resultPath = path;

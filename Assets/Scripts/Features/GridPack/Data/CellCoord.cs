@@ -13,6 +13,7 @@ namespace Features.GridPack.Data
         
         public static CellCoord operator+ (CellCoord a, CellCoord b) => new CellCoord(a.Q + b.Q, a.R + b.R);
         public static CellCoord operator- (CellCoord a, CellCoord b) => new CellCoord(a.Q - b.Q, a.R - b.R);
+        public static CellCoord operator* (CellCoord a, int k) => new(a.Q * k, a.R * k);
 
         private const float CellTransMultiplier1 = 1.5f; // todo вынести в настройки
         private const float CellTransMultiplier2 = 0.5f;
@@ -38,13 +39,14 @@ namespace Features.GridPack.Data
             var best = default(CellCoord);
             var bestDist = int.MaxValue;
  
-            foreach (var dir in HexMath.Directions)
+            foreach (var neighbour in HexMath.GetNeighbours(new CellCoord(Q, R)))
             {
-                var dist = new CellCoord(Q + dir.Q, R + dir.R).DistanceTo(hex);
+                var dist = neighbour.DistanceTo(hex);
+                
                 if (dist < bestDist)
                 {
                     bestDist = dist;
-                    best = dir;
+                    best = neighbour;
                 }
             }
  

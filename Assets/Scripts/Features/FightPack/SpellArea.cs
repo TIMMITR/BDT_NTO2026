@@ -199,7 +199,7 @@ namespace Features.FightPack
 
                 for (int i = 0; i < spell.range; i++)
                 {
-                    cell = new CellCoord(cell.Q + dir.Q, cell.R + dir.R);
+                    cell += dir;
                     
                     if (cell == to)
                     {
