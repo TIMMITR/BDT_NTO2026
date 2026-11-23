@@ -16,6 +16,7 @@ namespace Features.ItemsPack.Cards.Views
             for (var i = 0; i < cardsHolderViews.Count; i++)
             {
                 var index = i;
+                cardsHolderViews[i].gameObject.SetActive(false);
                 cardsHolderViews[i].cardsButton.onClick.AddListener(() =>
                 {
                     World.Default.GetRequest<CardPickRequest>().Publish(new CardPickRequest
