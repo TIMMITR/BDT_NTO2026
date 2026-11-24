@@ -35,7 +35,14 @@ namespace Features.GridPack
             ref var pos = ref positions.Get(unit);
             pos.coord = to;
         }
-        
-        // возможно стоит добавить удаление 
+
+        public static void Remove(ref GridComponent gridComp, Stash<CellTileComponent> tiles, Entity unit, CellCoord at)
+        {
+            if (!gridComp.takenCells.TryGetValue(at, out var unitOnCell) || unitOnCell != unit)
+                return;
+            
+            gridComp.takenCells.Remove(at);
+            tiles.Get(gridComp.cells[at]).blocked = false;
+        }
     }
 }

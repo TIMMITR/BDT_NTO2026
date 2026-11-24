@@ -29,11 +29,14 @@ namespace Features.FightPack.ShapeStrategy
             return false;
         }
 
-        public void CollectCells(GridComponent gridComp, Stash<CellTileComponent> tiles, SpellConfigSo spell, CellCoord from, CellCoord to, CellCoord dir,
-            out List<CellCoord> result)
+        public void CollectCells(GridComponent gridComp, Stash<CellTileComponent> tiles, SpellConfigSo spell,
+            CellCoord from, CellCoord to, CellCoord dir, List<CellCoord> result)
         {
-            throw new System.NotImplementedException();
+            result.Add(from);
+            result.AddRange(GetPath(gridComp, tiles, spell, from, to));
         }
+
+        public CellCoord GetStartPoint(CellCoord from, CellCoord to) => from;
 
         private IEnumerable<CellCoord> GetPath(GridComponent gridComp, Stash<CellTileComponent> tiles, SpellConfigSo spell,
             CellCoord from, CellCoord dir)

@@ -26,7 +26,6 @@ namespace Features.CellSelectionPack.Systems
         private Stash<CellPositionComponent> _positionStash;
         
         private Stash<SpellDataComponent> _spellDataStash;
-        private Stash<AttackDataComponent> _attackDataStash;
         
         private Event<CellChooseEvent> _cellChooseEvent;
         
@@ -38,6 +37,7 @@ namespace Features.CellSelectionPack.Systems
         private SpellConfigSo _lastSpell;
 
         private List<CellCoord> _fullPath = new();
+        private List<CellCoord> _attackCells = new();
 
         public void OnAwake()
         {
@@ -52,7 +52,6 @@ namespace Features.CellSelectionPack.Systems
             _cellChooseEvent = World.GetEvent<CellChooseEvent>();
             
             _spellDataStash = World.GetStash<SpellDataComponent>();
-            _attackDataStash = World.GetStash<AttackDataComponent>();
             
             _colorCellRequest = World.GetRequest<ColorCellRequest>();
             _clearColorsRequest = World.GetRequest<ClearColorsRequest>();
@@ -105,10 +104,7 @@ namespace Features.CellSelectionPack.Systems
                 {
                     if (activeSpell != null)
                     {
-                        _attackDataStash.Set(gridEntity, new AttackDataComponent(activeSpell, from.Value, to.Value));
-                        ref var attackComp = ref _attackDataStash.Get(gridEntity);
-                    
-                        BuildAttackPath(ref gridComp, ref attackComp,speed, out var path);
+                        BuildAttackPath(gridComp, activeSpell, from.Value, to.Value, speed, out var path);
                     
                         selectedUnitComp.path = path;
                     }
@@ -123,17 +119,11 @@ namespace Features.CellSelectionPack.Systems
             }
         }
 
-        private void BuildAttackPath(ref GridComponent gridComp, 
-            ref AttackDataComponent attackData,
-            int speed,
+        private void BuildAttackPath(GridComponent gridComp, SpellConfigSo spell, CellCoord from, CellCoord to, int speed,
             out List<CellCoord> resultPath)
         {
-            var from = attackData.from;
-            var to = attackData.to;
-            var spell = attackData.spellConfig;
-            
             var foundPath = PathFinder.GetPath(gridComp, from, to, _cellTileStash);
-            resultPath = new List<CellCoord> { from };
+            resultPath = new();
 
             CellCoord best = default;
             CellCoord bestDir = default;
@@ -143,7 +133,7 @@ namespace Features.CellSelectionPack.Systems
             {
                 if (pair.Value > speed || pair.Value >= bestCost)
                     continue;
-                if (!SpellArea.TryHitFrom(gridComp, _cellTileStash, spell, pair.Key, to, out var dir))
+                if (!SpellArea.TryAim(gridComp, _cellTileStash, spell, pair.Key, to, out var dir))
                     continue;
  
                 best = pair.Key;
@@ -153,21 +143,17 @@ namespace Features.CellSelectionPack.Systems
  
             if (bestCost == int.MaxValue) 
                 return;
-            
+
             if (best != from)
-                resultPath.AddRange(PathFinder.ReconstructPath(foundPath, from, best)); // тут именно добавление,
-                                                                                        // т.к. иначе from не запишется
-            
-            attackData.dir = bestDir;
+                resultPath = PathFinder.ReconstructPath(foundPath, from, to);
             
             foreach (var cell in resultPath)
                 _colorCellRequest.Publish(new ColorCellRequest(cell, ColorType.Path));
 
-            var attackPath = SpellArea.ReconstructPath(gridComp, _cellTileStash,
-                spell, 
-                best, to, bestDir);
+            _attackCells.Clear();
+            SpellArea.CollectCells(gridComp, _cellTileStash, spell, from, to, bestDir, _attackCells);
             
-            foreach (var cell in attackPath)
+            foreach (var cell in _attackCells)
                 _colorCellRequest.Publish(new ColorCellRequest(cell, ColorType.Attack)); 
         }
         

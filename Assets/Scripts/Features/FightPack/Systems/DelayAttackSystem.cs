@@ -4,6 +4,7 @@ using Features.CellSelectionPack.Components;
 using Features.FightPack.Components;
 using Features.FightPack.Requests;
 using Features.GridPack.Components;
+using Features.GridPack.Data;
 using Features.UnitPack.Components;
 using Global;
 using Scellecs.Morpeh;
@@ -23,6 +24,8 @@ namespace Features.FightPack.Systems
         private Stash<GridComponent> _gridStash;
         private Stash<CellTileComponent> _cellTileStash;
         private Stash<CellPositionComponent> _positionStash;
+
+        private List<Entity> _targets = new();
         
         private Request<ProjectileCastRequest> _projectileCastRequest;
 
@@ -49,34 +52,29 @@ namespace Features.FightPack.Systems
         {
             foreach (var unit in _attackReadyFilter)
             {
+                ref var attackDesire = ref _attackDesireStash.Get(unit);
                 
-                ref var attackData = ref _attackDataStash.Get(gridEntity);
+                var from = _positionStash.Get(unit).coord;
+                var to = attackDesire.target;
+                var spell = attackDesire.spellConfig;
 
-                attackData.from = _positionStash.Get(unit).coord;
-
-                if (!SpellArea.TryHitFrom(gridComp, _cellTileStash, // todo возможно стоит попробовать избежать пересчитывания
-                        attackData.spellConfig,
-                        attackData.from, attackData.to, 
-                        out attackData.dir))
-                {
-                    _delayStash.Remove(unit);
+                if (!SpellArea.TryAim(_grid.Comp, _cellTileStash, spell, from, to,
+                        out var dir))
                     continue;
-                }
                 
-                var casterSide = _unitStash.Get(unit).teamSide;
-                var targets = SpellArea.CollectTargets(gridComp, _cellTileStash, _unitStash, attackData, casterSide);
-                var origin = attackData.spellConfig.rangeType == SpellRangeType.Area 
-                    ? attackData.to 
-                    : attackData.from;
+                _targets.Clear();
 
-                List<AttackOrderRequest> orders = new();
+                var team = _unitStash.Get(unit).teamSide;
+                
+                SpellArea.CollectTargets(_grid.Comp, _unitStash, _cellTileStash, spell, from, to, dir, team, _targets);
 
-                foreach (var target in targets)
-                    orders.Add(new AttackOrderRequest(unit, target, origin));
+                var startPoint = SpellArea.GetStartPoint(spell, from, to);
+                List<AttackOrderRequest> attackOrders = new(_targets.Count);
                 
-                _projectileCastRequest.Publish(new ProjectileCastRequest(attackData.from, attackData.to, attackData.spellConfig, orders));
+                foreach (var target in _targets)
+                    attackOrders.Add(new AttackOrderRequest(unit, target, startPoint, spell));
                 
-                _delayStash.Remove(unit);
+                _projectileCastRequest.Publish(new ProjectileCastRequest(from, to, spell, attackOrders));
             }
         }
         

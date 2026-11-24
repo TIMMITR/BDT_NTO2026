@@ -105,7 +105,7 @@ namespace Scenes.Game
 
             _updateGroup.AddSystem(new SpellChangeSystem());
 
-            _updateGroup.AddSystem(new DeathSystem());
+            _updateGroup.AddSystem(new DeathTagsApplySystem());
             
             _updateGroup.AddSystem(new StoryTalkPlayerSystem(gameContext.introTalk));
             

@@ -9,6 +9,7 @@ namespace Features.FightPack.ShapeStrategy
     public interface IShapeStrategy
     {
         bool TryAim(GridComponent gridComp, Stash<CellTileComponent> tiles, SpellConfigSo spell, CellCoord from, CellCoord to, out CellCoord dir);
-        void CollectCells(GridComponent gridComp, Stash<CellTileComponent> tiles, SpellConfigSo spell, CellCoord from, CellCoord to, CellCoord dir, out List<CellCoord> result);
+        void CollectCells(GridComponent gridComp, Stash<CellTileComponent> tiles, SpellConfigSo spell, CellCoord from, CellCoord to, CellCoord dir, List<CellCoord> result);
+        CellCoord GetStartPoint(CellCoord from, CellCoord to); // метод для получения точки, откуда выполняется атака
     }
 }

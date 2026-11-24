@@ -10,8 +10,6 @@ namespace Features.PathFinderPack
 {
     public static class PathFinder
     {
-        
-        
         public static PassReady GetPath(GridComponent gridComp, CellCoord from, CellCoord to, Stash<CellTileComponent> stash)
         {
             PassReady result = new()
@@ -23,7 +21,7 @@ namespace Features.PathFinderPack
             result.cellsCost[from] = 0;
             result.path[from] = from;
             
-            List<CostCoord> candidates = new()
+            List<CellCost> candidates = new()
             {
                 new(from, 0),
             };
@@ -60,7 +58,7 @@ namespace Features.PathFinderPack
                     
                     result.cellsCost[next] = newCost;
                     result.path[next] = currentCell.coord;
-                    candidates.Add(new CostCoord(next, newCost));
+                    candidates.Add(new CellCost(next, newCost));
                 }
             }
             
@@ -90,7 +88,7 @@ namespace Features.PathFinderPack
             return !cellComp.blocked;
         }
 
-        private static CostCoord GetMin(List<CostCoord> candidates)
+        private static CellCost GetMin(List<CellCost> candidates)
         {
             int minIndex = 0;
 
@@ -108,18 +106,18 @@ namespace Features.PathFinderPack
         }
     }
 
-    public struct PassReady
+    public struct PassReady // структура, хранящая путь и его стоимость
     {
         public Dictionary<CellCoord, CellCoord> path;
         public Dictionary<CellCoord, int> cellsCost;
     }
     
-    public struct CostCoord // todo переименовать
+    public struct CellCost // todo переименовать
     {
         public CellCoord coord;
         public int cost;
         
-        public CostCoord(CellCoord coord, int cost)
+        public CellCost(CellCoord coord, int cost)
         {
             this.coord = coord;
             this.cost = cost;

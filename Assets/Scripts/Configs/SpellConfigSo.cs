@@ -10,7 +10,7 @@ namespace Configs
         public int damage;
         public int range;
         public SpellRangeType rangeType;
-        public int areaRadius;
+        public int areaRadius; // только для удара по окружности
         public bool ignoreArmor;
         public bool isMultipleHit;
         public bool canHitAllies;
