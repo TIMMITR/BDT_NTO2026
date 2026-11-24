@@ -85,6 +85,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8092151704010821708}
+  - component: {fileID: 4524638479250047636}
   m_Layer: 0
   m_Name: Stats
   m_TagString: Untagged
@@ -116,6 +117,18 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!225 &4524638479250047636
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 818718721643179012}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &1566553522736950968
 GameObject:
   m_ObjectHideFlags: 0
@@ -802,6 +815,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   pickUnitButton: {fileID: 3454737086341673902}
   statsPanel: {fileID: 8092151704010821708}
+  openStatsButton: {fileID: 5285057383271595476}
+  openDuration: 0.2
+  closeDuration: 0.2
+  panelSlideDistance: 24
+  buttonSlideDistance: 14
+  collapsedWidth: 0.15
 --- !u!1 &6967128112002103317
 GameObject:
   m_ObjectHideFlags: 0

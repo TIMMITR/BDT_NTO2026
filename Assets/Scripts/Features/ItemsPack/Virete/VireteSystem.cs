@@ -113,6 +113,10 @@ namespace Features.ItemsPack.Virete
                     }
                     // задержка для показа 
                     // todo чтобы вид эффекта делался
+                    // возмножно хорошей идеей будет через primeTween сделать что с начала идет quick talk
+                    // потом идет эффект
+                    // задержка
+                    // и втророй quick talk
                     trigger =  QuickTalkTrigger.VireteHeal; // я тогда могу переделать на 2 quick talk
                 }
                 else

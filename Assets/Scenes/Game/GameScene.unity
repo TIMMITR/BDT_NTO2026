@@ -1949,6 +1949,13 @@ MonoBehaviour:
   image: {fileID: 993013211}
   cardName: {fileID: 230400071}
   cardDescription: {fileID: 583630061}
+  appearDuration: 0.45
+  moveToCenterDuration: 0.45
+  disappearDuration: 0.35
+  selectedHoldDuration: 3
+  appearDelayStep: 0.08
+  offscreenDistance: 1000
+  selectedScale: 1.12
 --- !u!1 &680781607
 GameObject:
   m_ObjectHideFlags: 0
@@ -4608,6 +4615,13 @@ MonoBehaviour:
   image: {fileID: 1509708539}
   cardName: {fileID: 403734244}
   cardDescription: {fileID: 1547605277}
+  appearDuration: 0.45
+  moveToCenterDuration: 0.45
+  disappearDuration: 0.35
+  selectedHoldDuration: 3
+  appearDelayStep: 0.08
+  offscreenDistance: 1000
+  selectedScale: 1.12
 --- !u!1001 &1682460731
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -6031,6 +6045,13 @@ MonoBehaviour:
   image: {fileID: 188306077}
   cardName: {fileID: 758983414}
   cardDescription: {fileID: 962733500}
+  appearDuration: 0.45
+  moveToCenterDuration: 0.45
+  disappearDuration: 0.35
+  selectedHoldDuration: 3
+  appearDelayStep: 0.08
+  offscreenDistance: 1000
+  selectedScale: 1.12
 --- !u!1 &1976658806
 GameObject:
   m_ObjectHideFlags: 0
