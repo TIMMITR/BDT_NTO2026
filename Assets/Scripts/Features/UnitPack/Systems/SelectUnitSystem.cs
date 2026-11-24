@@ -32,8 +32,8 @@ namespace Features.UnitPack.Systems
         private Stash<SpeedComponent> _speedStash;
         private Stash<CellPositionComponent> _positionStash;
         private Stash<UnitAnimationComponent> _unitAnimationStash;
-        private Stash<DelayAttackComponent> _delayAttackStash;
         private Stash<SpellDataComponent> _spellDataStash;
+        private Stash<AttackDesireComponent> _attackDesireStash;
 
         private Request<LmbStartRequest> _lmbRequest;
         private Request<MoveUnitRequest> _moveUnitRequest;
@@ -55,8 +55,8 @@ namespace Features.UnitPack.Systems
             _speedStash = World.GetStash<SpeedComponent>();
             _positionStash = World.GetStash<CellPositionComponent>();
             _unitAnimationStash = World.GetStash<UnitAnimationComponent>();
-            _delayAttackStash = World.GetStash<DelayAttackComponent>();
             _spellDataStash = World.GetStash<SpellDataComponent>();
+            _attackDesireStash = World.GetStash<AttackDesireComponent>();
 
             _lmbRequest = World.GetRequest<LmbStartRequest>();
             _moveUnitRequest = World.GetRequest<MoveUnitRequest>();
@@ -108,7 +108,10 @@ namespace Features.UnitPack.Systems
                 }
                 else if (_spellDataStash.Has(selected.unit))
                 {
-                    _delayAttackStash.Set(selected.unit, new DelayAttackComponent(unit));
+                    _attackDesireStash.Set(selected.unit, new AttackDesireComponent(
+                        clicked,
+                        _spellDataStash.Get(selected.unit).spellData
+                    ));
                 }
 
                 // двигаем

@@ -14,7 +14,7 @@ namespace Features.FightPack.ShapeStrategy
         {
             foreach (var d in HexMath.Directions)
             {
-                foreach (var cell in GetPath(gridComp, tiles, spell, from, to))
+                foreach (var cell in GetPath(gridComp, tiles, spell, from, d))
                 {
                     if (cell != to)
                         continue;
@@ -32,8 +32,7 @@ namespace Features.FightPack.ShapeStrategy
         public void CollectCells(GridComponent gridComp, Stash<CellTileComponent> tiles, SpellConfigSo spell,
             CellCoord from, CellCoord to, CellCoord dir, List<CellCoord> result)
         {
-            result.Add(from);
-            result.AddRange(GetPath(gridComp, tiles, spell, from, to));
+            result.AddRange(GetPath(gridComp, tiles, spell, from, dir));
         }
 
         public CellCoord GetStartPoint(CellCoord from, CellCoord to) => from;

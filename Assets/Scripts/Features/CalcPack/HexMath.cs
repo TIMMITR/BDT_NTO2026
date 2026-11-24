@@ -22,7 +22,7 @@ namespace Features.CalcPack
                 yield return center + dir;
         }
         
-        public static IEnumerable<CellCoord> Range(CellCoord center, int radius)
+        public static IEnumerable<CellCoord> GetRange(CellCoord center, int radius)
         {
             for (var dq = -radius; dq <= radius; dq++)
             {
@@ -34,7 +34,7 @@ namespace Features.CalcPack
             }
         }
 
-        public static IEnumerable<CellCoord> Ring(CellCoord center, int radius)
+        public static IEnumerable<CellCoord> GetRing(CellCoord center, int radius)
         {
             if (radius <= 0)
             {

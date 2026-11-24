@@ -1,14 +1,10 @@
 using System.Collections.Generic;
-using Configs;
-using Features.CellSelectionPack.Components;
 using Features.FightPack.Components;
 using Features.FightPack.Requests;
 using Features.GridPack.Components;
-using Features.GridPack.Data;
 using Features.UnitPack.Components;
 using Global;
 using Scellecs.Morpeh;
-using Unity.VisualScripting;
 
 namespace Features.FightPack.Systems
 {
@@ -21,7 +17,6 @@ namespace Features.FightPack.Systems
 
         private Stash<AttackDesireComponent> _attackDesireStash;
         private Stash<UnitComponent> _unitStash;
-        private Stash<GridComponent> _gridStash;
         private Stash<CellTileComponent> _cellTileStash;
         private Stash<CellPositionComponent> _positionStash;
 
@@ -35,7 +30,7 @@ namespace Features.FightPack.Systems
                 With<AttackDesireComponent>().
                 With<UnitComponent>().
                 With<CellPositionComponent>().
-                Without<UnitComponent>().
+                Without<UnitAnimationComponent>().
                 Build();
             
             _grid = new Singletone<GridComponent>(World);
@@ -53,6 +48,7 @@ namespace Features.FightPack.Systems
             foreach (var unit in _attackReadyFilter)
             {
                 ref var attackDesire = ref _attackDesireStash.Get(unit);
+                _attackDesireStash.Remove(unit);
                 
                 var from = _positionStash.Get(unit).coord;
                 var to = attackDesire.target;

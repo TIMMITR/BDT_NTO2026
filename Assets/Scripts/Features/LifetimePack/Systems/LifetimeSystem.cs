@@ -1,6 +1,7 @@
 using System;
 using Features.LifetimePack.Components;
 using Features.TransformPack;
+using Global;
 using Scellecs.Morpeh;
 using Object = UnityEngine.Object;
 
@@ -14,6 +15,7 @@ namespace Features.LifetimePack.Systems
         
         private Stash<LifetimeComponent> _lifetimeStash;
         private Stash<TransformComponent> _transformStash;
+        private Stash<DestroyTag> _destroyTag;
 
         public void OnAwake()
         {
@@ -21,6 +23,7 @@ namespace Features.LifetimePack.Systems
             
             _lifetimeStash = World.GetStash<LifetimeComponent>();
             _transformStash = World.GetStash<TransformComponent>();
+            _destroyTag = World.GetStash<DestroyTag>();
         }
 
         public void OnUpdate(float deltaTime)
@@ -34,10 +37,7 @@ namespace Features.LifetimePack.Systems
                 if (ltComp.remainingTime > 0f)
                     continue;
                 
-                if(_transformStash.Has(entity))
-                    Object.Destroy(_transformStash.Get(entity).value.gameObject);
-                
-                World.RemoveEntity(entity);
+                _destroyTag.Add(entity);
             }
         }
     

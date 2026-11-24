@@ -46,7 +46,7 @@ namespace Features.GridPack.Data
                 if (dist < bestDist)
                 {
                     bestDist = dist;
-                    best = neighbour;
+                    best = neighbour - this;
                 }
             }
  

@@ -12,6 +12,11 @@ namespace Features.FightPack.ShapeStrategy
     {
         public bool TryAim(GridComponent gridComp, Stash<CellTileComponent> tiles, SpellConfigSo spell, CellCoord from, CellCoord to, out CellCoord dir)
         {
+            dir = default;
+            
+            if (!GridData.Contains(gridComp, from))
+                return false;
+            
             dir = from.DirectionTo(to);
 
             return from.DistanceTo(to) <= spell.range;
@@ -20,9 +25,7 @@ namespace Features.FightPack.ShapeStrategy
         public void CollectCells(GridComponent gridComp, Stash<CellTileComponent> tiles, SpellConfigSo spell, CellCoord from, CellCoord to,
             CellCoord dir, List<CellCoord> result)
         {
-            result.Add(from);
-            
-            foreach (var cell in HexMath.Range(to, spell.areaRadius))
+            foreach (var cell in HexMath.GetRange(to, spell.areaRadius))
             {
                 if (GridData.Contains(gridComp, cell))
                     result.Add(cell);

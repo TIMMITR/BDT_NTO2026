@@ -1,8 +1,5 @@
-using System;
 using System.Collections.Generic;
 using Configs;
-using Features.CalcPack;
-using Features.CellSelectionPack.Components;
 using Features.FightPack.ShapeStrategy;
 using Features.GridPack;
 using Features.GridPack.Components;
@@ -14,6 +11,8 @@ namespace Features.FightPack
 {
     public static class SpellArea // todo возможно, стоит объеденить переменные (from, to) (gridComp, spell)
     {
+        private static List<CellCoord> _cells = new ();
+        
         private static readonly Dictionary<SpellRangeType, IShapeStrategy> Strategies = new()
         {
             { SpellRangeType.Straight, new LineStrategy() },
@@ -38,11 +37,11 @@ namespace Features.FightPack
             CellCoord from, CellCoord to,
             CellCoord dir, TeamSide team, List<Entity> result)
         {
-            List<CellCoord> cells = new ();
+            _cells.Clear();
             
-            CollectCells(gridComp, tiles, spell, from, to, dir, cells);
+            CollectCells(gridComp, tiles, spell, from, to, dir, _cells);
 
-            foreach (var cell in cells)
+            foreach (var cell in _cells)
             {
                 if (!GridData.TryGetUnit(gridComp, units, cell, out var unit))
                     continue;
@@ -56,6 +55,6 @@ namespace Features.FightPack
         public static CellCoord GetStartPoint(SpellConfigSo spell, CellCoord from, CellCoord to) => 
             Strategies.TryGetValue(spell.rangeType, out var shape) 
             ? shape.GetStartPoint(from, to) 
-            : default;
+            : from;
     }
 }

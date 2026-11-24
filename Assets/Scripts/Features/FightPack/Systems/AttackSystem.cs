@@ -37,6 +37,9 @@ namespace Features.FightPack.Systems
                 var source = request.source;
                 var target = request.target;
                 
+                if (World.IsDisposed(source) || World.IsDisposed(target)) 
+                    continue;
+                
                 _damageRequest.Publish(new DamageRequest(source, target, spell.damage));
 
                 if (spell.punchDistance > 0 && _positionStash.Has(target))

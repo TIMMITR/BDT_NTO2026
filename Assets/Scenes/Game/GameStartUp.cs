@@ -60,7 +60,6 @@ namespace Scenes.Game
             _initGroup.Initialize();
             
             _updateGroup = _world.CreateSystemsGroup();
-            _updateGroup.Initialize();
             _updateGroup.AddSystem(new InputSystem(_playerInputActions));
             _updateGroup.AddSystem(new TargetSystem());
             _updateGroup.AddSystem(new RaycastSystem());
@@ -104,8 +103,6 @@ namespace Scenes.Game
             _updateGroup.AddSystem(new EnemyAISystem());
 
             _updateGroup.AddSystem(new SpellChangeSystem());
-
-            _updateGroup.AddSystem(new DeathTagsApplySystem());
             
             _updateGroup.AddSystem(new StoryTalkPlayerSystem(gameContext.introTalk));
             
@@ -114,6 +111,10 @@ namespace Scenes.Game
             
             _updateGroup.AddSystem(new TypingSystem(globalContext.worldSettings));
             _updateGroup.AddSystem(new SceneSystem(globalContext.transitionSettings));
+            
+            _updateGroup.AddSystem(new DeathTagsApplySystem());
+            _updateGroup.AddSystem(new GridDeleteSystem());
+            _updateGroup.AddSystem(new EntityDestroySystem());
                 
             _updateGroup.Initialize();
             

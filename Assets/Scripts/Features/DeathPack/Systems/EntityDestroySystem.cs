@@ -17,7 +17,6 @@ namespace Features.DeathPack.Systems
         {
             _destroyFilter = World.Filter.
                 With<DestroyTag>().
-                With<TransformComponent>().
                 Build();
             
             _transformStash = World.GetStash<TransformComponent>();
@@ -27,9 +26,14 @@ namespace Features.DeathPack.Systems
         {
             foreach (var unit in _destroyFilter)
             {
-                var tr =  _transformStash.Get(unit);
+                Debug.Log($"Entity: {unit} has been destroyed");
+
+                if (_transformStash.Has(unit)) // не вынесено в фильтр, т.к. некоторые сущности не содержат этот компонент
+                {
+                    ref var tr = ref _transformStash.Get(unit);
+                    Object.Destroy(tr.value.gameObject);
+                }
                 
-                Object.Destroy(tr.value.gameObject);
                 World.RemoveEntity(unit);
             }
         }

@@ -32,14 +32,12 @@ namespace Features.PathFinderPack
 
                 foreach (var dir in HexMath.Directions)
                 {
-                    var next = new CellCoord(currentCell.coord.Q + dir.Q, currentCell.coord.R + dir.R);
+                    var next = currentCell.coord + dir;
 
                     if (!gridComp.cells.TryGetValue(next, out var cell))
                         continue;
 
-                    int cost = 0;
-
-                    if (!CanPass(cell, stash, out cost)) 
+                    if (!CanPass(cell, stash, out var cost)) 
                         continue;
 
                     if (cost <= 0)

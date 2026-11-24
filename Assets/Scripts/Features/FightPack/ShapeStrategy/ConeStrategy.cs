@@ -18,8 +18,6 @@ namespace Features.FightPack.ShapeStrategy
         public void CollectCells(GridComponent gridComp, Stash<CellTileComponent> tiles, SpellConfigSo spell, CellCoord from, CellCoord to, CellCoord dir,
             List<CellCoord> result)
         {
-            result.Add(from);
-
             for (int i = 0; i < spell.range; i++)
             {
                 // todo доделать
