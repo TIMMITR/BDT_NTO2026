@@ -47,7 +47,7 @@ namespace Features.FightPack.Systems
         {
             foreach (var unit in _attackReadyFilter)
             {
-                ref var attackDesire = ref _attackDesireStash.Get(unit);
+                var attackDesire = _attackDesireStash.Get(unit);
                 _attackDesireStash.Remove(unit);
                 
                 var from = _positionStash.Get(unit).coord;

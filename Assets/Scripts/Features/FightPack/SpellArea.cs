@@ -52,6 +52,13 @@ namespace Features.FightPack
             }
         }
 
+        public static void CollectRangeCells(GridComponent gridComp, Stash<CellTileComponent> tiles,
+            SpellConfigSo spell, CellCoord from, CellCoord to, CellCoord dir, List<CellCoord> result)
+        {
+            if (Strategies.TryGetValue(spell.rangeType, out var shape))
+                shape.CollectRangeCells(gridComp, tiles, spell, from,to, dir, result);
+        }
+
         public static CellCoord GetStartPoint(SpellConfigSo spell, CellCoord from, CellCoord to) => 
             Strategies.TryGetValue(spell.rangeType, out var shape) 
             ? shape.GetStartPoint(from, to) 

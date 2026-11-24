@@ -20,6 +20,7 @@ namespace Features.CellSelectionPack.Requests
         Chosen,
         Clicked,
         Path,
-        Attack
+        Attack,
+        Range
     }
 }

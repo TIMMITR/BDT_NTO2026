@@ -14,6 +14,7 @@ namespace Features.GridPack.Data
         public static CellCoord operator+ (CellCoord a, CellCoord b) => new CellCoord(a.Q + b.Q, a.R + b.R);
         public static CellCoord operator- (CellCoord a, CellCoord b) => new CellCoord(a.Q - b.Q, a.R - b.R);
         public static CellCoord operator* (CellCoord a, int k) => new(a.Q * k, a.R * k);
+        public static CellCoord operator- (CellCoord a) => new(-a.Q, -a.R);
 
         private const float CellTransMultiplier1 = 1.5f; // todo вынести в настройки
         private const float CellTransMultiplier2 = 0.5f;

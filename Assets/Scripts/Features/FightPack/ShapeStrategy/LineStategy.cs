@@ -35,6 +35,8 @@ namespace Features.FightPack.ShapeStrategy
             result.AddRange(GetPath(gridComp, tiles, spell, from, dir));
         }
 
+        public void CollectRangeCells(GridComponent gridComp, Stash<CellTileComponent> tiles, SpellConfigSo spell, CellCoord from, CellCoord to, CellCoord dir,List<CellCoord> result) { }
+
         public CellCoord GetStartPoint(CellCoord from, CellCoord to) => from;
 
         private IEnumerable<CellCoord> GetPath(GridComponent gridComp, Stash<CellTileComponent> tiles, SpellConfigSo spell,

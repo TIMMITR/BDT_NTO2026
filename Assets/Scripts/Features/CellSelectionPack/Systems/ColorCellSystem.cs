@@ -107,6 +107,9 @@ namespace Features.CellSelectionPack.Systems
                     case ColorType.Attack:
                         color = _colorData.attackColor;
                         break;
+                    case  ColorType.Range:
+                        color = _colorData.rangeColor;
+                        break;
                 }
 
                 child.GetComponent<MeshRenderer>().material.color = color;

@@ -24,6 +24,8 @@ namespace Features.FightPack.ShapeStrategy
             }
         }
 
+        public void CollectRangeCells(GridComponent gridComp, Stash<CellTileComponent> tiles, SpellConfigSo spell, CellCoord from, CellCoord to, CellCoord dir, List<CellCoord> result) { }
+
         public CellCoord GetStartPoint(CellCoord from, CellCoord to) => from;
     }
 }

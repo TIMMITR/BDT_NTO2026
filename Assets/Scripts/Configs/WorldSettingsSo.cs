@@ -42,5 +42,6 @@ namespace Configs
         public Color chosenColor;
         public Color pathColor;
         public Color attackColor;
+        public Color rangeColor;
     }
 }

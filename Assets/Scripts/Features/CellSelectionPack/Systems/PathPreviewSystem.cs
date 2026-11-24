@@ -10,6 +10,7 @@ using Features.PathFinderPack;
 using Features.SpellPack.Components;
 using Global;
 using Scellecs.Morpeh;
+using UnityEngine;
 
 namespace Features.CellSelectionPack.Systems
 {
@@ -38,6 +39,7 @@ namespace Features.CellSelectionPack.Systems
 
         private List<CellCoord> _fullPath = new();
         private List<CellCoord> _attackCells = new();
+        private List<CellCoord> _rangeCells = new();
 
         public void OnAwake()
         {
@@ -141,11 +143,20 @@ namespace Features.CellSelectionPack.Systems
                 return;
 
             if (best != from)
+            {
                 resultPath = PathFinder.ReconstructPath(foundPath, from, best);
+                resultPath.Insert(0, from);
+            }
             
             foreach (var cell in resultPath)
                 _colorCellRequest.Publish(new ColorCellRequest(cell, ColorType.Path));
-
+            
+            _rangeCells.Clear();
+            SpellArea.CollectRangeCells(_grid.Comp, _cellTileStash, spell, best, to, bestDir, _rangeCells);
+            
+            foreach (var cell in _rangeCells)
+                _colorCellRequest.Publish(new ColorCellRequest(cell, ColorType.Range));
+            
             _attackCells.Clear();
             SpellArea.CollectCells(_grid.Comp, _cellTileStash, spell, best, to, bestDir, _attackCells);
             
