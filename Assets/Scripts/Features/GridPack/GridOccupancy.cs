@@ -29,22 +29,20 @@ namespace Features.GridPack
             CellCoord to)
         {
             grid.takenCells.Remove(from);
-            //tiles.Get(grid.cells[from]).blocked = false;
  
             grid.takenCells[to] = unit;
-            //tiles.Get(grid.cells[to]).blocked = true;
  
             ref var pos = ref positions.Get(unit);
             pos.coord = to;
         }
-        
-        public static bool TryGetUnit(
-            GridComponent grid,
-            Stash<UnitComponent> units,
-            CellCoord at,
-            out Entity unit)
+
+        public static void Remove(ref GridComponent gridComp, Stash<CellTileComponent> tiles, Entity unit, CellCoord at)
         {
-            return grid.takenCells.TryGetValue(at, out unit) && units.Has(unit);
+            if (!gridComp.takenCells.TryGetValue(at, out var unitOnCell) || unitOnCell != unit)
+                return;
+            
+            gridComp.takenCells.Remove(at);
+            tiles.Get(gridComp.cells[at]).blocked = false;
         }
     }
 }

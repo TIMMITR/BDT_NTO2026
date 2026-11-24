@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using Features.CalcPack;
+using Features.GridPack;
 using Features.GridPack.Components;
 using Features.GridPack.Data;
 using Scellecs.Morpeh;
@@ -8,17 +10,7 @@ namespace Features.PathFinderPack
 {
     public static class PathFinder
     {
-        public static CellCoord[] Directions =
-        {
-            new(1,0),
-            new(1, -1),
-            new(0, -1),
-            new(-1, 0),
-            new(-1, 1),
-            new(0, 1),
-        };
-        
-        public static PassReady GetPath(GridComponent grid, CellCoord from, CellCoord to, Stash<CellTileComponent> stash)
+        public static PassReady GetPath(GridComponent gridComp, CellCoord from, CellCoord to, Stash<CellTileComponent> stash)
         {
             PassReady result = new()
             {
@@ -29,7 +21,7 @@ namespace Features.PathFinderPack
             result.cellsCost[from] = 0;
             result.path[from] = from;
             
-            List<CostCoord> candidates = new()
+            List<CellCost> candidates = new()
             {
                 new(from, 0),
             };
@@ -38,16 +30,14 @@ namespace Features.PathFinderPack
             {
                 var currentCell = GetMin(candidates);
 
-                foreach (var dir in Directions)
+                foreach (var dir in HexMath.Directions)
                 {
-                    var next = new CellCoord(currentCell.coord.Q + dir.Q, currentCell.coord.R + dir.R);
+                    var next = currentCell.coord + dir;
 
-                    if (!grid.cells.TryGetValue(next, out var cell))
+                    if (!gridComp.cells.TryGetValue(next, out var cell))
                         continue;
 
-                    int cost = 0;
-
-                    if (!CanPass(cell, stash, out cost)) 
+                    if (!CanPass(cell, stash, out var cost)) 
                         continue;
 
                     if (cost <= 0)
@@ -56,7 +46,7 @@ namespace Features.PathFinderPack
                         continue;
                     }
                     
-                    if (grid.takenCells.ContainsKey(next))
+                    if (GridData.HasUnit(gridComp, next))
                         continue;
                     
                     int newCost = result.cellsCost[currentCell.coord] + cost;
@@ -66,7 +56,7 @@ namespace Features.PathFinderPack
                     
                     result.cellsCost[next] = newCost;
                     result.path[next] = currentCell.coord;
-                    candidates.Add(new CostCoord(next, newCost));
+                    candidates.Add(new CellCost(next, newCost));
                 }
             }
             
@@ -96,7 +86,7 @@ namespace Features.PathFinderPack
             return !cellComp.blocked;
         }
 
-        private static CostCoord GetMin(List<CostCoord> candidates)
+        private static CellCost GetMin(List<CellCost> candidates)
         {
             int minIndex = 0;
 
@@ -114,18 +104,18 @@ namespace Features.PathFinderPack
         }
     }
 
-    public struct PassReady
+    public struct PassReady // структура, хранящая путь и его стоимость
     {
         public Dictionary<CellCoord, CellCoord> path;
         public Dictionary<CellCoord, int> cellsCost;
     }
     
-    public struct CostCoord // todo переименовать
+    public struct CellCost // todo переименовать
     {
         public CellCoord coord;
         public int cost;
         
-        public CostCoord(CellCoord coord, int cost)
+        public CellCost(CellCoord coord, int cost)
         {
             this.coord = coord;
             this.cost = cost;

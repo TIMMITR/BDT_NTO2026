@@ -5,6 +5,7 @@ using Features.GridPack.Components;
 using Features.GridPack.Data;
 using Features.KnockbackPack.Requests;
 using Features.UnitPack.Components;
+using Global;
 using Scellecs.Morpeh;
 using UnityEngine;
 
@@ -14,9 +15,8 @@ namespace Features.KnockbackPack.Systems
     {
         public World World { get; set; }
 
-        private Filter _gridFilter;
+        private Singletone<GridComponent> _grid;
         
-        private Stash<GridComponent> _gridStash;
         private Stash<CellPositionComponent> _positionStash;
         private Stash<CellTileComponent> _cellTileStash;
         private Stash<UnitAnimationComponent> _unitAnimationStash;
@@ -26,9 +26,8 @@ namespace Features.KnockbackPack.Systems
         
         public void OnAwake()
         {
-            _gridFilter = World.Filter.With<GridComponent>().Build();
+            _grid = new Singletone<GridComponent>(World);
             
-            _gridStash = World.GetStash<GridComponent>();
             _positionStash = World.GetStash<CellPositionComponent>();
             _cellTileStash = World.GetStash<CellTileComponent>();
             _unitAnimationStash = World.GetStash<UnitAnimationComponent>();
@@ -41,9 +40,6 @@ namespace Features.KnockbackPack.Systems
         {
             foreach (var request in _knockbackRequest.Consume())
             {
-                var gridEntity = _gridFilter.First();
-                ref var gridComp = ref _gridStash.Get(gridEntity);
-                
                 var unit = request.unit;
 
                 if (!_positionStash.Has(unit))
@@ -54,7 +50,7 @@ namespace Features.KnockbackPack.Systems
                 var distance = request.distance;
                 var returnDistance = request.returnDistance;
                 
-                var path = BuildKnockbackPath(gridComp, from, dir, distance, returnDistance, out var collided);
+                var path = BuildKnockbackPath(from, dir, distance, returnDistance, out var collided);
 
                 if (collided)
                 {
@@ -66,13 +62,12 @@ namespace Features.KnockbackPack.Systems
                 if (path.Count < 2) 
                     continue;
                 
-                GridOccupancy.Move(ref gridComp, _cellTileStash, _positionStash, unit, from, path[^1]);
+                GridOccupancy.Move(ref _grid.Comp, _cellTileStash, _positionStash, unit, from, path[^1]);
                 _unitAnimationStash.Set(unit, new UnitAnimationComponent(path, true));
             }
         }
 
-        private List<CellCoord> BuildKnockbackPath(GridComponent grid,
-            CellCoord from, CellCoord dir,
+        private List<CellCoord> BuildKnockbackPath(CellCoord from, CellCoord dir,
             int distance, int returnDistance, out bool collided)
         {
             List<CellCoord> path = new() { from };
@@ -81,12 +76,12 @@ namespace Features.KnockbackPack.Systems
 
             for (int i = 0; i < distance; i++)
             {
-                var next = new CellCoord(cell.Q + dir.Q, cell.R + dir.R);
+                var next = cell + dir;
 
-                if (!grid.cells.TryGetValue(next, out var cellEntity))
+                if (!_grid.Comp.cells.TryGetValue(next, out var cellEntity))
                     break;
 
-                if (_cellTileStash.Get(cellEntity).blocked || grid.takenCells.ContainsKey(next))
+                if (!GridData.IsFreeCell(_grid.Comp, _cellTileStash, next))
                 {
                     collided = true;
                     break;
@@ -100,14 +95,14 @@ namespace Features.KnockbackPack.Systems
             {
                 for (var i = 0; i < returnDistance; i++)
                 {
-                    var next = new CellCoord(cell.Q - dir.Q, cell.R - dir.R);
+                    var next = cell - dir;
 
-                    if (!IsFree(grid, next, from))
+                    if (!IsFree(next, from))
                     {
                         dir = new CellCoord(-dir.Q, -dir.R);
-                        next = new CellCoord(cell.Q + dir.Q, cell.R + dir.R);
+                        next = cell + dir;
                         
-                        if (!IsFree(grid, next, from))
+                        if (!IsFree(next, from))
                             break;
                     }
                     
@@ -116,13 +111,12 @@ namespace Features.KnockbackPack.Systems
                 }
             }
             
-            return path;
+            return path;    
         }
         
-        private bool IsFree(GridComponent grid, CellCoord cell, CellCoord self) =>
-            grid.cells.TryGetValue(cell, out var cellEntity) &&
-            !_cellTileStash.Get(cellEntity).blocked &&
-            (!grid.takenCells.ContainsKey(cell) || cell == self);
+        private bool IsFree(CellCoord cell, CellCoord self) => cell == self 
+            ? !GridData.HasBuilding(_grid.Comp, _cellTileStash, cell) 
+            : GridData.IsFreeCell(_grid.Comp, _cellTileStash, cell);
         
         public void Dispose() { }
     }

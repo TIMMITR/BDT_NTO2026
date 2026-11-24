@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Configs;
 using Features.BattlePack;
+using Features.CalcPack;
 using Features.ControlPointPack.Components;
 using Features.GridPack;
 using Features.GridPack.Components;
@@ -107,18 +108,12 @@ namespace Features.ControlPointPack.Systems
 
         private CellCoord? FindRelevantCell(GridComponent gridComp, CellCoord from)
         {
-            foreach (var dir in PathFinder.Directions)
+            foreach (var neighbour in HexMath.GetNeighbours(from))
             {
-                var coord = new CellCoord(from.Q + dir.Q, from.R + dir.R);
+                if (!GridData.IsFreeCell(gridComp, _cellTileStash, neighbour))
+                    return null;
                 
-                if(!gridComp.cells.TryGetValue(coord, out var cell))
-                    continue;
-                if (gridComp.takenCells.ContainsKey(coord))
-                    continue;
-                if (_cellTileStash.Get(cell).blocked)
-                    continue;
-                
-                return coord;
+                return neighbour;
             }
             
             return null;

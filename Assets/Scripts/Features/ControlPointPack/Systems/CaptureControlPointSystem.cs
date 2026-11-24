@@ -1,4 +1,5 @@
 using Configs;
+using Features.CalcPack;
 using Features.ControlPointPack.Components;
 using Features.ControlPointPack.Events;
 using Features.GridPack;
@@ -47,7 +48,7 @@ namespace Features.ControlPointPack.Systems
                 if (evt.phase == TurnPhase.Events)
                     continue;
                 
-                var gridEntity = _gridFilter.First();
+                var gridEntity = _gridFilter.First();   
                 ref var gridComp = ref _gridStash.Get(gridEntity);
                 
                 foreach (var controlPoint in _controlPointFilter)
@@ -58,14 +59,10 @@ namespace Features.ControlPointPack.Systems
                     ref var controlPointComp = ref _controlPointStash.Get(controlPoint);
                     var coord = controlPointComp.cellCoord;
             
-                    foreach (var dir in PathFinder.Directions)
+                    foreach (var neighbour in HexMath.GetNeighbours(coord))
                     {
-                        var neighbor = new CellCoord(coord.Q + dir.Q, coord.R + dir.R);
-
-                        if (!GridOccupancy.TryGetUnit(gridComp, _unitStash, neighbor, out var unit))
+                        if (!GridData.TryGetUnit(gridComp, _unitStash, neighbour, out var unit, out var side))
                             continue;
-                        
-                        var side = _unitStash.Get(unit).teamSide;
 
                         if(side == TeamSide.Player)
                             hasPlayer = true;

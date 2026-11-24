@@ -14,7 +14,6 @@ namespace Features.FightPack.Systems
     {
         public World World { get; set; }
 
-        private Stash<SpellDataComponent> _spellStash;
         private Stash<CellPositionComponent> _positionStash;
 
         private Request<KnockbackRequest> _knockbackRequest;
@@ -23,7 +22,6 @@ namespace Features.FightPack.Systems
         
         public void OnAwake()
         {
-            _spellStash = World.GetStash<SpellDataComponent>();
             _positionStash = World.GetStash<CellPositionComponent>();
             
             _knockbackRequest = World.GetRequest<KnockbackRequest>();
@@ -35,27 +33,28 @@ namespace Features.FightPack.Systems
         {
             foreach (var request in _attackRequest.Consume())
             {
-                ref var spell = ref _spellStash.Get(request.source);
-                var spellData = spell.spellData;
+                var spell = request.spell;
+                var source = request.source;
+                var target = request.target;
                 
-                _damageRequest.Publish(new DamageRequest(request.source, request.target, spellData.damage));
+                if (World.IsDisposed(source) || World.IsDisposed(target)) 
+                    continue;
+                
+                _damageRequest.Publish(new DamageRequest(source, target, spell.damage));
 
-                if (spell.spellData.punchDistance > 0)
+                if (spell.punchDistance > 0 && _positionStash.Has(target))
                 {
-                    var target = _positionStash.Get(request.target).coord;
-                    var dir = request.origin.DirectionTo(target);
+                    var to = _positionStash.Get(target).coord;
+                    var dir = request.origin.DirectionTo(to);
                     
-                    _knockbackRequest.Publish(new KnockbackRequest(request.source, request.target, dir, 
-                        spellData.punchDistance, spellData.punchDamage, spellData.punchReturnDistance));
+                    _knockbackRequest.Publish(new KnockbackRequest(source, target, dir, 
+                        spell.punchDistance, spell.punchDamage, spell.punchReturnDistance));
                 }
                 
-                Debug.Log($"{request.source} attacking {request.target} with {spell.spellData.damage}");
+                Debug.Log($"{source} attacking {target} with {spell.damage}");
             }
         }
     
-        public void Dispose()
-        {
-            
-        }
+        public void Dispose() {}
     }
 }

@@ -3,6 +3,7 @@ using Features.FightPack.Components;
 using Features.FightPack.Requests;
 using Features.GridPack.Components;
 using Features.TransformPack;
+using Global;
 using Scellecs.Morpeh;
 using UnityEngine;
 using Object = UnityEngine.Object;
@@ -19,6 +20,7 @@ namespace Features.FightPack.Systems
         private Stash<GridComponent> _gridStash;
         private Stash<TransformComponent> _transformStash;
         private Stash<ProjectileComponent> _projectileStash;
+        private Stash<DestroyTag> _destroyTag;
         
         private Request<ProjectileCastRequest> _projectileRequest;
         private Request<AttackOrderRequest> _attackOrderRequest;
@@ -31,6 +33,7 @@ namespace Features.FightPack.Systems
             _gridStash = World.GetStash<GridComponent>();
             _transformStash = World.GetStash<TransformComponent>();
             _projectileStash = World.GetStash<ProjectileComponent>();
+            _destroyTag = World.GetStash<DestroyTag>();
             
             _projectileRequest = World.GetRequest<ProjectileCastRequest>();
             _attackOrderRequest = World.GetRequest<AttackOrderRequest>();
@@ -102,8 +105,7 @@ namespace Features.FightPack.Systems
             foreach (var order in projComp.orders)
                 _attackOrderRequest.Publish(order);
             
-            Object.Destroy(tr.gameObject);
-            World.RemoveEntity(entity);
+            _destroyTag.Add(entity);
         }
     
         public void Dispose() {}

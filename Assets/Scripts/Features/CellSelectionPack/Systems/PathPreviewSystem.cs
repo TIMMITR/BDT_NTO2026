@@ -8,6 +8,7 @@ using Features.GridPack.Components;
 using Features.GridPack.Data;
 using Features.PathFinderPack;
 using Features.SpellPack.Components;
+using Global;
 using Scellecs.Morpeh;
 
 namespace Features.CellSelectionPack.Systems
@@ -16,9 +17,8 @@ namespace Features.CellSelectionPack.Systems
     {
         public World World { get; set; }
 
-        private Filter _gridFilter;
-
-        private Stash<GridComponent> _gridStash;
+        private Singletone<GridComponent> _grid;
+        
         private Stash<SelectedUnitComponent> _selectedUnitStash;
         private Stash<ChosenCellComponent> _chosenCellStash;
         
@@ -26,7 +26,6 @@ namespace Features.CellSelectionPack.Systems
         private Stash<CellPositionComponent> _positionStash;
         
         private Stash<SpellDataComponent> _spellDataStash;
-        private Stash<AttackDataComponent> _attackDataStash;
         
         private Event<CellChooseEvent> _cellChooseEvent;
         
@@ -38,12 +37,12 @@ namespace Features.CellSelectionPack.Systems
         private SpellConfigSo _lastSpell;
 
         private List<CellCoord> _fullPath = new();
+        private List<CellCoord> _attackCells = new();
 
         public void OnAwake()
         {
-            _gridFilter = World.Filter.With<GridComponent>().Build();
+            _grid = new Singletone<GridComponent>(World);
             
-            _gridStash = World.GetStash<GridComponent>();
             _selectedUnitStash = World.GetStash<SelectedUnitComponent>();
             _chosenCellStash = World.GetStash<ChosenCellComponent>();
             _cellTileStash = World.GetStash<CellTileComponent>();
@@ -52,7 +51,6 @@ namespace Features.CellSelectionPack.Systems
             _cellChooseEvent = World.GetEvent<CellChooseEvent>();
             
             _spellDataStash = World.GetStash<SpellDataComponent>();
-            _attackDataStash = World.GetStash<AttackDataComponent>();
             
             _colorCellRequest = World.GetRequest<ColorCellRequest>();
             _clearColorsRequest = World.GetRequest<ClearColorsRequest>();
@@ -60,12 +58,10 @@ namespace Features.CellSelectionPack.Systems
 
         public void OnUpdate(float deltaTime)
         {
-            if (_gridFilter.IsEmpty()) return;
-
             foreach (var evt in _cellChooseEvent.publishedChanges)
             {
-                var gridEntity = _gridFilter.First();
-
+                var gridEntity = _grid.Entity;
+                
                 Entity? unit = _selectedUnitStash.Has(gridEntity) ? _selectedUnitStash.Get(gridEntity).unit : null;
             
                 CellCoord? from = unit.HasValue && _positionStash.Has(unit.Value)
@@ -97,7 +93,6 @@ namespace Features.CellSelectionPack.Systems
 
                 if (from == to || !from.HasValue || !to.HasValue) return;
 
-                ref var gridComp = ref _gridStash.Get(gridEntity);
                 ref var selectedUnitComp = ref _selectedUnitStash.Get(gridEntity);
                 var speed = selectedUnitComp.moveSpeed;
                 
@@ -105,16 +100,13 @@ namespace Features.CellSelectionPack.Systems
                 {
                     if (activeSpell != null)
                     {
-                        _attackDataStash.Set(gridEntity, new AttackDataComponent(activeSpell, from.Value, to.Value));
-                        ref var attackComp = ref _attackDataStash.Get(gridEntity);
-                    
-                        BuildAttackPath(ref gridComp, ref attackComp,speed, out var path);
+                        BuildAttackPath(activeSpell, from.Value, to.Value, speed, out var path);
                     
                         selectedUnitComp.path = path;
                     }
                     else
                     {   
-                        BuildPreviewPath(ref gridComp, from.Value, to.Value, speed, out var path);
+                        BuildPreviewPath(from.Value, to.Value, speed, out var path);
                         
                         selectedUnitComp.path = path;
                     }
@@ -123,17 +115,11 @@ namespace Features.CellSelectionPack.Systems
             }
         }
 
-        private void BuildAttackPath(ref GridComponent gridComp, 
-            ref AttackDataComponent attackData,
-            int speed,
+        private void BuildAttackPath(SpellConfigSo spell, CellCoord from, CellCoord to, int speed,
             out List<CellCoord> resultPath)
         {
-            var from = attackData.from;
-            var to = attackData.to;
-            var spell = attackData.spellConfig;
-            
-            var foundPath = PathFinder.GetPath(gridComp, from, to, _cellTileStash);
-            resultPath = new List<CellCoord> { from };
+            var foundPath = PathFinder.GetPath(_grid.Comp, from, to, _cellTileStash);
+            resultPath = new() {from};
 
             CellCoord best = default;
             CellCoord bestDir = default;
@@ -143,7 +129,7 @@ namespace Features.CellSelectionPack.Systems
             {
                 if (pair.Value > speed || pair.Value >= bestCost)
                     continue;
-                if (!SpellArea.TryHitFrom(gridComp, _cellTileStash, spell, pair.Key, to, out var dir))
+                if (!SpellArea.TryAim(_grid.Comp, _cellTileStash, spell, pair.Key, to, out var dir))
                     continue;
  
                 best = pair.Key;
@@ -153,28 +139,24 @@ namespace Features.CellSelectionPack.Systems
  
             if (bestCost == int.MaxValue) 
                 return;
-            
+
             if (best != from)
-                resultPath.AddRange(PathFinder.ReconstructPath(foundPath, from, best)); // тут именно добавление,
-                                                                                        // т.к. иначе from не запишется
-            
-            attackData.dir = bestDir;
+                resultPath = PathFinder.ReconstructPath(foundPath, from, best);
             
             foreach (var cell in resultPath)
                 _colorCellRequest.Publish(new ColorCellRequest(cell, ColorType.Path));
 
-            var attackPath = SpellArea.ReconstructPath(gridComp, _cellTileStash,
-                spell, 
-                best, to, bestDir);
+            _attackCells.Clear();
+            SpellArea.CollectCells(_grid.Comp, _cellTileStash, spell, best, to, bestDir, _attackCells);
             
-            foreach (var cell in attackPath)
+            foreach (var cell in _attackCells)
                 _colorCellRequest.Publish(new ColorCellRequest(cell, ColorType.Attack)); 
         }
         
 
-        private void BuildPreviewPath(ref GridComponent gridComp, CellCoord from, CellCoord to, int maxCost, out List<CellCoord> path)
+        private void BuildPreviewPath(CellCoord from, CellCoord to, int maxCost, out List<CellCoord> path)
         {
-            var pathReady = PathFinder.GetPath(gridComp, from, to, _cellTileStash);
+            var pathReady = PathFinder.GetPath(_grid.Comp, from, to, _cellTileStash);
             
             _fullPath = PathFinder.ReconstructPath(pathReady, from, to);
 
