@@ -1,19 +1,17 @@
 using Configs;
-using Features.CellSelectionPack.Components;
 using Features.GridPack.Components;
 using Features.GridPack.Data;
 using Scellecs.Morpeh;
 using UnityEngine;
 
-namespace Features.GridPack
+namespace Features.GridPack.Systems
 {
-    public sealed class GridSystem : IInitializer
+    public class GridSystem : IInitializer // todo надо ли делать sealed?
     {
         public World World { get; set; }
 
         private Stash<GridComponent> _gridStash;
         private Stash<CellTileComponent> _cellTileStash;
-        private Stash<ChosenCellComponent> _chosenCellStash;
 
         private readonly WorldSettingsSo _worldSettings;
 
@@ -26,7 +24,6 @@ namespace Features.GridPack
         {
             _gridStash = World.GetStash<GridComponent>();
             _cellTileStash = World.GetStash<CellTileComponent>();
-            _chosenCellStash = World.GetStash<ChosenCellComponent>();
 
             CreateGrid();
         }
@@ -37,8 +34,6 @@ namespace Features.GridPack
             float cellRadius = _worldSettings.cellRadius;
 
             var gridEntity = World.CreateEntity();
-            
-            _chosenCellStash.Add(gridEntity);
             
             ref var gridComp = ref _gridStash.Add(gridEntity);
             gridComp = new GridComponent(cellRadius, gridRadius);

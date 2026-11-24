@@ -3,7 +3,7 @@ using Scellecs.Morpeh;
 
 namespace Features.CellTrackPack.Events
 {
-    public struct CellChooseEvent : IEventData
+    public struct CellChooseEvent : IEventData // todo переделать
     {
         public TeamSide cellSide;
         

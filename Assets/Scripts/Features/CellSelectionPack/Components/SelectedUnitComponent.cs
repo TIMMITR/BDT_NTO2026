@@ -1,6 +1,3 @@
-using System.Collections.Generic;
-using Configs;
-using Features.GridPack.Data;
 using Scellecs.Morpeh;
 
 namespace Features.CellSelectionPack.Components

@@ -1,4 +1,5 @@
 using Features.BattlePack;
+using Features.BusyPack;
 using Features.CameraPack.Systems;
 using Features.CellSelectionPack.Systems;
 using Features.CellTrackPack.Systems;
@@ -8,6 +9,7 @@ using Features.DeathPack.Systems;
 using Features.EnemyAIPack.System;
 using Features.FightPack.Systems;
 using Features.GridPack;
+using Features.GridPack.Systems;
 using Features.StoryTalkPack.Systems;
 using Features.TypingPack.Systems;
 using Features.HealthPack;
@@ -95,6 +97,12 @@ namespace Scenes.Game
             _updateGroup.AddSystem(new UnitAnimationSystem());
             _updateGroup.AddSystem(new ChangeAnimationDataSystem(gameContext.moveDataList));
             _updateGroup.AddSystem(new PlayerPositionStateSystem());
+
+            _updateGroup.AddSystem(new PlayerClickSystem());
+            _updateGroup.AddSystem(new SelectUnitSystem());
+            _updateGroup.AddSystem(new PathPreviewSystem());
+            _updateGroup.AddSystem(new PathHighlightSystem());
+            _updateGroup.AddSystem(new BusyTagSystem());
 
             _updateGroup.AddSystem(new KnockbackSystem());
             _updateGroup.AddSystem(new LifetimeSystem());

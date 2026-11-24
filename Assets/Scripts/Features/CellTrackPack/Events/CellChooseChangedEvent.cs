@@ -1,7 +1,7 @@
 using Features.GridPack.Data;
 using Scellecs.Morpeh;
 
-namespace Features.CellSelectionPack.Events
+namespace Features.CellTrackPack.Events
 {
     public struct CellChooseChangedEvent : IEventData
     {

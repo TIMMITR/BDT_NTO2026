@@ -1,5 +1,4 @@
 using Configs;
-using Features.CellSelectionPack.Events;
 using Features.CellTrackPack.Events;
 using Features.GridPack;
 using Features.GridPack.Components;

@@ -37,7 +37,7 @@ namespace Features.PathFinderPack
                     if (!gridComp.cells.TryGetValue(next, out var cell))
                         continue;
 
-                    if (!CanPass(cell, stash, out var cost)) 
+                    if (!TryPass(cell, stash, out var cost)) 
                         continue;
 
                     if (cost <= 0)
@@ -63,6 +63,22 @@ namespace Features.PathFinderPack
             return result;
         }
 
+        public static List<CellCoord> GetPathByCost(PassReady pass, CellCoord from, CellCoord to, int speed)
+        {
+            var result = new List<CellCoord> { from };
+ 
+            foreach (var cell in ReconstructPath(pass, from, to))
+            {
+                if (pass.cellsCost[cell] > speed)
+                    break;
+ 
+                result.Add(cell);
+            }
+ 
+            return result;
+        }
+        
+
         public static List<CellCoord> ReconstructPath(PassReady pass, CellCoord from, CellCoord to)
         {
             List<CellCoord> result = new();
@@ -79,7 +95,7 @@ namespace Features.PathFinderPack
             return result;
         }
 
-        private static bool CanPass(Entity cell, Stash<CellTileComponent> stash, out int cost)
+        private static bool TryPass(Entity cell, Stash<CellTileComponent> stash, out int cost)
         {
             ref var cellComp = ref stash.Get(cell);
             cost = cellComp.moveCost;

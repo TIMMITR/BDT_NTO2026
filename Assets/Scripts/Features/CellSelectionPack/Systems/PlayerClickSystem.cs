@@ -17,7 +17,7 @@ using SelectUnitRequest = Features.CellSelectionPack.Requests.SelectUnitRequest;
 
 namespace Features.CellSelectionPack.Systems
 {
-    public sealed class PlayerClickSystem : ISystem
+    public class PlayerClickSystem : ISystem
     {
         public World World { get; set; }
 

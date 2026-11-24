@@ -32,3 +32,6 @@ MonoBehaviour:
     chosenColor: {r: 1, g: 0.50889933, b: 0, a: 0.69411767}
     pathColor: {r: 0, g: 1, b: 0.973691, a: 0.5647059}
     attackColor: {r: 0.69182384, g: 0.036984242, b: 0.036984242, a: 0.6666667}
+    rangeColor: {r: 0.020096293, g: 0, b: 0.96862745, a: 1}
+  cardsManaCost: 2
+  vireteManaCost: 6

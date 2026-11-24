@@ -6,7 +6,7 @@ using Scellecs.Morpeh;
 
 namespace Features.CellSelectionPack.Systems
 {
-    public sealed class UnitSelectionSystem : ISystem
+    public sealed class SelectUnitSystem : ISystem
     {
         public World World { get; set; }
 
