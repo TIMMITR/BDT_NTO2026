@@ -13,6 +13,7 @@ using Features.TypingPack.Systems;
 using Features.HealthPack;
 using Features.InputPack;
 using Features.ItemsPack.Cards;
+using Features.ItemsPack.Virete;
 using Features.KnockbackPack.Systems;
 using Features.LifetimePack.Systems;
 using Features.ManaPack;
@@ -81,8 +82,9 @@ namespace Scenes.Game
             _updateGroup.AddSystem(new ActivateControlPointSystem());
             _updateGroup.AddSystem(new ClearControlPointSystem());
 
-            _updateGroup.AddSystem(new CardsSystem(globalContext.cardsConfig));
-            
+            _updateGroup.AddSystem(new CardsSystem(globalContext.cardsConfig,
+                globalContext.worldSettings));
+            _updateGroup.AddSystem(new VireteSystem(globalContext.worldSettings));
             _updateGroup.AddSystem(new SelectUnitSystem());
             _updateGroup.AddSystem(new UnitSpawnSystem());
             _updateGroup.AddSystem(new MoveCommandSystem());

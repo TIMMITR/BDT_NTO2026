@@ -11,7 +11,9 @@ namespace Features.QuickTalkPack.Data
         CrystalSpawned,
         CrystalDestroyed,
         Intervention,
-        VeritifonUsed,
+        VireteHeal, // должен сказать что поможет и как поможет
+        VireteRevive,
+        VireteDamage,
         BattleWon,
         BattleLost
     }

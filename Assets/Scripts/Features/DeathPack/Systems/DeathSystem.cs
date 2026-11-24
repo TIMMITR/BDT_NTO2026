@@ -51,7 +51,9 @@ namespace Features.DeathPack.Systems
                     var coord = _positionStash.Get(unit).coord;
                     gridComp.takenCells.Remove(coord);
                 }
-                
+                // todo сделать чтобы юниты игрока не пропадали полностью
+                // чтобы можно было их оживить снова
+                //  я пока это тебе оставлю 
                 Object.Destroy(_transformStash.Get(unit).value.gameObject);
                 
                 World.RemoveEntity(unit);

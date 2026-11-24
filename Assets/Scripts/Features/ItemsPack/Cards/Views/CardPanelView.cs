@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Features.ItemsPack.Cards.Events;
 using Features.ItemsPack.Cards.Requests;
 using Scellecs.Morpeh;
@@ -19,6 +20,11 @@ namespace Features.ItemsPack.Cards.Views
                 cardsHolderViews[i].gameObject.SetActive(false);
                 cardsHolderViews[i].cardsButton.onClick.AddListener(() =>
                 {
+                    cardsHolderViews[index].TurnCard
+                        (_shownCards[index].cardName,
+                        _shownCards[index].cardDescription,
+                        _shownCards[index].cardUiSprite);
+                    TurnCardsOff(index);
                     World.Default.GetRequest<CardPickRequest>().Publish(new CardPickRequest
                     {
                         cardType = _shownCards[index].cardType
@@ -34,14 +40,22 @@ namespace Features.ItemsPack.Cards.Views
                     for (var i = 0; i < cardsHolderViews.Count &&  i < change.cardsHolderDatas.Count; i++)
                     {
                         var cardsHolderView = cardsHolderViews[i];
-                        cardsHolderView.cardName.text = change.cardsHolderDatas[i].cardName;
-                        cardsHolderView.image.sprite = change.cardsHolderDatas[i].cardUiSprite;
-                        cardsHolderView.cardDescription.text = change.cardsHolderDatas[i].cardDescription;
                         
                         cardsHolderView.gameObject.SetActive(true);
                     }
                 }
             });
         }
+
+        public void TurnCardsOff(int index)
+        {
+            for (var i = 0; i < cardsHolderViews.Count && i < _shownCards.Count; i++)
+            {
+                if (i == index) continue;
+                cardsHolderViews[i].gameObject.SetActive(false);
+            }
+            // todo корутиной  или primeTween отключать карту index
+        }
+        
     }
 }

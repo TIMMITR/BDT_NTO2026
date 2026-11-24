@@ -30,6 +30,9 @@ namespace Configs
         
         [Header("Color")]
         public ColorData colorData;
+
+        public int cardsManaCost = 2;
+        public int vireteManaCost = 6;
     }
 
     [Serializable]
