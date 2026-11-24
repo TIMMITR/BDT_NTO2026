@@ -1,5 +1,6 @@
 using System;
 using Features.ManaPack.Events;
+using Global;
 using Scellecs.Morpeh;
 using UnityEngine;
 
@@ -12,6 +13,7 @@ namespace Features.ManaPack
         private Stash<ManaComponent> _manaStash;
 
         private Request<ManaChangeRequest> _manaChangeRequest;
+        private Filter _player;
 
         private Event<ManaChangedEvent> _manaChangeSuccessEvent;
         private Event<ManaChangedFailedEvent> _manaChangeFailedEvent;
@@ -19,7 +21,7 @@ namespace Features.ManaPack
         public void OnAwake()
         {
             _manaStash = World.GetStash<ManaComponent>();
-
+            _player = World.Filter.With<PlayerTag>().Build();
             _manaChangeRequest = World.GetRequest<ManaChangeRequest>();
 
             _manaChangeSuccessEvent = World.GetEvent<ManaChangedEvent>();
@@ -30,14 +32,12 @@ namespace Features.ManaPack
         {
             foreach (var request in _manaChangeRequest.Consume())
             {
-                if (!_manaStash.Has(request.entity)) 
-                    continue;
 
-                ref var manaComponent = ref _manaStash.Get(request.entity);
+                ref var manaComponent = ref _manaStash.Get(_player.First());
 
                 if (request.amount < 0 && manaComponent.currentMana < -request.amount)
                 {
-                    _manaChangeFailedEvent.NextFrame(new ManaChangedFailedEvent { entity = request.entity });
+                    _manaChangeFailedEvent.NextFrame(new ManaChangedFailedEvent ());
                     continue;
                 }
 

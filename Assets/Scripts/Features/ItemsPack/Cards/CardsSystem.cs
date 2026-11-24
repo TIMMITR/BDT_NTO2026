@@ -57,12 +57,12 @@ namespace Features.ItemsPack.Cards
 
                 if (!raycastComponent.hitCollider.gameObject.GetComponent<CardItemView>()) continue;
                 ref var manaComp = ref _manaStash.Get(_manaFilter.First());
-                if (manaComp.currentMana < _worldSettings.cardsManaCost)
-                {
-                    // todo сделать какой-то сигнал
-                    Debug.Log("Недостаточно маны");
-                    continue;
-                }
+                // if (manaComp.currentMana < _worldSettings.cardsManaCost)
+                // {
+                //     // todo сделать какой-то сигнал
+                //     Debug.Log("Недостаточно маны");
+                //     continue;
+                // }
                 
                 _manaChangeRequest.Publish(new ManaChangeRequest
                 {

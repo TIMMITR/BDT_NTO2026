@@ -46,7 +46,7 @@ namespace Features.ItemsPack.Virete
             _unitStash = World.GetStash<UnitComponent>();
             _healthStash = World.GetStash<HealthComponent>();
 
-            // может просто сделать что начинатся quick talk c вирете и там выбор как-то
+            // может просто сделать что начинается quick talk c вирете и там выбор как-то
             // или пока просто по простым правилам давать штуки
             // типа если персонаж мертв - возвращает его к жизни
             // если общее хп меньше половины от максимального - лечит до половины обоих персов
@@ -95,10 +95,12 @@ namespace Features.ItemsPack.Virete
                 if (maxHealth / 2 > health)
                 {
                     trigger =  QuickTalkTrigger.VireteHeal;
+                    // todo чтобы сам эффект делался
                 }
                 else
                 {
                     trigger = QuickTalkTrigger.VireteDamage;
+                    // todo эффект
                 }
                 _event.NextFrame(new QuickTalkTriggerEvent 
                 {

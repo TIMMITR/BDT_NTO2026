@@ -84,9 +84,7 @@ namespace Features.ControlPointPack.Systems
                 
                     if (controlPointComp.teamSide == TeamSide.Player)
                     {
-                        var player = _playerFilter.First();
-                    
-                        _manaRequest.Publish(new ManaChangeRequest(manaReward, player));
+                        _manaRequest.Publish(new ManaChangeRequest(manaReward));
                     }
                     else if (controlPointComp.teamSide == TeamSide.Enemy)
                     {

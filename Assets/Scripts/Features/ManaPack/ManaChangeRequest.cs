@@ -5,12 +5,10 @@ namespace Features.ManaPack
     public struct ManaChangeRequest : IRequestData
     {
         public int amount;
-        public Entity entity;
 
-        public ManaChangeRequest(int amount, Entity entity)
+        public ManaChangeRequest(int amount)
         {
             this.amount = amount;
-            this.entity = entity;
         }
     }
 }
