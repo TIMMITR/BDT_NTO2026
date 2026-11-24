@@ -3,6 +3,7 @@ using Features.CellSelectionPack.Components;
 using Features.CellSelectionPack.Events;
 using Features.CellSelectionPack.Requests;
 using Features.FightPack.Components;
+using Features.GridPack;
 using Features.GridPack.Components;
 using Features.GridPack.Data;
 using Features.InputPack.Requests;
@@ -12,7 +13,6 @@ using Features.StatePack.Components;
 using Features.UnitPack.Components;
 using Features.UnitPack.Requests;
 using Scellecs.Morpeh;
-using UnityEngine;
 
 namespace Features.UnitPack.Systems
 {
@@ -34,12 +34,12 @@ namespace Features.UnitPack.Systems
         private Stash<UnitAnimationComponent> _unitAnimationStash;
         private Stash<DelayAttackComponent> _delayAttackStash;
         private Stash<SpellDataComponent> _spellDataStash;
+        private Stash<AttackDesireComponent> _attackDesireStash;
 
-        private Event<LmbStartEvent> _lmbEvent;
         private Request<MoveUnitRequest> _moveUnitRequest;
         private Request<ColorCellRequest> _colorCellRequest;
-        private Request<SelectUnitRequest> _selectUnitRequest;
 
+        private Event<LmbStartEvent> _lmbEvent;
         private Event<CellChooseChangedEvent> _cellChoosedChangedEvent;
 
         public void OnAwake()
@@ -58,12 +58,12 @@ namespace Features.UnitPack.Systems
             _unitAnimationStash = World.GetStash<UnitAnimationComponent>();
             _delayAttackStash = World.GetStash<DelayAttackComponent>();
             _spellDataStash = World.GetStash<SpellDataComponent>();
+            _attackDesireStash = World.GetStash<AttackDesireComponent>();
 
-            _lmbEvent = World.GetEvent<LmbStartEvent>();
             _moveUnitRequest = World.GetRequest<MoveUnitRequest>();
             _colorCellRequest = World.GetRequest<ColorCellRequest>();
-            _selectUnitRequest = World.GetRequest<SelectUnitRequest>();
 
+            _lmbEvent = World.GetEvent<LmbStartEvent>();
             _cellChoosedChangedEvent = World.GetEvent<CellChooseChangedEvent>();
         }
 
@@ -74,25 +74,15 @@ namespace Features.UnitPack.Systems
             if(turnPhaseComp.phase != TurnPhase.Player)
                 return;
 
-            
             var lmbClicked = false;
-            foreach (var _ in _lmbEvent.publishedChanges) lmbClicked = true;
+            
+            foreach (var _ in _lmbEvent.publishedChanges)
+                lmbClicked = true;
             
             var gridEntity = _gridFilter.First();
 
-            foreach (var request in _selectUnitRequest.Consume())
-            {
-                Debug.Log("fbcb");
-                if (_selectedUnitStash.Has(gridEntity))
-                {
-                    ref var selected = ref _selectedUnitStash.Get(gridEntity);
-                    selected.unit = request.unit; // бро как этот скрипт работает нахрен
-                }
-            }
-            // todo бро переделай это пж
-            // по сути система рабоатет, но тут не куда вставить принудительный селект юнита, пока что так оставлю
-
-            if (!lmbClicked || !_chosenCellStash.Has(gridEntity)) return;
+            if (!lmbClicked || !_chosenCellStash.Has(gridEntity)) 
+                return;
             
             ref var gridComp = ref _gridStash.Get(gridEntity);
             var clicked = _chosenCellStash.Get(gridEntity).cellCoord;
@@ -124,10 +114,14 @@ namespace Features.UnitPack.Systems
                 else if (_spellDataStash.Has(selected.unit))
                 {
                     _delayAttackStash.Set(selected.unit, new DelayAttackComponent(unit));
+                    _attackDesireStash.Set(selected.unit, new AttackDesireComponent(
+                        clicked,
+                        _spellDataStash.Get(selected.unit).spellData
+                    ));
                 }
 
                 // двигаем
-                if (selected.path is { Count: > 1 })
+                if (selected.path != null && selected.path.Count > 1)
                 {
                     _moveUnitRequest.Publish(new MoveUnitRequest(selected.unit, selected.path));
                 }
@@ -149,20 +143,21 @@ namespace Features.UnitPack.Systems
             }
         }
 
-        private TeamSide TryGetUnit(GridComponent gridComp, CellCoord cellCoord, out Entity unit)
-        {
-            if (!gridComp.takenCells.TryGetValue(cellCoord, out unit) || _unitAnimationStash.Has(unit))
-                return TeamSide.None;
-
-            ref var unitComp = ref _unitStash.Get(unit);
-            
-            return unitComp.teamSide;
-        }
-
         private bool TryGetPlayerSpeed(Entity unit, out int moveSpeed)
         {
             moveSpeed = _speedStash.Get(unit).currentSpeed;
-            return moveSpeed > 0;
+            if (moveSpeed <= 0)
+                return false;
+            
+            return true;
+        }
+        
+        private TeamSide TryGetUnit(GridComponent gridComp, CellCoord cellCoord, out Entity unit) // свой метод, чтобы нельзя было выбрать unit в полете
+        {
+            if (!GridData.TryGetUnit(gridComp, _unitStash, cellCoord, out unit, out var side))
+                return TeamSide.None;
+ 
+            return _unitAnimationStash.Has(unit) ? TeamSide.None : side;
         }
 
         public void Dispose() {}
