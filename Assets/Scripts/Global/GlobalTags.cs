@@ -9,6 +9,7 @@ namespace Global
     public struct BaseTag : IComponent { }
     public struct DestroyTag : IComponent { }
     public struct DeadTag : IComponent { }
+    public struct BusyTag : IComponent { }
     
     public struct SimpleAnimationActiveTag : IComponent { }
     
