@@ -24,14 +24,22 @@ namespace Features.DamagePack
         {
             foreach (var request in _damageRequest.Consume())
             {
-                if (!_damageStash.Has(request.source)) continue;
-
-                ref var damageComponent = ref _damageStash.Get(request.source);
-
+                int totalDamage;
+                
+                if (World.IsDisposed(request.source))
+                {
+                    totalDamage = -request.amount;
+                }
+                else
+                {
+                    ref var damageComponent = ref _damageStash.Get(request.source);
+                    totalDamage = -damageComponent.multiplier * request.amount;
+                }
+                
                 _healthChangeRequest.Publish(new HealthChangeRequest
                 {
                     entity = request.target,
-                    amount = -damageComponent.multiplier * request.amount
+                    amount = totalDamage
                 });
             }
         }

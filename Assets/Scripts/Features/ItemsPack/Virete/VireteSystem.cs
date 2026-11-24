@@ -1,4 +1,5 @@
 using Configs;
+using Features.DamagePack;
 using Features.HealthPack;
 using Features.InputPack.Requests;
 using Features.ManaPack;
@@ -24,9 +25,12 @@ namespace Features.ItemsPack.Virete
         private Stash<ManaComponent> _manaStash;
         
         private Request<ManaChangeRequest> _manaChangeRequest;
+        private Request<HealthChangeRequest> _healthChangeRequest;
+        private Request<DamageRequest>  _damageRequest;
         
         private Event<LmbStartEvent> _lmbStartEvent;
         private Event<QuickTalkTriggerEvent> _quickTalkTriggerEvent;
+        
         
         private readonly WorldSettingsSo _worldSettings;
 
@@ -47,6 +51,8 @@ namespace Features.ItemsPack.Virete
             _healthStash = World.GetStash<HealthComponent>();
             
             _manaChangeRequest = World.GetRequest<ManaChangeRequest>();
+            _healthChangeRequest = World.GetRequest<HealthChangeRequest>();
+            _damageRequest = World.GetRequest<DamageRequest>();
             
             _lmbStartEvent = World.GetEvent<LmbStartEvent>();
             _quickTalkTriggerEvent = World.GetEvent<QuickTalkTriggerEvent>();
@@ -92,13 +98,37 @@ namespace Features.ItemsPack.Virete
                 
                 if (maxHealth / 2 >= health)
                 {
-                    trigger =  QuickTalkTrigger.VireteHeal;
-                    // todo чтобы сам эффект делался
+                    
+                    foreach (var entity in _unitsFilter)
+                    {
+                        ref var unitComp =  ref _unitStash.Get(entity);
+                        
+                        if (unitComp.teamSide != TeamSide.Player) continue;
+                        
+                        _healthChangeRequest.Publish(new HealthChangeRequest
+                        {
+                            amount = _worldSettings.vireteHealing,
+                            entity = entity
+                        });
+                    }
+                    // задержка для показа 
+                    // todo чтобы вид эффекта делался
+                    trigger =  QuickTalkTrigger.VireteHeal; // я тогда могу переделать на 2 quick talk
                 }
                 else
                 {
+                    foreach (var entity in _unitsFilter)
+                    {
+                        ref var unitComp =  ref _unitStash.Get(entity);
+                        
+                        if (unitComp.teamSide != TeamSide.Enemy) continue;
+                        _damageRequest.Publish(new DamageRequest
+                        {
+                            amount = _worldSettings.vireteDamage,
+                            target = entity
+                        });
+                    }
                     trigger = QuickTalkTrigger.VireteDamage;
-                    // todo эффект
                 }
                 _quickTalkTriggerEvent.NextFrame(new QuickTalkTriggerEvent 
                 {

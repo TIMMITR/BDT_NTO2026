@@ -33,6 +33,8 @@ namespace Configs
 
         public int cardsManaCost = 2;
         public int vireteManaCost = 6;
+        public int vireteDamage = 2;
+        public int vireteHealing = 2;
     }
 
     [Serializable]
