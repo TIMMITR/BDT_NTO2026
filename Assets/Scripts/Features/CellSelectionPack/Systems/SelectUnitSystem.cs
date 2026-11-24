@@ -15,6 +15,7 @@ namespace Features.CellSelectionPack.Systems
         private Stash<SelectedUnitComponent> _selectedUnitStash;
         private Stash<PlannedPathComponent> _plannedPathStash;
         private Stash<PlannedAttackComponent> _plannedAttackStash;
+        private Stash<PlannedRangeComponent> _plannedRangeStash;
 
         private Request<SelectUnitRequest> _selectRequest;
         private Request<DeselectUnitRequest> _deselectRequest;
@@ -27,6 +28,7 @@ namespace Features.CellSelectionPack.Systems
             _selectedUnitStash = World.GetStash<SelectedUnitComponent>();
             _plannedPathStash = World.GetStash<PlannedPathComponent>();
             _plannedAttackStash = World.GetStash<PlannedAttackComponent>();
+            _plannedRangeStash = World.GetStash<PlannedRangeComponent>();
 
             _selectRequest = World.GetRequest<SelectUnitRequest>();
             _deselectRequest = World.GetRequest<DeselectUnitRequest>();
@@ -55,6 +57,8 @@ namespace Features.CellSelectionPack.Systems
 
             _plannedPathStash.Remove(selection);
             _plannedAttackStash.Remove(selection);
+            _plannedRangeStash.Remove(selection);
+            
             _planCalcRequest.Publish(new PlanCalcRequest());
         }
 

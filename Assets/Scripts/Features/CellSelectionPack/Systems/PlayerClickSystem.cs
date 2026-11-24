@@ -3,6 +3,7 @@ using Configs;
 using Features.CellSelectionPack.Components;
 using Features.CellSelectionPack.Requests;
 using Features.CellSelectionPack.Tags;
+using Features.FightPack.Components;
 using Features.GridPack;
 using Features.GridPack.Components;
 using Features.GridPack.Data;
@@ -13,7 +14,6 @@ using Features.UnitPack.Components;
 using Features.UnitPack.Requests;
 using Global;
 using Scellecs.Morpeh;
-using SelectUnitRequest = Features.CellSelectionPack.Requests.SelectUnitRequest;
 
 namespace Features.CellSelectionPack.Systems
 {
@@ -27,9 +27,11 @@ namespace Features.CellSelectionPack.Systems
 
         private Stash<ChosenCellComponent> _chosenCellStash;
         private Stash<SelectedUnitComponent> _selectedUnitStash;
-        private Stash<PlannedPathComponent> _plannedPathStash;
         private Stash<SpeedComponent> _speedStash;
         private Stash<UnitComponent> _unitStash;
+        private Stash<PlannedPathComponent> _plannedPathStash;
+        private Stash<PlannedAttackComponent> _plannedAttackStash;
+        private Stash<AttackDesireComponent> _attackDesireStash;
 
         private Stash<BusyTag> _busyTag;
         private Stash<PlayerSelectionTag> _selectionTag;
@@ -48,9 +50,11 @@ namespace Features.CellSelectionPack.Systems
 
             _chosenCellStash = World.GetStash<ChosenCellComponent>();
             _selectedUnitStash = World.GetStash<SelectedUnitComponent>();
-            _plannedPathStash = World.GetStash<PlannedPathComponent>();
             _speedStash = World.GetStash<SpeedComponent>();
             _unitStash = World.GetStash<UnitComponent>();
+            _plannedPathStash = World.GetStash<PlannedPathComponent>();
+            _plannedAttackStash = World.GetStash<PlannedAttackComponent>();
+            _attackDesireStash = World.GetStash<AttackDesireComponent>();
             
             _busyTag = World.GetStash<BusyTag>();
             _selectionTag = World.GetStash<PlayerSelectionTag>();
@@ -105,12 +109,20 @@ namespace Features.CellSelectionPack.Systems
             
             // если выбран нейтральный/вражеский юнит
 
-            IssueOrders(selection, selected, cell);
+            GiveOrder(selected, cell);
             _deselectRequest.Publish(new DeselectUnitRequest());
         }
 
-        private void IssueOrders(Entity selection, Entity unit, CellCoord target)
+        private void GiveOrder(Entity unit, CellCoord target)
         {
+            var selection = _selection.Entity;
+            
+            if (_plannedAttackStash.Has(_selection.Entity))
+            {
+                var attack = _plannedAttackStash.Get(selection);
+                _attackDesireStash.Set(unit, new AttackDesireComponent(attack.target, attack.spell));
+            }
+            
             if (!_plannedPathStash.Has(selection))
                 return;
 

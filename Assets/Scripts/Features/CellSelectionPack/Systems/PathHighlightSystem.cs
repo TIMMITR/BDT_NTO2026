@@ -18,6 +18,7 @@ namespace Features.CellSelectionPack.Systems
         private Stash<ChosenCellComponent> _chosenCellStash;
         private Stash<SelectedUnitComponent> _selectedUnitStash;
         private Stash<PlannedPathComponent> _plannedPathStash;
+        private Stash<PlannedRangeComponent> _plannedRangeStash;
         private Stash<PlannedAttackComponent> _plannedAttackStash;
         private Stash<CellPositionComponent> _positionStash;
 
@@ -32,6 +33,7 @@ namespace Features.CellSelectionPack.Systems
             _chosenCellStash = World.GetStash<ChosenCellComponent>();
             _selectedUnitStash = World.GetStash<SelectedUnitComponent>();
             _plannedPathStash = World.GetStash<PlannedPathComponent>();
+            _plannedRangeStash = World.GetStash<PlannedRangeComponent>();
             _plannedAttackStash = World.GetStash<PlannedAttackComponent>();
             _positionStash = World.GetStash<CellPositionComponent>();
 
@@ -59,7 +61,8 @@ namespace Features.CellSelectionPack.Systems
             if (_plannedAttackStash.Has(selection))
                 ColorCells(_plannedAttackStash.Get(selection).cells, ColorType.Attack);
 
-            // todo добавить range
+            if (_plannedRangeStash.Has(selection))
+                ColorCells(_plannedRangeStash.Get(selection).range, ColorType.Range);
             
             if (_chosenCellStash.Has(selection))
                 ColorCell(_chosenCellStash.Get(selection).cellCoord, ColorType.Chosen);

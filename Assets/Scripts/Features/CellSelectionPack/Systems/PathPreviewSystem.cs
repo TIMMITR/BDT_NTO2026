@@ -14,7 +14,6 @@ using Features.SpellPack.Components;
 using Features.UnitPack.Components;
 using Global;
 using Scellecs.Morpeh;
-using UnityEngine;
 
 namespace Features.CellSelectionPack.Systems
 {
@@ -31,6 +30,7 @@ namespace Features.CellSelectionPack.Systems
         private Stash<CellPositionComponent> _positionStash;
         private Stash<SpellDataComponent> _spellDataStash;
         private Stash<PlannedPathComponent> _plannedPathStash;
+        private Stash<PlannedRangeComponent> _plannedRangeStash;
         private Stash<PlannedAttackComponent> _plannedAttackStash;
         private Stash<UnitComponent> _unitStash;
         private Stash<SpeedComponent> _speedStash;
@@ -51,8 +51,10 @@ namespace Features.CellSelectionPack.Systems
             _positionStash = World.GetStash<CellPositionComponent>();
             _spellDataStash = World.GetStash<SpellDataComponent>();
             _plannedPathStash = World.GetStash<PlannedPathComponent>();
+            _plannedRangeStash = World.GetStash<PlannedRangeComponent>();
             _plannedAttackStash = World.GetStash<PlannedAttackComponent>();
             _speedStash = World.GetStash<SpeedComponent>();
+            _unitStash = World.GetStash<UnitComponent>();
             
             _cellChooseChangedEvent = World.GetEvent<CellChooseChangedEvent>();
             
@@ -78,13 +80,18 @@ namespace Features.CellSelectionPack.Systems
                 _plannedAttackStash.Remove(selected);
             if (_plannedPathStash.Has(selected))
                 _plannedPathStash.Remove(selected);
+            if (_plannedRangeStash.Has(selected))
+                _plannedRangeStash.Remove(selected);
 
+            _refreshHighlightRequest.Publish(new RefreshHighlightRequest());
+
+            if (!_selectedUnitStash.Has(selected) || !_chosenCellStash.Has(selected))
+                return;
+            
             var unit = _selectedUnitStash.Get(selected).unit;
             
             var from = _positionStash.Get(unit).coord;
             var to = _chosenCellStash.Get(selected).cellCoord; 
-            
-            _refreshHighlightRequest.Publish(new RefreshHighlightRequest());
             
             if (from == to || GridData.GetUnitTeam(_grid.Comp, _unitStash, to) == TeamSide.Player)
                 return;
@@ -95,63 +102,6 @@ namespace Features.CellSelectionPack.Systems
                 BuildAttackPath(_spellDataStash.Get(unit).spellData, from, to, speed);
             else
                 BuildMovePath(from, to, speed);
-
-            /*
-            foreach (var evt in _cellChooseEvent.publishedChanges)
-            {
-                var gridEntity = _grid.Entity;
-
-                Entity? unit = _selectedUnitStash.Has(gridEntity) ? _selectedUnitStash.Get(gridEntity).unit : null;
-
-                CellCoord? from = unit.HasValue && _positionStash.Has(unit.Value)
-                    ? _positionStash.Get(unit.Value).coord : null;
-                CellCoord? to = _chosenCellStash.Has(gridEntity) ? _chosenCellStash.Get(gridEntity).cellCoord : null;
-
-                var activeSpell = unit.HasValue && _spellDataStash.Has(unit.Value)
-                    ? _spellDataStash.Get(unit.Value).spellData
-                    : null;
-
-                if (from == _lastFrom && to == _lastTo && activeSpell == _lastSpell) return;
-
-                _lastFrom = from;
-                _lastTo = to;
-                _lastSpell = activeSpell;
-
-                _clearColorsRequest.Publish(new ClearColorsRequest()); // полная чистка доски
-
-                if (from.HasValue)
-                    _colorCellRequest.Publish(new ColorCellRequest(from.Value, ColorType.Clicked));
-                if (to.HasValue)
-                    _colorCellRequest.Publish(new ColorCellRequest(to.Value, ColorType.Chosen));
-
-                if (_selectedUnitStash.Has(gridEntity)) // нужно для очистки массива выбранных клеток
-                {
-                    ref var pickedCellForClear = ref _selectedUnitStash.Get(gridEntity);
-                    pickedCellForClear.path.Clear();
-                }
-
-                if (from == to || !from.HasValue || !to.HasValue) return;
-
-                ref var selectedUnitComp = ref _selectedUnitStash.Get(gridEntity);
-                var speed = selectedUnitComp.moveSpeed;
-
-                if (evt.cellSide == TeamSide.Enemy || evt.cellSide == TeamSide.None)
-                {
-                    if (activeSpell != null)
-                    {
-                        BuildAttackPath(activeSpell, from.Value, to.Value, speed, out var path);
-
-                        selectedUnitComp.path = path;
-                    }
-                    else
-                    {
-                        BuildPreviewPath(from.Value, to.Value, speed, out var path);
-
-                        selectedUnitComp.path = path;
-                    }
-                }
-
-            }*/
         }
 
         private void BuildAttackPath(SpellConfigSo spell, CellCoord from, CellCoord to, int speed)
@@ -169,9 +119,13 @@ namespace Features.CellSelectionPack.Systems
  
             var cells = new List<CellCoord>();
             SpellArea.CollectCells(_grid.Comp, _cellTileStash, spell, position, to, dir, cells);
+            
+            var range = new List<CellCoord>();
+            SpellArea.CollectRangeCells(_grid.Comp, _cellTileStash, spell, position, to, dir, range);
  
             _plannedPathStash.Set(_selection.Entity, new PlannedPathComponent(path));
             _plannedAttackStash.Set(_selection.Entity, new PlannedAttackComponent(to, spell, cells));
+            _plannedRangeStash.Set(_selection.Entity, new PlannedRangeComponent(range));
         }
         
         private void BuildMovePath(CellCoord from, CellCoord to, int speed)

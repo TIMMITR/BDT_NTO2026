@@ -2,13 +2,11 @@ using Features.BattlePack;
 using Features.BusyPack;
 using Features.CameraPack.Systems;
 using Features.CellSelectionPack.Systems;
-using Features.CellTrackPack.Systems;
 using Features.ControlPointPack.Systems;
 using Features.DamagePack;
 using Features.DeathPack.Systems;
 using Features.EnemyAIPack.System;
 using Features.FightPack.Systems;
-using Features.GridPack;
 using Features.GridPack.Systems;
 using Features.StoryTalkPack.Systems;
 using Features.TypingPack.Systems;
@@ -71,38 +69,47 @@ namespace Scenes.Game
             _updateGroup.AddSystem(new StateChangeSystem());
             _updateGroup.AddSystem(new StateBundleSystem());
             
-            _updateGroup.AddSystem(new ChooseCellSystem());
             _updateGroup.AddSystem(new CameraTargetMoveSystem(
                 gameContext.cameraCorridorStart,
                 gameContext.cameraCorridorEnd));
-            _updateGroup.AddSystem(new TrackChosenUnitSystem());
             _updateGroup.AddSystem(new BattleSystem(gameContext.gamePlan));
 
+            // Блок выбора клетки и подсветки
+                
+            _updateGroup.AddSystem(new ChooseCellSystem());
+            _updateGroup.AddSystem(new PlayerClickSystem());
+            _updateGroup.AddSystem(new SelectUnitSystem());
+            _updateGroup.AddSystem(new MoveCommandSystem());
+            _updateGroup.AddSystem(new PathPreviewSystem());
+            _updateGroup.AddSystem(new PathHighlightSystem());
+            _updateGroup.AddSystem(new ColorCellSystem(gameContext.highlightCellPool, globalContext.worldSettings.colorData));
+            
+            // Блок атаки
+            
+            _updateGroup.AddSystem(new DelayAttackSystem());
+            _updateGroup.AddSystem(new ProjectileSystem());
+            _updateGroup.AddSystem(new AttackSystem());
+            _updateGroup.AddSystem(new UnitAnimationSystem());
+            
+            // Блок "контрольных точек"
+            
             _updateGroup.AddSystem(new SpawnControlPointSystem());
             _updateGroup.AddSystem(new CaptureControlPointSystem());
             _updateGroup.AddSystem(new ActivateControlPointSystem());
             _updateGroup.AddSystem(new ClearControlPointSystem());
+            
 
+            _updateGroup.AddSystem(new BusyTagSystem());
+            
             _updateGroup.AddSystem(new CardsSystem(globalContext.cardsConfig,
                 globalContext.worldSettings));
             _updateGroup.AddSystem(new VireteSystem(globalContext.worldSettings));
             _updateGroup.AddSystem(new SelectUnitSystem());
             _updateGroup.AddSystem(new UnitSpawnSystem());
-            _updateGroup.AddSystem(new MoveCommandSystem());
-            _updateGroup.AddSystem(new PathPreviewSystem());
-            _updateGroup.AddSystem(new DelayAttackSystem());
-            _updateGroup.AddSystem(new ProjectileSystem());
-            _updateGroup.AddSystem(new AttackSystem());
-            _updateGroup.AddSystem(new ColorCellSystem(gameContext.highlightCellPool, globalContext.worldSettings.colorData));
-            _updateGroup.AddSystem(new UnitAnimationSystem());
             _updateGroup.AddSystem(new ChangeAnimationDataSystem(gameContext.moveDataList));
             _updateGroup.AddSystem(new PlayerPositionStateSystem());
 
-            _updateGroup.AddSystem(new PlayerClickSystem());
-            _updateGroup.AddSystem(new SelectUnitSystem());
-            _updateGroup.AddSystem(new PathPreviewSystem());
-            _updateGroup.AddSystem(new PathHighlightSystem());
-            _updateGroup.AddSystem(new BusyTagSystem());
+            
 
             _updateGroup.AddSystem(new KnockbackSystem());
             _updateGroup.AddSystem(new LifetimeSystem());
