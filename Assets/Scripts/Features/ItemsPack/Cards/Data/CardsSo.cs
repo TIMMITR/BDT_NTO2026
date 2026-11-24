@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Features.ItemsPack.Cards
+namespace Features.ItemsPack.Cards.Data
 {
     [CreateAssetMenu(fileName = "Card", menuName = "Configs/Card", order = 67)]
     public class CardsSo : ScriptableObject

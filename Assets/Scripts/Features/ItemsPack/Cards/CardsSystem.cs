@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using Configs;
 using Features.InputPack.Requests;
+using Features.ItemsPack.Cards.Data;
 using Features.ItemsPack.Cards.Events;
 using Features.ItemsPack.Cards.Requests;
+using Features.ItemsPack.Cards.Views;
 using Features.ManaPack;
 using Features.RaycastPack;
 using Scellecs.Morpeh;
@@ -18,16 +20,19 @@ namespace Features.ItemsPack.Cards
 
         private Filter _filter;
         private Filter _manaFilter;
+        
         private Stash<RaycastComponent> _raycastStash;
+        private Stash<ManaComponent> _manaStash;
+        
         private Event<LmbStartEvent> _lmbStartEvent;
         private Event<ShowCardsEvent> _showCardsEvent;
-        private Request<CardPickRequest> _request;
-        private readonly CardsConfigSo _cardsConfig;
+        
+        private Request<CardPickRequest> _cardPickRequest;
         private Request<ManaChangeRequest> _manaChangeRequest;
-        private Stash<ManaComponent> _manaStash;
+        
         private readonly WorldSettingsSo _worldSettings;
-
-
+        private readonly CardsConfigSo _cardsConfig;
+        
         public CardsSystem(CardsConfigSo cardsConfig, WorldSettingsSo worldSettings)
         {
             _cardsConfig = cardsConfig;
@@ -38,13 +43,15 @@ namespace Features.ItemsPack.Cards
         {
             _filter = World.Filter.With<RaycastComponent>().Build();
             _manaFilter = World.Filter.With<ManaComponent>().Build();
-            _lmbStartEvent = World.GetEvent<LmbStartEvent>();
+            
             _raycastStash = World.GetStash<RaycastComponent>();
-            _showCardsEvent  = World.GetEvent<ShowCardsEvent>();
-            _request = World.GetRequest<CardPickRequest>();
-            _manaChangeRequest = World.GetRequest<ManaChangeRequest>();
             _manaStash = World.GetStash<ManaComponent>();
-
+            
+            _lmbStartEvent = World.GetEvent<LmbStartEvent>();
+            _showCardsEvent  = World.GetEvent<ShowCardsEvent>();
+            
+            _cardPickRequest = World.GetRequest<CardPickRequest>();
+            _manaChangeRequest = World.GetRequest<ManaChangeRequest>();
         }
 
         public void OnUpdate(float deltaTime)
@@ -57,6 +64,7 @@ namespace Features.ItemsPack.Cards
 
                 if (!raycastComponent.hitCollider.gameObject.GetComponent<CardItemView>()) continue;
                 ref var manaComp = ref _manaStash.Get(_manaFilter.First());
+                
                 // if (manaComp.currentMana < _worldSettings.cardsManaCost)
                 // {
                 //     // todo сделать какой-то сигнал
@@ -83,11 +91,10 @@ namespace Features.ItemsPack.Cards
                 });
             }
 
-            foreach (var cardPick in _request.Consume())
+            foreach (var cardPick in _cardPickRequest.Consume())
             {
                 switch (cardPick.cardType)
                 {
-                    // и вот тут применять бонусы на основе cardPick.cardType
                     case CardType.CoolCard:
                         Debug.Log("Cool card");
                         break;

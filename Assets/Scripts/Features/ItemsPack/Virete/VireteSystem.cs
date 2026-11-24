@@ -7,7 +7,6 @@ using Features.QuickTalkPack.Events;
 using Features.RaycastPack;
 using Features.UnitPack.Components;
 using Scellecs.Morpeh;
-using UnityEngine;
 
 namespace Features.ItemsPack.Virete
 {
@@ -15,17 +14,21 @@ namespace Features.ItemsPack.Virete
     {
         public World World { get; set; }
         
-        private Filter _filter;
+        private Filter _raycastFilter;
         private Filter _manaFilter;
-        private Stash<RaycastComponent> _raycastStash;
-        private Event<LmbStartEvent> _lmbStartEvent;
-        private Request<ManaChangeRequest> _manaChangeRequest;
-        private Stash<ManaComponent> _manaStash;
-        private readonly WorldSettingsSo _worldSettings;
-        private Event<QuickTalkTriggerEvent> _event;
-        private Stash<UnitComponent> _unitStash;
         private Filter _unitsFilter;
+        
+        private Stash<RaycastComponent> _raycastStash;
         private Stash<HealthComponent>  _healthStash;
+        private Stash<UnitComponent> _unitStash;
+        private Stash<ManaComponent> _manaStash;
+        
+        private Request<ManaChangeRequest> _manaChangeRequest;
+        
+        private Event<LmbStartEvent> _lmbStartEvent;
+        private Event<QuickTalkTriggerEvent> _quickTalkTriggerEvent;
+        
+        private readonly WorldSettingsSo _worldSettings;
 
         public VireteSystem(WorldSettingsSo worldSettings)
         {
@@ -34,47 +37,44 @@ namespace Features.ItemsPack.Virete
         
         public void OnAwake()
         {
-            _filter = World.Filter.With<RaycastComponent>().Build();
+            _raycastFilter = World.Filter.With<RaycastComponent>().Build();
             _manaFilter = World.Filter.With<ManaComponent>().Build();
-            _lmbStartEvent = World.GetEvent<LmbStartEvent>();
-            _raycastStash = World.GetStash<RaycastComponent>();
-            
-            _manaChangeRequest = World.GetRequest<ManaChangeRequest>();
-            _manaStash = World.GetStash<ManaComponent>();
-            _event = World.GetEvent<QuickTalkTriggerEvent>();
             _unitsFilter = World.Filter.With<UnitComponent>().With<HealthComponent>().Build();
+            
+            _raycastStash = World.GetStash<RaycastComponent>();
+            _manaStash = World.GetStash<ManaComponent>();
             _unitStash = World.GetStash<UnitComponent>();
             _healthStash = World.GetStash<HealthComponent>();
-
-            // может просто сделать что начинается quick talk c вирете и там выбор как-то
-            // или пока просто по простым правилам давать штуки
-            // типа если персонаж мертв - возвращает его к жизни
-            // если общее хп меньше половины от максимального - лечит до половины обоих персов
-            // если все хорошо то просто 2 урона каждому врагу
+            
+            _manaChangeRequest = World.GetRequest<ManaChangeRequest>();
+            
+            _lmbStartEvent = World.GetEvent<LmbStartEvent>();
+            _quickTalkTriggerEvent = World.GetEvent<QuickTalkTriggerEvent>();
         }
 
         public void OnUpdate(float deltaTime)
         {
             foreach (var _ in _lmbStartEvent.publishedChanges)
             {
-                if (_filter.IsEmpty() && _unitsFilter.IsEmpty()) return;
-                ref var raycastComponent = ref _raycastStash.Get(_filter.First());
+                if (_raycastFilter.IsEmpty() && _unitsFilter.IsEmpty()) return;
+                ref var raycastComponent = ref _raycastStash.Get(_raycastFilter.First());
                 if (!raycastComponent.hasHit) continue;
 
                 if (!raycastComponent.hitCollider.gameObject.GetComponent<VireteView>()) continue;
                 
                 ref var manaComp = ref _manaStash.Get(_manaFilter.First());
-                //
+                
                 // if (manaComp.currentMana < _worldSettings.vireteManaCost)
                 // {
                 //     // todo сделать какой-то сигнал
                 //     Debug.Log("Недостаточно маны");
                 //     continue;
                 // }
-                // _manaChangeRequest.Publish(new ManaChangeRequest
-                // {
-                //     amount = _worldSettings.vireteManaCost
-                // });
+                
+                _manaChangeRequest.Publish(new ManaChangeRequest
+                {
+                    amount = _worldSettings.vireteManaCost
+                });
                 
                 // todo логика выбор и Quick talk
                 int health = 0;
@@ -83,16 +83,14 @@ namespace Features.ItemsPack.Virete
                 {
                     ref var unitComp =  ref _unitStash.Get(entity);
                     ref var healthComp = ref _healthStash.Get(entity);
-                    if (unitComp.teamSide == TeamSide.Player)
-                    {
-                        health += healthComp.currentHealth;
-                        maxHealth += healthComp.currentHealth;
-                    }
+                    if (unitComp.teamSide != TeamSide.Player) continue;
+                    health += healthComp.currentHealth;
+                    maxHealth += healthComp.currentHealth;
                 }
 
                 QuickTalkTrigger trigger;
                 
-                if (maxHealth / 2 > health)
+                if (maxHealth / 2 >= health)
                 {
                     trigger =  QuickTalkTrigger.VireteHeal;
                     // todo чтобы сам эффект делался
@@ -102,7 +100,7 @@ namespace Features.ItemsPack.Virete
                     trigger = QuickTalkTrigger.VireteDamage;
                     // todo эффект
                 }
-                _event.NextFrame(new QuickTalkTriggerEvent 
+                _quickTalkTriggerEvent.NextFrame(new QuickTalkTriggerEvent 
                 {
                     trigger = trigger
                 });

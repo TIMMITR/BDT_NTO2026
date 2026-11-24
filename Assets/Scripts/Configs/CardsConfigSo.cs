@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Features.ItemsPack.Cards;
+using Features.ItemsPack.Cards.Data;
 using UnityEngine;
 
 namespace Configs
