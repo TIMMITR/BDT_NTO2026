@@ -3,6 +3,7 @@ using Features.UnitPack.Events;
 using Features.UnitPack.Requests;
 using Scellecs.Morpeh;
 using UnityEngine;
+using SelectUnitRequest = Features.CellSelectionPack.Requests.SelectUnitRequest;
 
 namespace Features.OverlayPack.Views
 {

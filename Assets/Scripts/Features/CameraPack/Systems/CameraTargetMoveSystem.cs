@@ -1,4 +1,5 @@
 using Features.CellSelectionPack.Components;
+using Features.CellSelectionPack.Tags;
 using Features.GridPack.Components;
 using Features.GridPack.Data;
 using Features.PlayerPack;
@@ -18,11 +19,12 @@ namespace Features.CameraPack.Systems
 
         private Filter _playerFilter;
         private Filter _playerTargetFilter;
-        private Filter _gridFilter;
+
+        private Singletone<PlayerSelectionTag> _selection;
+        private Singletone<GridComponent> _grid;
 
         private Stash<PlayerPositionComponent> _positionStash;
         private Stash<TransformComponent> _transformStash;
-        private Stash<GridComponent> _gridStash;
         private Stash<ChosenCellComponent> _chosenCellStash;
         private Stash<SelectedUnitComponent> _selectedUnitStash;
         private Stash<CellPositionComponent> _cellPositionStash;
@@ -41,13 +43,21 @@ namespace Features.CameraPack.Systems
 
         public void OnAwake()
         {
-            _playerFilter = World.Filter.With<PlayerTag>().With<PlayerPositionComponent>().Build();
-            _playerTargetFilter = World.Filter.With<PlayerTargetTag>().With<TransformComponent>().Build();
-            _gridFilter = World.Filter.With<GridComponent>().Build();
+            _playerFilter = World.Filter.
+                With<PlayerTag>().
+                With<PlayerPositionComponent>().
+                Build();
+            
+            _playerTargetFilter = World.Filter.
+                With<PlayerTargetTag>().
+                With<TransformComponent>().
+                Build();
+
+            _selection = new Singletone<PlayerSelectionTag>(World);
+            _grid = new Singletone<GridComponent>(World);
 
             _positionStash = World.GetStash<PlayerPositionComponent>();
             _transformStash = World.GetStash<TransformComponent>();
-            _gridStash = World.GetStash<GridComponent>();
             _chosenCellStash = World.GetStash<ChosenCellComponent>();
             _selectedUnitStash = World.GetStash<SelectedUnitComponent>();
             _cellPositionStash = World.GetStash<CellPositionComponent>();
@@ -55,7 +65,7 @@ namespace Features.CameraPack.Systems
 
         public void OnUpdate(float deltaTime)
         {
-            if (_playerFilter.IsEmpty() || _playerTargetFilter.IsEmpty() || _gridFilter.IsEmpty()) return;
+            if (_playerFilter.IsEmpty() || _playerTargetFilter.IsEmpty()) return;
 
             var target = _transformStash.Get(_playerTargetFilter.First()).value;
 
@@ -75,17 +85,15 @@ namespace Features.CameraPack.Systems
                 return;
             }
 
-            var gridEntity = _gridFilter.First();
-
-            ref var grid = ref _gridStash.Get(gridEntity);
+            var selection = _selection.Entity;
 
             CellCoord chosenCoord;
-            if (_chosenCellStash.Has(gridEntity) && _init)
+            if (_chosenCellStash.Has(selection) && _init)
             {
-                chosenCoord = _chosenCellStash.Get(gridEntity).cellCoord;
+                chosenCoord = _chosenCellStash.Get(selection).cellCoord;
                 _prevCellCoord = chosenCoord;
             }
-            else if (!_chosenCellStash.Has(gridEntity) && _init)
+            else if (!_chosenCellStash.Has(selection) && _init)
             {
                 chosenCoord = _prevCellCoord;
             }
@@ -97,9 +105,9 @@ namespace Features.CameraPack.Systems
 
             var focusDepth = (float)(2 * chosenCoord.R + chosenCoord.Q);
 
-            if (_selectedUnitStash.Has(gridEntity))
+            if (_selectedUnitStash.Has(selection))
             {
-                ref var selected = ref _selectedUnitStash.Get(gridEntity);
+                ref var selected = ref _selectedUnitStash.Get(selection);
 
                 if (_cellPositionStash.Has(selected.unit))
                 {
@@ -109,7 +117,7 @@ namespace Features.CameraPack.Systems
                 }
             }
 
-            var t = Mathf.Clamp01(0.5f + focusDepth / (4f * grid.gridRadius));
+            var t = Mathf.Clamp01(0.5f + focusDepth / (4f * _grid.Comp.gridRadius));
             positionComponent.progress = t;
 
             t = Mathf.SmoothStep(0f, 1f, t);

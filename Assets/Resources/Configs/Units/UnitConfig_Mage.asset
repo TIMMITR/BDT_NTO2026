@@ -24,4 +24,6 @@ MonoBehaviour:
   posY: 0.15
   spellList:
   - {fileID: 11400000, guid: dbb1b68a724ef034483f73fe6929fdb6, type: 2}
+  - {fileID: 11400000, guid: 649202e26debd184daebdd782168b7c3, type: 2}
   spawnRotationY: 0
+  priority: 0

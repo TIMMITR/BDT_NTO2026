@@ -27,10 +27,8 @@ namespace Features.FightPack.ShapeStrategy
             CellCoord dir, List<CellCoord> result)
         {
             foreach (var cell in HexMath.GetRange(to, spell.areaRadius ))
-            {
                 if (GridData.Contains(gridComp, cell))
                     result.Add(cell);
-            }
         }
 
         public void CollectRangeCells(GridComponent gridComp, Stash<CellTileComponent> tiles, SpellConfigSo spell,
@@ -42,8 +40,7 @@ namespace Features.FightPack.ShapeStrategy
             {
                 cell += cell.DirectionTo(to);
  
-                if (!GridData.Contains(gridComp, cell)
-                    || cell.DistanceTo(to) <= spell.areaRadius)
+                if (!GridData.Contains(gridComp, cell) || cell.DistanceTo(to) <= spell.areaRadius)
                     break;
  
                 result.Add(cell);

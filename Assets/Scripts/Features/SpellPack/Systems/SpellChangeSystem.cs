@@ -1,8 +1,10 @@
 using Configs;
 using Features.CellSelectionPack.Components;
+using Features.CellSelectionPack.Tags;
 using Features.GridPack.Components;
 using Features.SpellPack.Components;
 using Features.SpellPack.Requests;
+using Global;
 using Scellecs.Morpeh;
 
 namespace Features.SpellPack.Systems
@@ -11,7 +13,7 @@ namespace Features.SpellPack.Systems
     {
         public World World { get; set; }
 
-        private Filter _gridFilter;
+        private Singletone<PlayerSelectionTag> _selection;
         
         private Stash<SelectedUnitComponent> _selectedUnitStash;
         private Stash<SpellDataComponent> _spellStash;
@@ -21,7 +23,7 @@ namespace Features.SpellPack.Systems
         
         public void OnAwake()
         {
-            _gridFilter = World.Filter.With<GridComponent>().Build();
+            _selection = new Singletone<PlayerSelectionTag>(World);
             
             _spellStash = World.GetStash<SpellDataComponent>();
             _selectedUnitStash = World.GetStash<SelectedUnitComponent>();
@@ -34,12 +36,10 @@ namespace Features.SpellPack.Systems
         {
             foreach (var request in _spellChangeRequest.Consume())
             {
-                var gridEntity = _gridFilter.First();
-
-                if (!_selectedUnitStash.Has(gridEntity))
+                if (!_selectedUnitStash.Has(_selection.Entity))
                     continue;
                 
-                var unit = _selectedUnitStash.Get(gridEntity).unit;
+                var unit = _selectedUnitStash.Get(_selection.Entity).unit;
 
                 if (!_spellListStash.Has(unit))
                     continue;

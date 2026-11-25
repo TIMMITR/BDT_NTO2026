@@ -1,9 +1,10 @@
 using Features.CellSelectionPack.Components;
-using Features.CellSelectionPack.Events;
-using Features.GridPack;
+using Features.CellSelectionPack.Tags;
+using Features.CellTrackPack.Events;
 using Features.GridPack.Components;
 using Features.GridPack.Data;
 using Features.RaycastPack;
+using Global;
 using Scellecs.Morpeh;
 using UnityEngine;
 
@@ -14,10 +15,11 @@ namespace Features.CellSelectionPack.Systems
         public World World { get; set; }
         
         private Filter _raycastFilter;
-        private Filter _gridFilter;
+        
+        private Singletone<PlayerSelectionTag> _selection;
+        private Singletone<GridComponent> _grid;
         
         private Stash<RaycastComponent> _raycastStash;
-        private Stash<GridComponent> _gridStash;
         private Stash<ChosenCellComponent> _chosenCellStash;
         
         private Event<CellChooseChangedEvent> _cellChooseChanged;
@@ -31,12 +33,11 @@ namespace Features.CellSelectionPack.Systems
             _raycastFilter = World.Filter.
                 With<RaycastComponent>().
                 Build();
-            _gridFilter = World.Filter.
-                With<GridComponent>().
-                Build();
+
+            _selection = new Singletone<PlayerSelectionTag>(World);
+            _grid = new Singletone<GridComponent>(World);
             
             _raycastStash = World.GetStash<RaycastComponent>();
-            _gridStash = World.GetStash<GridComponent>();
             _chosenCellStash = World.GetStash<ChosenCellComponent>();
             
             _cellChooseChanged = World.GetEvent<CellChooseChangedEvent>();
@@ -44,7 +45,7 @@ namespace Features.CellSelectionPack.Systems
 
         public void OnUpdate(float deltaTime)
         {
-            if (_raycastFilter.IsEmpty() || _gridFilter.IsEmpty())
+            if (_raycastFilter.IsEmpty())
             {
                 Debug.Log("[CHOOSE_CELL_SYSTEM] Can not find one of filter.");
                 return;
@@ -53,23 +54,22 @@ namespace Features.CellSelectionPack.Systems
             var raycastEntity = _raycastFilter.First();
             ref var raycastComp = ref _raycastStash.Get(raycastEntity);
             var hitPoint = raycastComp.hitPoint;
-
-            var gridEntity = _gridFilter.First();
-            ref var gridComp = ref _gridStash.Get(gridEntity);
+            
+            var selected = _selection.Entity;
 
             if (!raycastComp.hasHit)
             {
-                _chosenCellStash.Remove(gridEntity);
+                _chosenCellStash.Remove(selected);
                 _hasChanged = false;
                 return;
             }
             
-            var transCoord = gridComp.FromWorldCoord(hitPoint);
+            var transCoord = _grid.Comp.FromWorldCoord(hitPoint);
 
-            if (gridComp.cells.ContainsKey(transCoord))
-                _chosenCellStash.Set(gridEntity, new ChosenCellComponent{cellCoord = transCoord});
+            if (_grid.Comp.cells.ContainsKey(transCoord))
+                _chosenCellStash.Set(selected, new ChosenCellComponent{cellCoord = transCoord});
             else
-                _chosenCellStash.Remove(gridEntity);
+                _chosenCellStash.Remove(selected);
             
             if(_lastCoord != transCoord || !_hasChanged)
                 _cellChooseChanged.NextFrame(new CellChooseChangedEvent(transCoord));
