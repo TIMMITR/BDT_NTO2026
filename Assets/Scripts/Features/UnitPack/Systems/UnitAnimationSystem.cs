@@ -1,6 +1,7 @@
 using Features.GridPack.Components;
 using Features.TransformPack;
 using Features.UnitPack.Components;
+using Features.UnitPack.Events;
 using Scellecs.Morpeh;
 using UnityEngine;
 
@@ -71,6 +72,8 @@ namespace Features.UnitPack.Systems
                 {
                     animationComp.progress = 0f;
                     animationComp.index++;
+                    World.GetEvent<UnitMovedEvent>().NextFrame(new UnitMovedEvent());
+                    
                     animationComp.isTurning = !animationComp.isSlide;
 
                     if (animationComp.index >= animationComp.points.Count)

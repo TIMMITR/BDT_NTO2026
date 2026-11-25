@@ -88,6 +88,7 @@ namespace Features.QuickTalkPack.Systems
                 queue.saidThisBattle.Add(best);
 
             _shownEvent.NextFrame(new QuickTalkShownEvent { set = best, line = line });
+            // todo чтобы battle UI снова включался
         }
 
         private static void TickCandidateTtl(in QuickTalkQueueComponent queue, float deltaTime)

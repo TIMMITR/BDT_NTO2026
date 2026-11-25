@@ -14,6 +14,9 @@ namespace Configs
         public float cellRadius = 0.25f;
         public int defaultMoveCost = 1;
 
+        [Header("Audio")]
+        [Min(0f)] public float audioPitchVariation = 0.05f;
+
         [Header("Dialogue")]
         public float dialogueCharsPerSecond = 60f;
         public float dialogueStayTime = 3f;

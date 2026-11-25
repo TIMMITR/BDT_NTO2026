@@ -1,3 +1,4 @@
+using Features.AudioPack.Systems;
 using Features.ButtonsPack;
 using Features.CameraPack.Systems;
 using Features.InputPack;
@@ -53,6 +54,10 @@ namespace Scenes.MainMenu
             
             _updateGroup.AddSystem(new ButtonsSystem(mainMenuContext.gameSceneName));
             _updateGroup.AddSystem(new SceneSystem(globalContext.transitionSettings));
+            _updateGroup.AddSystem(new AudioSystem(
+                globalContext.audioContext.audioSources,
+                globalContext.audioConfig,
+                globalContext.worldSettings));
             _updateGroup.Initialize();
             
             _world.AddSystemsGroup(order: 0, _updateGroup);

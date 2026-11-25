@@ -1,3 +1,4 @@
+using System;
 using PrimeTween;
 using UnityEngine;
 using UnityEngine.UI;
@@ -26,8 +27,11 @@ namespace Features.ItemsPack.Cards.Views
         private Sequence _animation;
         private bool _isInitialized;
 
+        private Sprite _sprite;
+
         private void Awake()
         {
+            _sprite = image.sprite;
             Initialize();
         }
 
@@ -38,6 +42,11 @@ namespace Features.ItemsPack.Cards.Views
 
         public void TurnCard(string cName, string description, Sprite sprite)
         {
+            if (cardName is null)
+            {
+                Debug.LogWarning("Card name is null");
+                return;
+            }
             cardName.text = cName;
             image.sprite = sprite;
             cardDescription.text = description;
@@ -59,7 +68,7 @@ namespace Features.ItemsPack.Cards.Views
             _rectTransform.anchoredPosition = hiddenPosition;
             transform.localScale = startScale;
 
-            _animation = Sequence.Create(useUnscaledTime: true)
+            _animation = Sequence.Create()
                 .Group(Tween.UIAnchoredPosition(
                     _rectTransform,
                     hiddenPosition,
@@ -164,7 +173,6 @@ namespace Features.ItemsPack.Cards.Views
             {
                 _canvasGroup = gameObject.AddComponent<CanvasGroup>();
             }
-
             _idlePosition = _rectTransform.anchoredPosition;
             _idleScale = transform.localScale;
             _isInitialized = true;
@@ -187,6 +195,9 @@ namespace Features.ItemsPack.Cards.Views
             _canvasGroup.alpha = 1f;
             _canvasGroup.blocksRaycasts = true;
             cardsButton.interactable = false;
+            image.sprite = _sprite;
+            cardName.text = string.Empty;
+            cardDescription.text = string.Empty;
             gameObject.SetActive(false);
         }
     }

@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Features.GridPack.Components;
 using Features.UnitPack.Components;
+using Features.UnitPack.Events;
 using Features.UnitPack.Requests;
 using Scellecs.Morpeh;
 using Scenes.Game;

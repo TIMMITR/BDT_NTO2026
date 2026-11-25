@@ -9,5 +9,7 @@ namespace Scenes
         public PrefabSettingsSo prefabSettings;
         public TransitionsSettingsSo transitionSettings;
         public CardsConfigSo cardsConfig;
+        public AudioConfigSo audioConfig;
+        public AudioContext audioContext;
     }
 }

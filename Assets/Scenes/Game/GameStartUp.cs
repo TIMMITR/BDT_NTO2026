@@ -1,3 +1,4 @@
+using Features.AudioPack.Systems;
 using Features.BattlePack;
 using Features.CameraPack.Systems;
 using Features.CellSelectionPack.Systems;
@@ -115,6 +116,12 @@ namespace Scenes.Game
             _updateGroup.AddSystem(new QuickTalkQueueSystem(globalContext.worldSettings));
             
             _updateGroup.AddSystem(new TypingSystem(globalContext.worldSettings));
+            _updateGroup.AddSystem(new AudioTriggerSystem());
+
+            _updateGroup.AddSystem(new AudioSystem(
+                globalContext.audioContext.audioSources,
+                globalContext.audioConfig,
+                globalContext.worldSettings));
             _updateGroup.AddSystem(new SceneSystem(globalContext.transitionSettings));
             
             _updateGroup.AddSystem(new DeathTagsApplySystem());

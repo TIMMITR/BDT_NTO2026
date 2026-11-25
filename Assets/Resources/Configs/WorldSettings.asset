@@ -17,6 +17,7 @@ MonoBehaviour:
   gridRadius: 5
   cellRadius: 0.25
   defaultMoveCost: 1
+  audioPitchVariation: 0.05
   dialogueCharsPerSecond: 50
   dialogueStayTime: 4
   quickTalkGlobalCooldownSeconds: 15
