@@ -5,7 +5,7 @@ using Features.CellSelectionPack.Systems;
 using Features.ControlPointPack.Systems;
 using Features.DamagePack;
 using Features.DeathPack.Systems;
-using Features.EnemyAIPack.System;
+using Features.EnemyAIPack.Systems;
 using Features.FightPack.Systems;
 using Features.GridPack.Systems;
 using Features.StoryTalkPack.Systems;

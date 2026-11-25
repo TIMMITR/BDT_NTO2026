@@ -1,14 +1,10 @@
 using System.Collections.Generic;
 using Configs;
 using Features.BattlePack;
-using Features.CalcPack;
-using Features.CellSelectionPack.Components;
 using Features.ControlPointPack.Components;
+using Features.EnemyAIPack.ActionStrategies;
 using Features.FightPack.Components;
-using Features.GridPack;
 using Features.GridPack.Components;
-using Features.GridPack.Data;
-using Features.PathFinderPack;
 using Features.SpeedPack;
 using Features.SpellPack.Components;
 using Features.StatePack.Components;
@@ -20,7 +16,7 @@ using Global;
 using Scellecs.Morpeh;
 using UnityEngine;
 
-namespace Features.EnemyAIPack.System
+namespace Features.EnemyAIPack.Systems
 {
     public class EnemyAISystem : ISystem
     {
@@ -40,10 +36,10 @@ namespace Features.EnemyAIPack.System
         private Stash<SpeedComponent> _speedStash;
         private Stash<UnitComponent> _unitStash;
         private Stash<SpellDataComponent> _spellStash;
-        private Stash<DelayAttackComponent> _delayAttackStash;
         private Stash<BattleComponent> _battleStash;
-        private Stash<UnitAnimationComponent> _unitAnimationStash;
         private Stash<AttackDesireComponent> _attackDesireStash;
+
+        private Stash<BusyTag> _busyTag;
         
         private Event<PhaseChangedEvent> _phaseChangedEvent;
 
@@ -54,9 +50,9 @@ namespace Features.EnemyAIPack.System
 
         private List<Entity> _units = new();
         
-        private float _attackWeight;
-        private float _captureWeight;
-        private float _defenceWeight;
+        private EnemyContext _context;
+
+        private Dictionary<AIAction, ActionStrategy> _strategies = new();
         
         private bool _isActive;
         private int _currentIndex;
@@ -66,7 +62,7 @@ namespace Features.EnemyAIPack.System
             _unitFilter = World.Filter.With<UnitComponent>().Build();
             _controlPointFilter = World.Filter.With<ControlPointComponent>().Build();
             _battleFilter = World.Filter.With<BattleComponent>().Build();
-            _movingFilter = World.Filter.With<UnitAnimationComponent>().Build();
+            _movingFilter = World.Filter.With<BusyTag>().Build();
             _baseFilter = World.Filter.With<BaseTag>().Build();
 
             _grid = new Singletone<GridComponent>(World);
@@ -77,262 +73,117 @@ namespace Features.EnemyAIPack.System
             _speedStash = World.GetStash<SpeedComponent>();
             _unitStash = World.GetStash<UnitComponent>();
             _spellStash = World.GetStash<SpellDataComponent>();
-            _delayAttackStash = World.GetStash<DelayAttackComponent>();
             _battleStash = World.GetStash<BattleComponent>();
-            _unitAnimationStash = World.GetStash<UnitAnimationComponent>();
             _attackDesireStash = World.GetStash<AttackDesireComponent>();
+
+            _busyTag = World.GetStash<BusyTag>();
             
             _phaseChangedEvent = World.GetEvent<PhaseChangedEvent>();
             _moveUnitRequest = World.GetRequest<MoveUnitRequest>();
             _endTurnRequest = World.GetRequest<EndEnemyTurnRequest>();
-        }
 
+            InitContext();
+        }
+        
         public void OnUpdate(float deltaTime)
         {
             foreach (var evt in _phaseChangedEvent.publishedChanges)
                 if (evt.phase == TurnPhase.Enemy && evt.type == TurnType.Start)
                     BeginPhase();
-
+ 
             if (!_isActive)
                 return;
-
+ 
             if (_units.Count == 0 || _currentIndex >= _units.Count)
             {
-                Debug.Log("Все юниты уничтожены");
                 _isActive = false;
                 _units.Clear();
                 _endTurnRequest.Publish(new EndEnemyTurnRequest(), allowNextFrame: true);
                 return;
             }
-            
+ 
             var unit = _units[_currentIndex];
-
-            if (_unitAnimationStash.Has(unit) || _delayAttackStash.Has(unit))
+ 
+            if (_busyTag.Has(unit))
                 return;
-
+ 
             if (!_movingFilter.IsEmpty())
                 return;
-            
+ 
             Iterate(unit);
-            
+ 
             _currentIndex++;
         }
-
+        
         private void Iterate(Entity unit)
         {
-            var from = _positionStash.Get(unit).coord;
-
-            var attackChance = (1 + Random.value) * _attackWeight;
-            var captureChance = (1 + Random.value) * _captureWeight;
-            var defenceChance = (1 + Random.value) * _defenceWeight;
-
-            var maxChance = Mathf.Max(attackChance, captureChance, defenceChance); // todo надо будет при добавлении доп весов
-
-            if (Mathf.Approximately(captureChance, maxChance) && TryCapture(from, unit)) 
-                // для избежания погрешности float
+            _context.unit = unit;
+ 
+            AIAction? chosen = null;
+            var bestChance = float.MinValue;
+ 
+            foreach (var pair in _strategies)
             {
-                _captureWeight -= _config.CaptureReduceValue;
-                Debug.Log($"Enemy has chosen to go to the control point. Current capture weight: {_captureWeight}");
+                var chance = (1f + Random.value) * pair.Value.weight;
+ 
+                if (chance > bestChance)
+                {
+                    bestChance = chance;
+                    chosen = pair.Key;
+                }
             }
-            else if (Mathf.Approximately(attackChance, maxChance) && TryAttack(from, unit)) // todo избавиться от первого условия (система весов не работает)
+ 
+            if (chosen == null)
+                return;
+ 
+            var strategy = _strategies[chosen.Value];
+ 
+            if (strategy.TryExecute(_context))
             {
-                _attackWeight -= _config.AttackReduceValue;
-                Debug.Log($"Enemy has chosen to go to the player unit. Current attack weight: {_attackWeight}");
+                strategy.Spend();
             }
-            else if (Mathf.Approximately(defenceChance, maxChance) && TryDefend(from, unit))
-            {
-                _defenceWeight -= _config.DefenceReduceValue;
-                Debug.Log($"Enemy has chosen to defend the base. Current defence weight: {_defenceWeight}");
-            }
-        }
-
-        private bool TryCapture(CellCoord from, Entity unit)
-        {
-            var speed = _speedStash.Get(unit).currentSpeed;
-            
-            if (!TryGetPathToPoint(from, speed, out var resultPath))
-                return false;
-            
-            _moveUnitRequest.Publish(new MoveUnitRequest(unit, resultPath), allowNextFrame: true); 
-            return true;
-        }
-
-        private bool TryAttack(CellCoord from, Entity unit)
-        {
-            if (!TryFindPlayer(from, out var target))
-                return false;
-            
-            if (!_spellStash.Has(unit))
-                return false;
-            
-            var spell = _spellStash.Get(unit).spellData;
-
-            if (from.DistanceTo(target) <= spell.range)
-            {
-                Attack(unit, target, spell);
-                return true;
-            }
-
-            var newPos = MoveToTarget(from, target, unit);
-            
-            if(newPos.DistanceTo(target) <= spell.range)
-                Attack(unit, target, spell);
-
-            return true;
         }
         
-        private bool TryDefend(CellCoord from, Entity unit)
-        {
-            var baseCoord = _positionStash.Get(_baseFilter.First()).coord;
-            var radius = _config.DefenceRadius;
-
-            if (from.DistanceTo(baseCoord) <= radius)
-                return true;
-
-            var speed = _speedStash.Get(unit).currentSpeed;
-            if (speed <= 0) 
-                return false;
-
-            List<CellCoord> resultPath = null;
-            
-            foreach (var cell in HexMath.GetRing(baseCoord, radius))
-            {
-                if (!GridData.IsFreeCell(_grid.Comp, _cellTileStash, cell)) continue;
-
-                var path = BuildPath(from, cell, speed);
-                if (path != null && (resultPath == null || path.Count < resultPath.Count))
-                    resultPath = path;
-            }
-
-            if (resultPath == null)
-                return false;
-            
-            _moveUnitRequest.Publish(new MoveUnitRequest(unit, resultPath), allowNextFrame: true);
-            
-            return true;
-        }
-
-        private void Attack(Entity unit, CellCoord target, SpellConfigSo spell)
-        {
-            _attackDesireStash.Set(unit, new AttackDesireComponent(target, spell));
-        }
-
-        private bool TryFindPlayer(CellCoord from, out CellCoord target)
-        {
-            var champion = int.MaxValue;
-            target = default;
-
-            foreach (var unit in _unitFilter)
-            {
-                if (_unitStash.Get(unit).teamSide != TeamSide.Player)
-                    continue;
-                
-                var coord = _positionStash.Get(unit).coord;
-                var dist = from.DistanceTo(coord);
-
-                if (dist < champion)
-                {
-                    champion = dist;
-                    target = coord;
-                }
-            }
-
-            return champion < int.MaxValue;
-        }
-
-        private CellCoord MoveToTarget(CellCoord from, CellCoord targetCoord, Entity unit)
-        {
-            var speed = _speedStash.Get(unit).currentSpeed;
-
-            if (speed <= 0)
-                return from;
-
-            List<CellCoord> resultPath = null;
-
-            foreach (var neighbour in HexMath.GetNeighbours(targetCoord))
-            {
-                if (!GridData.IsFreeCell(_grid.Comp, _cellTileStash, neighbour))
-                    continue;
-
-                var path = BuildPath(from, neighbour, speed);
-                    
-                if (path != null && ( resultPath == null || path.Count < resultPath.Count))
-                    resultPath = path;
-            }
-
-            if (resultPath == null)
-                return from;
-            
-            _moveUnitRequest.Publish(new MoveUnitRequest(unit, resultPath), allowNextFrame: true); // todo возможно, стоит избавиться от allowNextFrame
-            return resultPath[^1];
-        }
-
-        private bool TryGetPathToPoint(CellCoord from, int speed, out List<CellCoord> resultPath)
-        {
-            resultPath = null;
-            
-            if (speed <= 0)
-                return false;
-
-            foreach (var controlPoint in _controlPointFilter)
-            {
-                ref var controlPointComp = ref _controlPointStash.Get(controlPoint);
-                var coord = controlPointComp.cellCoord;
-
-                foreach (var neighbour in HexMath.GetNeighbours(coord))
-                {
-                    if (!GridData.IsFreeCell(_grid.Comp, _cellTileStash, neighbour))
-                        continue;
-
-                    var path = BuildPath(from, neighbour, speed);
-                    
-                    if (path != null && (resultPath == null || path.Count < resultPath.Count))
-                        resultPath = path;
-                }
-            }
-            
-            return resultPath != null;
-        }
-
-        private List<CellCoord> BuildPath(CellCoord from, CellCoord to, int speed)
-        {
-            var ready = PathFinder.GetPath(_grid.Comp, from, to, _cellTileStash);
-
-            if (!ready.path.ContainsKey(to))
-                return null;
-            
-            var path = PathFinder.ReconstructPath(ready, from, to);
-
-            if (path.Count <= 1)
-                return null;
-            
-            path.Insert(0, from);
-            
-            while (path.Count - 1 > speed)
-                path.RemoveAt(path.Count - 1);
-            
-            return path;
-        }
-
         private void BeginPhase()
         {
             _units.Clear();
             _currentIndex = 0;
-            
+ 
             foreach (var unit in _unitFilter)
                 if (_unitStash.Get(unit).teamSide == TeamSide.Enemy)
                     _units.Add(unit);
-            
+ 
             var battle = _battleFilter.First();
             ref var battleComp = ref _battleStash.Get(battle);
-            
+ 
             _config = battleComp.battlePlan.EnemyConfig;
-
-            _attackWeight = _config.AttackWeight;
-            _captureWeight = _config.CaptureWeight;
-            _defenceWeight = _config.DefenceWeight;
-            
+ 
+            _strategies[AIAction.Capture] = new CaptureStrategy(_config.CaptureWeight, _config.CaptureReduceValue);
+            _strategies[AIAction.Attack] = new AttackStrategy(_config.AttackWeight, _config.AttackReduceValue);
+            _strategies[AIAction.Defence] = new DefenceStrategy(_config.DefenceWeight, _config.DefenceReduceValue, _config.DefenceRadius);
+ 
             _isActive = true;
+        }
+
+        private void InitContext()
+        {
+            _context = new EnemyContext();
+            
+            _context.unitFilter = _unitFilter;
+            _context.controlPointFilter = _controlPointFilter;
+            _context.baseFilter =  _baseFilter;
+            
+            _context.grid = _grid;
+            
+            _context.positionStash = _positionStash;
+            _context.cellTileStash = _cellTileStash;
+            _context.controlPointStash = _controlPointStash;
+            _context.speedStash = _speedStash;
+            _context.unitStash = _unitStash;
+            _context.spellStash = _spellStash;
+            _context.attackDesireStash = _attackDesireStash;
+            
+            _context.moveRequest = _moveUnitRequest;
         }
 
         public void Dispose() { }
