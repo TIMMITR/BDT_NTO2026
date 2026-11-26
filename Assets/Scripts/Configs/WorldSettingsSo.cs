@@ -17,7 +17,7 @@ namespace Configs
 
         [Header("Dialogue")]
         public float dialogueCharsPerSecond = 60f;
-        [Min(1)] public int voiceCharacterInterval = 3;
+        public int voiceCharacterInterval = 3;
         public float dialogueStayTime = 3f;
         public float quickTalkGlobalCooldownSeconds = 15f;
         public float quickTalkCandidateTtlSeconds = 5f;

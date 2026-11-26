@@ -131,6 +131,7 @@ namespace Scenes.Game
             _updateGroup.AddSystem(new QuickTalkQueueSystem(globalContext.worldSettings));
             
             _updateGroup.AddSystem(new TypingSystem(globalContext.worldSettings));
+            _updateGroup.AddSystem(new VireteEmotionSystem());
             _updateGroup.AddSystem(new AudioTriggerSystem());
 
             _updateGroup.AddSystem(new AudioSystem(

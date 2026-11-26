@@ -15,6 +15,7 @@ namespace Features.QuickTalkPack.Data
         VireteRevive,
         VireteDamage,
         BattleWon,
-        BattleLost
+        BattleLost,
+        VireteBored
     }
 }

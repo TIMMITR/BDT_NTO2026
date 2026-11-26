@@ -19,7 +19,7 @@ MonoBehaviour:
   defaultMoveCost: 1
   dialogueCharsPerSecond: 40
   voiceCharacterInterval: 3
-  dialogueStayTime: 4
+  dialogueStayTime: 2
   quickTalkGlobalCooldownSeconds: 15
   quickTalkCandidateTtlSeconds: 5
   rotationSpeedModifier: {x: 0.8, y: 1.25}
