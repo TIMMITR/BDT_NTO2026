@@ -31,7 +31,7 @@ namespace Features.ItemsPack.Cards.Views
 
         private void Awake()
         {
-            _sprite = image.sprite;
+
             Initialize();
         }
 
@@ -169,6 +169,7 @@ namespace Features.ItemsPack.Cards.Views
 
             _rectTransform = (RectTransform)transform;
             _canvasGroup = GetComponent<CanvasGroup>();
+            _sprite = image.sprite;
             if (_canvasGroup == null)
             {
                 _canvasGroup = gameObject.AddComponent<CanvasGroup>();

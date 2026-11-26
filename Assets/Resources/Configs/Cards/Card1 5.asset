@@ -15,5 +15,5 @@ MonoBehaviour:
   cardsHolderData:
     cardName: The World
     cardDescription: 
-    cardType: 2
+    cardType: 5
     cardUiSprite: {fileID: 21300000, guid: 01edd1c22423138428d01ee0d99db439, type: 3}

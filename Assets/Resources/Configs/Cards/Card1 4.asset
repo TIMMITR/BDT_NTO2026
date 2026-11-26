@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Card1 4
   m_EditorClassIdentifier: 
   cardsHolderData:
-    cardName: The Moon140
+    cardName: The Moon
     cardDescription: 
-    cardType: 2
+    cardType: 4
     cardUiSprite: {fileID: 21300000, guid: ff18607944b9f2c4491ae87194fbb879, type: 3}

@@ -15,5 +15,5 @@ MonoBehaviour:
   cardsHolderData:
     cardName: Wheel of fortune
     cardDescription: 
-    cardType: 2
+    cardType: 3
     cardUiSprite: {fileID: 21300000, guid: afb73403eaefefc419ee99196d716616, type: 3}
