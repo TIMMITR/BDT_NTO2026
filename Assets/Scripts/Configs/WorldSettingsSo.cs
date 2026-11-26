@@ -14,8 +14,6 @@ namespace Configs
         public float cellRadius = 0.25f;
         public int defaultMoveCost = 1;
 
-        [Header("Audio")]
-        [Min(0f)] public float audioPitchVariation = 0.05f;
 
         [Header("Dialogue")]
         public float dialogueCharsPerSecond = 60f;
@@ -38,6 +36,8 @@ namespace Configs
         public int vireteManaCost = 6;
         public int vireteDamage = 2;
         public int vireteHealing = 2;
+        
+        public float audioPitchVariation = 0.05f;
     }
 
     [Serializable]
