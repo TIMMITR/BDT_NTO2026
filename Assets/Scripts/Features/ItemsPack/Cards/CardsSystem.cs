@@ -95,7 +95,24 @@ namespace Features.ItemsPack.Cards
             {
                 switch (cardPick.cardType)
                 {
-
+                    case CardType.TheFool: // 
+                        
+                        break;
+                    case CardType.TheMagician: // +3 маны
+                        
+                        break;
+                    case CardType.TheEmperor:
+                        
+                        break;
+                    case CardType.WheelOfFortune: // 
+                        
+                        break;
+                    case CardType.TheMoon: // 
+                        
+                        break;
+                    case CardType.TheWorld: // 
+                        
+                        break;
                     default:
                         throw new ArgumentOutOfRangeException();
                 }
