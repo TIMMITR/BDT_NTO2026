@@ -1,9 +1,13 @@
 using Configs;
+using Features.AudioPack;
 using Features.OverlayPack.Views;
 using Features.TypingPack.Components;
+using Features.TypingPack.Data;
 using Features.TypingPack.Events;
 using Features.TypingPack.Requests;
 using Scellecs.Morpeh;
+using UnityEngine;
+using AudioType = Configs.AudioType;
 
 namespace Features.TypingPack.Systems
 {
@@ -18,7 +22,7 @@ namespace Features.TypingPack.Systems
         private Request<TypingSkipRequest> _skipRequest;
         private Event<TypingEndEvent> _lineFinishedEvent;
         private Request<BattleUiRequest> _battleUIRequest;
-        
+        private Request<PlayEffectRequest> _playEffectRequest;
 
         private readonly WorldSettingsSo _settings;
 
@@ -36,6 +40,7 @@ namespace Features.TypingPack.Systems
             _skipRequest = World.GetRequest<TypingSkipRequest>();
             _lineFinishedEvent = World.GetEvent<TypingEndEvent>();
             _battleUIRequest = World.GetRequest<BattleUiRequest>();
+            _playEffectRequest = World.GetRequest<PlayEffectRequest>();
             
 
             if (_filter.IsEmpty())
@@ -78,8 +83,20 @@ namespace Features.TypingPack.Systems
              if (!typing.active) return;
              if (typing.isTyping)
              {
+                 var previousVisibleChars = (int)typing.visibleChars;
                  typing.visibleChars += _settings.dialogueCharsPerSecond * deltaTime;
-        
+                 var currentVisibleChars = Mathf.Min((int)typing.visibleChars, LineLength(typing));
+
+                 if (currentVisibleChars / _settings.voiceCharacterInterval > previousVisibleChars / _settings.voiceCharacterInterval)
+                 {
+                     _playEffectRequest.Publish(new PlayEffectRequest
+                     {
+                         audioType = typing.line.speaker == Speaker.Warlock
+                             ? AudioType.WarlockVoice
+                             : AudioType.VireteVoice
+                     });
+                 }
+
                  if (typing.visibleChars >= LineLength(typing))
                  {
                      typing.visibleChars = LineLength(typing);

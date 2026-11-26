@@ -17,8 +17,8 @@ MonoBehaviour:
   gridRadius: 5
   cellRadius: 0.25
   defaultMoveCost: 1
-  audioPitchVariation: 0.05
-  dialogueCharsPerSecond: 50
+  dialogueCharsPerSecond: 40
+  voiceCharacterInterval: 3
   dialogueStayTime: 4
   quickTalkGlobalCooldownSeconds: 15
   quickTalkCandidateTtlSeconds: 5
@@ -36,3 +36,6 @@ MonoBehaviour:
     rangeColor: {r: 0, g: 0.35031843, b: 1, a: 0.54509807}
   cardsManaCost: 2
   vireteManaCost: 6
+  vireteDamage: 2
+  vireteHealing: 2
+  audioPitchVariation: 0.05

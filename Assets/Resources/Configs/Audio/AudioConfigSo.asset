@@ -54,3 +54,17 @@ MonoBehaviour:
     audioFiles:
     - {fileID: 11400000, guid: 9780a7a0ae8f0994bbf93e7124197ae5, type: 2}
     - {fileID: 11400000, guid: cbcf69d7ab0e7d54da146f0ae058b2ed, type: 2}
+  - audioType: 13
+    audioFiles:
+    - {fileID: 11400000, guid: 396405f099e1d804b8acf82b5d90c2d9, type: 2}
+    - {fileID: 11400000, guid: ece161241839b564b8ddffacf53065a0, type: 2}
+    - {fileID: 11400000, guid: 6feb15ec4f8392543a06094283a38047, type: 2}
+    - {fileID: 11400000, guid: 38b0e0a5a44bc9940a7e1cac0922a126, type: 2}
+    - {fileID: 11400000, guid: 14aaf0f1cc7e293439ab11d2c33c9757, type: 2}
+  - audioType: 12
+    audioFiles:
+    - {fileID: 11400000, guid: 7373d027f29fd1d4ab89c170d2da09da, type: 2}
+    - {fileID: 11400000, guid: 7180232a0d4e612469499b5c3157c5e0, type: 2}
+    - {fileID: 11400000, guid: ef7b107e1683f9841ae3effa086127ad, type: 2}
+    - {fileID: 11400000, guid: 017737a53181f1e448b9b746e04e5a5a, type: 2}
+    - {fileID: 11400000, guid: 9c602d5aeeedfc6479619f5247eb5090, type: 2}
