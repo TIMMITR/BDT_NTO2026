@@ -1,4 +1,6 @@
 ﻿using Configs;
+using Features.TypingPack.Data;
+using Features.TypingPack.Events;
 using Features.UnitPack.Events;
 using Scellecs.Morpeh;
 
@@ -13,12 +15,14 @@ namespace Features.AudioPack.Systems
         
         private Request<PlayEffectRequest> _request;
         private Event<UnitMovedEvent> _unitMovedEvent;
+        private Event<SymbolTypedEvent> _typingEvent;
         
 
         public void OnAwake()
         {
             _request = World.GetRequest<PlayEffectRequest>();
             _unitMovedEvent = World.GetEvent<UnitMovedEvent>();
+            _typingEvent = World.GetEvent<SymbolTypedEvent>();
         }
 
         public void OnUpdate(float deltaTime)
@@ -28,6 +32,16 @@ namespace Features.AudioPack.Systems
                 _request.Publish(new PlayEffectRequest
                 {
                     audioType = AudioType.UnitMove
+                });
+            }
+
+            foreach (var evt in _typingEvent.publishedChanges)
+            {
+                _request.Publish(new PlayEffectRequest
+                {
+                    audioType = evt.speaker == Speaker.Warlock
+                        ? AudioType.WarlockVoice
+                        : AudioType.VireteVoice
                 });
             }
         }

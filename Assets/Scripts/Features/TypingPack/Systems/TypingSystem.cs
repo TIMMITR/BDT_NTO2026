@@ -22,8 +22,7 @@ namespace Features.TypingPack.Systems
         private Request<TypingSkipRequest> _skipRequest;
         private Event<TypingEndEvent> _lineFinishedEvent;
         private Request<BattleUiRequest> _battleUIRequest;
-        private Request<PlayEffectRequest> _playEffectRequest;
-
+        private Event<SymbolTypedEvent> _typingEvent;
         private readonly WorldSettingsSo _settings;
 
         public TypingSystem(WorldSettingsSo settings)
@@ -40,7 +39,7 @@ namespace Features.TypingPack.Systems
             _skipRequest = World.GetRequest<TypingSkipRequest>();
             _lineFinishedEvent = World.GetEvent<TypingEndEvent>();
             _battleUIRequest = World.GetRequest<BattleUiRequest>();
-            _playEffectRequest = World.GetRequest<PlayEffectRequest>();
+            _typingEvent = World.GetEvent<SymbolTypedEvent>();
             
 
             if (_filter.IsEmpty())
@@ -89,11 +88,9 @@ namespace Features.TypingPack.Systems
 
                  if (currentVisibleChars / _settings.voiceCharacterInterval > previousVisibleChars / _settings.voiceCharacterInterval)
                  {
-                     _playEffectRequest.Publish(new PlayEffectRequest
+                     _typingEvent.NextFrame(new SymbolTypedEvent
                      {
-                         audioType = typing.line.speaker == Speaker.Warlock
-                             ? AudioType.WarlockVoice
-                             : AudioType.VireteVoice
+                         speaker =  typing.line.speaker
                      });
                  }
 
