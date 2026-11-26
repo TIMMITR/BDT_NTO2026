@@ -27,7 +27,7 @@ Transform:
   m_GameObject: {fileID: 6084275348472148382}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 21.82}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -50,11 +50,26 @@ VisualEffect:
   m_ResourceVersion: 1
   m_PropertySheet:
     m_Float:
-      m_Array: []
+      m_Array:
+      - m_Value: 0.00625
+        m_Name: Voronoi_1_Offset
+        m_Overridden: 1
+      - m_Value: 0.0125
+        m_Name: Voronoi_2_Offset
+        m_Overridden: 1
     m_Vector2f:
       m_Array: []
     m_Vector3f:
-      m_Array: []
+      m_Array:
+      - m_Value: {x: 0.03125, y: 0.03125, z: 15}
+        m_Name: Base_Scale
+        m_Overridden: 1
+      - m_Value: {x: 0.125, y: 0.125, z: 15}
+        m_Name: Border_Scale
+        m_Overridden: 1
+      - m_Value: {x: 0.15625, y: 0.15625, z: 15}
+        m_Name: Outline_Scale
+        m_Overridden: 1
     m_Vector4f:
       m_Array: []
     m_Uint:

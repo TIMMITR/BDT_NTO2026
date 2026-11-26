@@ -21,7 +21,7 @@ MonoBehaviour:
     multiplier: 1
     defence: 5
     moveSpeed: 3
-  posY: 0.15
+  posY: 0
   spellList:
   - {fileID: 11400000, guid: dbb1b68a724ef034483f73fe6929fdb6, type: 2}
-  spawnRotationY: 180
+  spawnRotationY: -180

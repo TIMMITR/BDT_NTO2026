@@ -1,5 +1,6 @@
 using Features.AudioPack.Systems;
 using Features.BattlePack;
+using Features.BattlePack.Systems;
 using Features.BusyPack;
 using Features.CameraPack.Systems;
 using Features.CellSelectionPack.Systems;
@@ -141,6 +142,7 @@ namespace Scenes.Game
             _updateGroup.AddSystem(new SceneSystem(globalContext.transitionSettings));
             
             _updateGroup.AddSystem(new DeathTagsApplySystem());
+            _updateGroup.AddSystem(new BattleRestartSystem());
             _updateGroup.AddSystem(new GridDeleteSystem());
             _updateGroup.AddSystem(new EntityDestroySystem());
                 

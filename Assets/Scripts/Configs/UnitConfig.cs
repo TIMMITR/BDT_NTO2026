@@ -22,7 +22,6 @@ namespace Configs
         [SerializeField] private float posY;
         [SerializeField] private List<SpellConfigSo> spellList;
         [SerializeField] private float spawnRotationY;
-        [SerializeField] private int priority;
         
         public string Name => characterName;
         public UnitClass Class => unitClass;
@@ -32,7 +31,6 @@ namespace Configs
         public float PosY => posY;
         public List<SpellConfigSo> SpellList => spellList;
         public float SpawnRotationY => spawnRotationY;
-        public int Priority => priority;
     }
     
     [Serializable]
