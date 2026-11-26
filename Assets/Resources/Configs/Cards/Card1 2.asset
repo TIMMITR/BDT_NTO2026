@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Card1 2
   m_EditorClassIdentifier: 
   cardsHolderData:
-    cardName: ded
-    cardDescription: Get Noita'd
+    cardName: The Emperor
+    cardDescription: 
     cardType: 2
-    cardUiSprite: {fileID: 21300000, guid: 5763b1a2006480448bab377db68e963b, type: 3}
+    cardUiSprite: {fileID: 21300000, guid: 1e7f368ee48b33a47aa1eb8e67230bc3, type: 3}

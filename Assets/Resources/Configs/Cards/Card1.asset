@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Card1
   m_EditorClassIdentifier: 
   cardsHolderData:
-    cardName: Cool card
-    cardDescription: B
+    cardName: The Fool
+    cardDescription: 
     cardType: 0
-    cardUiSprite: {fileID: 21300000, guid: 987727e8ecefb984bb42fba424f2ec88, type: 3}
+    cardUiSprite: {fileID: 21300000, guid: 0d22c2536b81cf844a0f1d4941c0e53c, type: 3}

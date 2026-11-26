@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: WizardVoice 3
   m_EditorClassIdentifier: 
   clip: {fileID: 8300000, guid: 0ebab3f21a3a24c4bb365bda7b949c9e, type: 3}
-  volume: 0.76
+  volume: 0.512
   pitch: 1

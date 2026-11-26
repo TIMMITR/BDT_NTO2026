@@ -19,8 +19,11 @@ namespace Features.ItemsPack.Cards.Data
 
     public enum CardType
     {
-        CoolCard,
-        HealingCard,
-        DeadCard
+        TheFool,
+        TheMagician,
+        TheEmperor,
+        WheelOfFortune,
+        TheMoon,
+        TheWorld
     }
 }

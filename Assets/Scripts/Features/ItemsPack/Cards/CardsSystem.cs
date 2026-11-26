@@ -95,15 +95,7 @@ namespace Features.ItemsPack.Cards
             {
                 switch (cardPick.cardType)
                 {
-                    case CardType.CoolCard:
-                        Debug.Log("Cool card");
-                        break;
-                    case CardType.DeadCard:
-                        Debug.Log("Ded card");
-                        break;
-                    case CardType.HealingCard:
-                        Debug.Log("Healing card");
-                        break;
+
                     default:
                         throw new ArgumentOutOfRangeException();
                 }
