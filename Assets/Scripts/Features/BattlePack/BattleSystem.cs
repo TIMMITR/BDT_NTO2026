@@ -42,7 +42,7 @@ namespace Features.BattlePack
             
             ref var battleComponent = ref _battleStash.Add(World.CreateEntity());
             battleComponent.currentBattleId = 0; 
-            battleComponent.battlePlan = _gamePlan.BattlePlans[0];
+            battleComponent.battlePlan = _gamePlan.BattleSets[0].battlePlan;
             
             _battleRequest.Publish(new BattleRequest{id = battleComponent.currentBattleId}, allowNextFrame: true);
         }
@@ -51,13 +51,13 @@ namespace Features.BattlePack
         {
             foreach (var request in _battleRequest.Consume())
             {
-                if (request.id < 0 || request.id > _gamePlan.BattlePlans.Count)
+                if (request.id < 0 || request.id > _gamePlan.BattleSets.Count)
                     continue;
 
                 var battle = _battleFilter.First();
                 ref var battleComp = ref _battleStash.Get(battle);
                 
-                var battlePlan = _gamePlan.BattlePlans[request.id];
+                var battlePlan = _gamePlan.BattleSets[request.id].battlePlan;
 
                 battleComp.currentBattleId = request.id;
                 battleComp.battlePlan = battlePlan;

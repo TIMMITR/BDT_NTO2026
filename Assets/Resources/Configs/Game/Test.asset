@@ -12,5 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 910d40dd4f36496dbfa7ec367ce0a188, type: 3}
   m_Name: Test
   m_EditorClassIdentifier: 
-  battlePlans:
-  - {fileID: 11400000, guid: a95ad061e2a16d548a22044d7e70df2b, type: 2}
+  battleSets:
+  - battlePlan: {fileID: 11400000, guid: a95ad061e2a16d548a22044d7e70df2b, type: 2}
+    storyTalkAfterBattle: {fileID: 11400000, guid: 19c4e5fcc6f92dd4da41c961de407347, type: 2}
+  - battlePlan: {fileID: 11400000, guid: b989b9994b8f22c4db0da2ddc76d578b, type: 2}
+    storyTalkAfterBattle: {fileID: 11400000, guid: c2112a3916bc9a14386a9d7778d32154, type: 2}
+  - battlePlan: {fileID: 11400000, guid: da7301da318cb7d44bf62a0a34db8950, type: 2}
+    storyTalkAfterBattle: {fileID: 11400000, guid: 65b64601d67ec99499c334edc39688b9, type: 2}
+  - battlePlan: {fileID: 11400000, guid: 974293cbccb7f5f48a3ef149b4a3a00c, type: 2}
+    storyTalkAfterBattle: {fileID: 11400000, guid: af0c6e1ed454d104eb00b9455b586ffe, type: 2}

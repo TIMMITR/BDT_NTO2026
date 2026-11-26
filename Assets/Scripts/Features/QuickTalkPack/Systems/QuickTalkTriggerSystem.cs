@@ -119,10 +119,10 @@ namespace Features.QuickTalkPack.Systems
 
             var battleId = _battleStash.Get(_battleFilter.First()).currentBattleId;
 
-            if (battleId < 0 || battleId >= _gamePlan.BattlePlans.Count)
+            if (battleId < 0 || battleId >= _gamePlan.BattleSets.Count)
                 return null;
 
-            return _gamePlan.BattlePlans[battleId];
+            return _gamePlan.BattleSets[battleId].battlePlan;
         }
 
         public void Dispose() { }

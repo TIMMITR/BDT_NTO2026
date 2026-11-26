@@ -8,13 +8,17 @@ namespace Features.ItemsPack.Virete
 
         public void OnAwake()
         {
+            // система должна 
         }
+        
         public void OnUpdate(float deltaTime)
         {
+            
         }
 
         public void Dispose()
         {
+            
         }
     }
 }
