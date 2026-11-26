@@ -20,6 +20,7 @@ MonoBehaviour:
   ignoreArmor: 0
   isMultipleHit: 0
   canHitAllies: 0
+  strikeAtTarget: 1
   punchDistance: 0
   punchDamage: 0
   punchReturnDistance: 0
@@ -29,6 +30,6 @@ MonoBehaviour:
   projectilePrefab: {fileID: 5568580209136403898, guid: f317f6673f619b24fbf9143172cb028b, type: 3}
   explosionPrefab: {fileID: 0}
   projectileSpeed: 0
-  projectileHeight: 1
+  projectileHeight: 2
   swayAmplitude: 0
   explosionLifetime: 0

@@ -14,6 +14,7 @@ namespace Configs
         public bool ignoreArmor;
         public bool isMultipleHit;
         public bool canHitAllies;
+        public bool strikeAtTarget;
  
         [Header("Punch")]
         public int punchDistance;

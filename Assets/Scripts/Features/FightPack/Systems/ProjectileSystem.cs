@@ -65,6 +65,18 @@ namespace Features.FightPack.Systems
             from.y += spell.projectileHeight;
             to.y += spell.projectileHeight;
             
+            if (spell.strikeAtTarget)
+            {
+                var point = to;
+ 
+                Object.Instantiate(spell.projectilePrefab, point, Quaternion.identity);
+ 
+                foreach (var order in request.orders)
+                    _attackOrderRequest.Publish(order);
+ 
+                return;
+            }
+            
             var dir = to - from;
             dir.y = 0f;
             var rot = dir.sqrMagnitude > 0.0001f
