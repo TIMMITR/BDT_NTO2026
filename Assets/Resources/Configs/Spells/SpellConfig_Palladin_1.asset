@@ -35,6 +35,6 @@ MonoBehaviour:
   projectilePrefab: {fileID: 6084275348472148382, guid: 6dc174e0088375d42a825b023993ceb2, type: 3}
   explosionPrefab: {fileID: 0}
   projectileSpeed: 0
-  projectileHeight: 1
+  projectileHeight: 0.1
   swayAmplitude: 0
   explosionLifetime: 0
