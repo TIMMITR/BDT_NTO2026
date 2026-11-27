@@ -5,12 +5,22 @@ namespace Configs
     [CreateAssetMenu(fileName = "SpellConfig_", menuName = "Spell/New Spell Config")]
     public class SpellConfigSo : ScriptableObject
     {
+        [Header("UI")]
+        [SerializeField] private string displayName;
+        [SerializeField, TextArea] private string description;
+        [SerializeField] private Sprite icon;
+
+        public string DisplayName => string.IsNullOrWhiteSpace(displayName) ? name : displayName;
+        public string Description => description;
+        public Sprite Icon => icon;
+
         [Header("General")]
         public SpellType spellType;
         public int damage;
         public int range;
         public SpellRangeType rangeType;
         public int areaRadius; // только для удара по окружности
+        public int manaCost;
         public bool ignoreArmor;
         public bool isMultipleHit; // todo не работает
         public bool canHitAllies;

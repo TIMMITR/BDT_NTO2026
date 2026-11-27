@@ -108,7 +108,6 @@ namespace Scenes.Game
                 globalContext.worldSettings));
             _updateGroup.AddSystem(new VireteSystem(globalContext.worldSettings));
             _updateGroup.AddSystem(new UnitSpawnSystem());
-            _updateGroup.AddSystem(new UnitPanelSystem(gameContext.battleUi.UnitsPanel));
             _updateGroup.AddSystem(new ChangeAnimationDataSystem(gameContext.moveDataList));
             _updateGroup.AddSystem(new PlayerPositionStateSystem());
 
@@ -122,6 +121,8 @@ namespace Scenes.Game
             _updateGroup.AddSystem(new HealthSystem());
             _updateGroup.AddSystem(new SpeedSystem());
             _updateGroup.AddSystem(new ResetSpeedSystem());
+            _updateGroup.AddSystem(new UnitPanelSystem(gameContext.battleUi.UnitsPanel));
+            _updateGroup.AddSystem(new UnitHoverPanelSystem(gameContext.battleUi.UnitHoverPanel));
 
             _updateGroup.AddSystem(new EnemyAISystem());
 

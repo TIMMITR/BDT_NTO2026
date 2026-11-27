@@ -12,6 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d7c0918ab1b1548499c9997a490daa15, type: 3}
   m_Name: SpellConfig_Palladin_1
   m_EditorClassIdentifier: 
+  displayName: Наказание
+  description: Наносит урон по площади и игнорирует броню.
+  icon: {fileID: 21300000, guid: 11f0b72c1f6f53a4f9e51e1932a0b98c, type: 3}
   spellType: 0
   damage: 10
   range: 4

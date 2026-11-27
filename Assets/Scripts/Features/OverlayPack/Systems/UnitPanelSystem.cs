@@ -1,6 +1,8 @@
 using Configs;
 using Features.CellSelectionPack.Requests;
+using Features.HealthPack;
 using Features.OverlayPack.Views;
+using Features.SpeedPack;
 using Features.UnitPack.Components;
 using Scellecs.Morpeh;
 
@@ -14,6 +16,9 @@ namespace Features.OverlayPack.Systems
 
         private Filter _unitFilter;
         private Stash<UnitComponent> _unitStash;
+        private Stash<HealthComponent> _healthStash;
+        private Stash<DefenceComponent> _defenceStash;
+        private Stash<SpeedComponent> _speedStash;
         private Request<SelectUnitRequest> _selectUnitRequest;
 
         private Entity[] _units;
@@ -28,6 +33,9 @@ namespace Features.OverlayPack.Systems
         {
             _unitFilter = World.Filter.With<UnitComponent>().Build();
             _unitStash = World.GetStash<UnitComponent>();
+            _healthStash = World.GetStash<HealthComponent>();
+            _defenceStash = World.GetStash<DefenceComponent>();
+            _speedStash = World.GetStash<SpeedComponent>();
             _selectUnitRequest = World.GetRequest<SelectUnitRequest>();
 
             _units = new Entity[_view.Capacity];
@@ -41,6 +49,29 @@ namespace Features.OverlayPack.Systems
         {
             RemoveDestroyedUnits();
             RegisterNewUnits();
+            UpdateStats();
+        }
+
+        private void UpdateStats()
+        {
+            for (var i = 0; i < _units.Length; i++)
+            {
+                if (!_occupiedSlots[i])
+                    continue;
+
+                var unit = _units[i];
+                var health = _healthStash.Get(unit);
+                var defence = _defenceStash.Get(unit);
+                var speed = _speedStash.Get(unit);
+
+                _view.UpdateStats(
+                    i,
+                    health.currentHealth,
+                    health.maxHealth,
+                    defence.currentDefence,
+                    speed.currentSpeed,
+                    speed.maxSpeed);
+            }
         }
 
         private void RemoveDestroyedUnits()

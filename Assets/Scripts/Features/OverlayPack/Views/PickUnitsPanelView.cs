@@ -26,12 +26,28 @@ namespace Features.OverlayPack.Views
         public void SetBound(int index, bool bound)
         {
             pickUnitViews[index].pickUnitButton.interactable = bound;
+            if (!bound)
+                pickUnitViews[index].ClearStats();
+        }
+
+        public void UpdateStats(
+            int index,
+            int currentHealth,
+            int maxHealth,
+            int defence,
+            int currentSpeed,
+            int maxSpeed)
+        {
+            pickUnitViews[index].UpdateStats(currentHealth, maxHealth, defence, currentSpeed, maxSpeed);
         }
 
         public void ClearBindings()
         {
             foreach (var view in pickUnitViews)
+            {
                 view.pickUnitButton.interactable = false;
+                view.ClearStats();
+            }
         }
     }
 }

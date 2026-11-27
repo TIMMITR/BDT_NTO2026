@@ -815,6 +815,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   pickUnitButton: {fileID: 3454737086341673902}
   statsPanel: {fileID: 8092151704010821708}
+  healthText: {fileID: 7070592555902307372}
+  defenceText: {fileID: 777116224883248684}
+  speedText: {fileID: 8349599257702169293}
   openStatsButton: {fileID: 5285057383271595476}
   openDuration: 0.2
   closeDuration: 0.2

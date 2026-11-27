@@ -9,9 +9,11 @@ namespace Features.OverlayPack.Views
         [SerializeField] private GameObject canvasUI;
         [SerializeField] private PickUnitsPanelView unitsPanel;
         [SerializeField] private SpellPanelView spellPanel;
+        [SerializeField] private UnitHoverPanelView unitHoverPanel;
 
         public PickUnitsPanelView UnitsPanel => unitsPanel;
         public SpellPanelView SpellPanel => spellPanel;
+        public UnitHoverPanelView UnitHoverPanel => unitHoverPanel;
 
         public void SetActive(bool active)
         {

@@ -9,6 +9,9 @@ namespace Features.OverlayPack.Views
         public Button pickUnitButton;
         public RectTransform statsPanel;
 
+        [SerializeField] private Text healthText;
+        [SerializeField] private Text defenceText;
+        [SerializeField] private Text speedText;
         [SerializeField] private RectTransform openStatsButton;
         [SerializeField] private float openDuration = 0.2f;
         [SerializeField] private float closeDuration = 0.2f;
@@ -36,6 +39,25 @@ namespace Features.OverlayPack.Views
         private void OnDestroy()
         {
             StopAnimation();
+        }
+
+        public void UpdateStats(
+            int currentHealth,
+            int maxHealth,
+            int defence,
+            int currentSpeed,
+            int maxSpeed)
+        {
+            healthText.text = $"{currentHealth}/{maxHealth}";
+            defenceText.text = defence.ToString();
+            speedText.text = $"{currentSpeed}/{maxSpeed}";
+        }
+
+        public void ClearStats()
+        {
+            healthText.text = "-";
+            defenceText.text = "-";
+            speedText.text = "-";
         }
 
         public void OpenStats()

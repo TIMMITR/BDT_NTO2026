@@ -12,6 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d7c0918ab1b1548499c9997a490daa15, type: 3}
   m_Name: SpellConfig_Palladin_0
   m_EditorClassIdentifier: 
+  displayName: Удар мечом
+  description: Поражает противников по линии, отбрасывает их и может задеть союзников.
+  icon: {fileID: 21300000, guid: bf5ec160bcab6ab4ea22471f2f59e85a, type: 3}
   spellType: 0
   damage: 3
   range: 3
