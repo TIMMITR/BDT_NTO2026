@@ -6,5 +6,10 @@ namespace Features.StoryTalkPack.Requests
     public struct StoryTalkShowRequest : IRequestData
     {
         public StoryTalk talk;
+
+        public StoryTalkShowRequest(StoryTalk talk)
+        {
+            this.talk = talk;
+        }
     }
 }

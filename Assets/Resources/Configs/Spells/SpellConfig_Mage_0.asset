@@ -13,13 +13,14 @@ MonoBehaviour:
   m_Name: SpellConfig_Mage_0
   m_EditorClassIdentifier: 
   spellType: 0
-  damage: 7
-  range: 2
+  damage: 1000
+  range: 1
   rangeType: 1
   areaRadius: 1
   ignoreArmor: 0
   isMultipleHit: 0
   canHitAllies: 0
+  strikeAtTarget: 0
   punchDistance: 1
   punchDamage: 1
   punchReturnDistance: 0

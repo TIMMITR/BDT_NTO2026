@@ -3,9 +3,12 @@ using Features.ControlPointPack.Components;
 using Features.ManaPack;
 using Features.SpeedPack.Requests;
 using Features.StatePack.Requests;
+using Features.StoryTalkPack.Events;
+using Features.StoryTalkPack.Requests;
 using Features.UnitPack.Components;
 using Global;
 using Scellecs.Morpeh;
+using UnityEngine;
 
 namespace Features.BattlePack.Systems
 {
@@ -26,6 +29,9 @@ namespace Features.BattlePack.Systems
         private Request<StartPlayerTurnRequest> _startPlayerTurnRequest;
         private Request<DeselectUnitRequest> _deselectRequest;
         private Request<ClearColorsRequest> _clearColorsRequest;
+        private Request<StoryTalkShowRequest> _storyTalkShowRequest;
+
+        private Event<StoryTalkFinishEvent> _storyTalkFinishEvent;
 
         private bool _isRestarting; // todo возможно стоит убрать
 
@@ -48,7 +54,9 @@ namespace Features.BattlePack.Systems
             _startPlayerTurnRequest = World.GetRequest<StartPlayerTurnRequest>();
             _deselectRequest = World.GetRequest<DeselectUnitRequest>();
             _clearColorsRequest = World.GetRequest<ClearColorsRequest>();
+            _storyTalkShowRequest = World.GetRequest<StoryTalkShowRequest>();
             
+            _storyTalkFinishEvent = World.GetEvent<StoryTalkFinishEvent>();
         }
 
         public void OnUpdate(float deltaTime)
@@ -70,25 +78,31 @@ namespace Features.BattlePack.Systems
                 }
             
                 _isRestarting = true;
+                
+                ref var battleComp  = ref _battleStash.Get(_battleFilter.First());
+                _storyTalkShowRequest.Publish(new StoryTalkShowRequest(battleComp.endStoryTalk));
                 return;
             }
 
+            
             if (!_controlPointFilter.IsEmpty() || !_unitFilter.IsEmpty())
                 return;
+
+            foreach (var evt in _storyTalkFinishEvent.publishedChanges)
+            {
+                _isRestarting = false;
             
-            _isRestarting = false;
-            
-            _deselectRequest.Publish(new DeselectUnitRequest(), allowNextFrame: true);
-            _clearColorsRequest.Publish(new ClearColorsRequest(), allowNextFrame: true);
-            _startPlayerTurnRequest.Publish(new StartPlayerTurnRequest(), allowNextFrame: true);
+                _deselectRequest.Publish(new DeselectUnitRequest(), allowNextFrame: true);
+                _clearColorsRequest.Publish(new ClearColorsRequest(), allowNextFrame: true);
+                _startPlayerTurnRequest.Publish(new StartPlayerTurnRequest(), allowNextFrame: true);
  
-            ref var battle = ref _battleStash.Get(_battleFilter.First());
-            _battleRequest.Publish(new BattleRequest { id = battle.currentBattleId }, allowNextFrame: true);
+                ref var battle = ref _battleStash.Get(_battleFilter.First());
+                
+                Debug.Log(battle.currentBattleId + 1);
+                _battleRequest.Publish(new BattleRequest { id = battle.currentBattleId + 1}, allowNextFrame: true);
+            }
         }
         
-        public void Dispose()
-        {
-            
-        }
+        public void Dispose() {}
     }
 }

@@ -42,7 +42,7 @@ namespace Features.StoryTalkPack.Systems
             _talkFinishedEvent = World.GetEvent<StoryTalkFinishEvent>();
             _battleUIRequest = World.GetRequest<BattleUiRequest>();
             
-            _showTalkRequest.Publish(new StoryTalkShowRequest{ talk = _introTalk}, allowNextFrame:true);
+            _showTalkRequest.Publish(new StoryTalkShowRequest(_introTalk), allowNextFrame:true);
         }
 
         public void OnUpdate(float deltaTime)
@@ -54,7 +54,7 @@ namespace Features.StoryTalkPack.Systems
                 _activeTalk = request.talk;
                 _lineIndex = 0;
 
-                _talkStartedEvent.NextFrame(new StoryTalkStartEvent { talk = _activeTalk });
+                _talkStartedEvent.NextFrame(new StoryTalkStartEvent {talk = _activeTalk });
 
                 if (!PlayLine())
                     FinishTalk();

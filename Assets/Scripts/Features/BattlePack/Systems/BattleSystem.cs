@@ -1,11 +1,10 @@
 using Features.ControlPointPack.Requests;
 using Features.GamePack;
 using Features.GridPack.Data;
-using Features.UnitPack;
 using Features.UnitPack.Requests;
 using Scellecs.Morpeh;
 
-namespace Features.BattlePack
+namespace Features.BattlePack.Systems
 {
     public sealed class BattleSystem : ISystem
     {
@@ -40,11 +39,7 @@ namespace Features.BattlePack
             
             _battleEvent = World.GetEvent<BattleEvent>();
             
-            ref var battleComponent = ref _battleStash.Add(World.CreateEntity());
-            battleComponent.currentBattleId = 0; 
-            battleComponent.battlePlan = _gamePlan.BattleSets[0].battlePlan;
-            
-            _battleRequest.Publish(new BattleRequest{id = battleComponent.currentBattleId}, allowNextFrame: true);
+            StartFirstBattle();
         }
 
         public void OnUpdate(float deltaTime)
@@ -55,14 +50,13 @@ namespace Features.BattlePack
                     continue;
 
                 var battle = _battleFilter.First();
-                ref var battleComp = ref _battleStash.Get(battle);
+                var newBattle = _gamePlan.BattleSets[request.id];
+                var plan = newBattle.battlePlan;
+                var story = newBattle.storyTalkAfterBattle;
                 
-                var battlePlan = _gamePlan.BattleSets[request.id].battlePlan;
-
-                battleComp.currentBattleId = request.id;
-                battleComp.battlePlan = battlePlan;
+                _battleStash.Set(battle, new BattleComponent(plan, story, request.id));
                 
-                foreach (var tile in battlePlan.Units)
+                foreach (var tile in plan.Units)
                 {
                     _unitSpawnRequest.Publish(new UnitSpawnRequest
                     (
@@ -73,7 +67,7 @@ namespace Features.BattlePack
                     ));
                 }
 
-                foreach (var controlPoint in battlePlan.ControlPoints)
+                foreach (var controlPoint in plan.ControlPoints)
                 {
                     _spawnControlPointRequest.Publish(new SpawnControlPointRequest
                     (
@@ -84,8 +78,8 @@ namespace Features.BattlePack
 
                 _unitSpawnRequest.Publish(new UnitSpawnRequest
                 (
-                    new CellCoord(battlePlan.BaseCoordQ, battlePlan.BaseCoordR),
-                    battlePlan.BaseConfig,
+                    new CellCoord(plan.BaseCoordQ, plan.BaseCoordR),
+                    plan.BaseConfig,
                     true,
                     true
                 ));    
@@ -94,6 +88,16 @@ namespace Features.BattlePack
                 
                 break;
             }
+        }
+
+        private void StartFirstBattle()
+        {
+            var battle = _gamePlan.BattleSets[0];
+            var plan = battle.battlePlan;
+            var story = battle.storyTalkAfterBattle;
+            
+            _battleStash.Add(World.CreateEntity(), new BattleComponent(plan, story, 0));
+            _battleRequest.Publish(new BattleRequest{id = 0}, allowNextFrame: true);
         }
 
         public void Dispose() { }

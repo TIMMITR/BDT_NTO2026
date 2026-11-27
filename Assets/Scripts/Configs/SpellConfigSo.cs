@@ -12,9 +12,9 @@ namespace Configs
         public SpellRangeType rangeType;
         public int areaRadius; // только для удара по окружности
         public bool ignoreArmor;
-        public bool isMultipleHit;
+        public bool isMultipleHit; // todo не работает
         public bool canHitAllies;
-        public bool strikeAtTarget;
+        public bool strikeAtTarget; // todo посмотреть удар по прямой
  
         [Header("Punch")]
         public int punchDistance;
