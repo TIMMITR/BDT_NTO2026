@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Features.GamePack;
+using Features.OverlayPack.Views;
 using Features.StoryTalkPack.Data;
 using UnityEngine;
 
@@ -15,6 +16,9 @@ namespace Scenes.Game
 
         [Header("Battle Settings")]
         public GamePlan gamePlan;
+
+        [Header("UI Settings")]
+        public BattleUiView battleUi;
         
         [Header("Board Settings")]
         public GameObject boardGameObject;

@@ -19,6 +19,7 @@ using Features.ItemsPack.Virete;
 using Features.KnockbackPack.Systems;
 using Features.LifetimePack.Systems;
 using Features.ManaPack;
+using Features.OverlayPack.Systems;
 using Features.PlayerPack.Systems;
 using Features.QuickTalkPack.Systems;
 using Features.RaycastPack;
@@ -106,8 +107,8 @@ namespace Scenes.Game
             _updateGroup.AddSystem(new CardsSystem(globalContext.cardsConfig,
                 globalContext.worldSettings));
             _updateGroup.AddSystem(new VireteSystem(globalContext.worldSettings));
-            _updateGroup.AddSystem(new SelectUnitSystem());
             _updateGroup.AddSystem(new UnitSpawnSystem());
+            _updateGroup.AddSystem(new UnitPanelSystem(gameContext.battleUi.UnitsPanel));
             _updateGroup.AddSystem(new ChangeAnimationDataSystem(gameContext.moveDataList));
             _updateGroup.AddSystem(new PlayerPositionStateSystem());
 
@@ -124,6 +125,7 @@ namespace Scenes.Game
 
             _updateGroup.AddSystem(new EnemyAISystem());
 
+            _updateGroup.AddSystem(new SpellPanelSystem(gameContext.battleUi.SpellPanel));
             _updateGroup.AddSystem(new SpellChangeSystem());
             
             _updateGroup.AddSystem(new StoryTalkPlayerSystem(gameContext.introTalk));
@@ -140,6 +142,7 @@ namespace Scenes.Game
                 globalContext.audioConfig,
                 globalContext.worldSettings));
             _updateGroup.AddSystem(new SceneSystem(globalContext.transitionSettings));
+            _updateGroup.AddSystem(new BattleUiSystem(gameContext.battleUi));
             
             _updateGroup.AddSystem(new DeathTagsApplySystem());
             _updateGroup.AddSystem(new BattleRestartSystem());

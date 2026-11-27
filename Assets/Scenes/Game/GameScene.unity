@@ -5174,6 +5174,7 @@ MonoBehaviour:
   playerSpawnPoint: {fileID: 2057196684}
   introTalk: {fileID: 11400000, guid: 700b1ecc6474423eb0d2ad5bf3c969c1, type: 2}
   gamePlan: {fileID: 11400000, guid: a30e07ce048f7ff438a6c67907bbb724, type: 2}
+  battleUi: {fileID: 1737310541}
   boardGameObject: {fileID: 0}
   highlightCellPool: {fileID: 88044064}
   cameraCorridorStart: {fileID: 3351093}
@@ -5745,6 +5746,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   canvasUI: {fileID: 1815731854}
+  unitsPanel: {fileID: 1356588342}
+  spellPanel: {fileID: 1027277904}
 --- !u!1001 &1745178143
 PrefabInstance:
   m_ObjectHideFlags: 0

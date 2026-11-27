@@ -1,7 +1,5 @@
-using Configs;
 using Features.CellSelectionPack.Components;
 using Features.CellSelectionPack.Tags;
-using Features.GridPack.Components;
 using Features.SpellPack.Components;
 using Features.SpellPack.Requests;
 using Global;
@@ -41,10 +39,17 @@ namespace Features.SpellPack.Systems
                 
                 var unit = _selectedUnitStash.Get(_selection.Entity).unit;
 
-                if (!_spellListStash.Has(unit))
+                if (World.IsDisposed(unit) || !_spellListStash.Has(unit))
                     continue;
                 
                 ref var list = ref _spellListStash.Get(unit);
+
+                if (request.index < 0 || request.index >= list.spellList.Count)
+                    continue;
+
+                var spell = list.spellList[request.index];
+                if (spell == null)
+                    continue;
 
                 if (list.currentIndex == request.index && _spellStash.Has(unit))
                 {
@@ -54,7 +59,7 @@ namespace Features.SpellPack.Systems
                 else
                 {
                     list.currentIndex = request.index;
-                    _spellStash.Set(unit, new SpellDataComponent(list.spellList[request.index]));
+                    _spellStash.Set(unit, new SpellDataComponent(spell));
                 }
             }
         }

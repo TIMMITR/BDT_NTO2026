@@ -1,24 +1,21 @@
-﻿using Scellecs.Morpeh;
+﻿using Features.SpellPack.View;
+using Scellecs.Morpeh;
 using UnityEngine;
 
 namespace Features.OverlayPack.Views
 {
     public class BattleUiView : MonoBehaviour
     {
-        public GameObject canvasUI;
+        [SerializeField] private GameObject canvasUI;
+        [SerializeField] private PickUnitsPanelView unitsPanel;
+        [SerializeField] private SpellPanelView spellPanel;
 
-        private Request<BattleUiRequest> _request;
-        private void Awake()
-        {
-            _request = World.Default.GetRequest<BattleUiRequest>();
-        }
+        public PickUnitsPanelView UnitsPanel => unitsPanel;
+        public SpellPanelView SpellPanel => spellPanel;
 
-        public void LateUpdate()
+        public void SetActive(bool active)
         {
-            foreach (var req in _request.Consume())
-            {
-                canvasUI.SetActive(req.active);
-            }
+            canvasUI.SetActive(active);
         }
     }
 
