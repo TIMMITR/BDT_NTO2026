@@ -11,6 +11,7 @@ namespace Features.ItemsPack.Cards.Views
         public Image image;
         public Text cardName;
         public Text cardDescription;
+        public CanvasGroup infoPanel;
         
         [SerializeField] private float appearDuration = 0.45f;
         [SerializeField] private float moveToCenterDuration = 0.45f;
@@ -50,6 +51,7 @@ namespace Features.ItemsPack.Cards.Views
             cardName.text = cName;
             image.sprite = sprite;
             cardDescription.text = description;
+            infoPanel.alpha = 1f;
         }
 
         public void Show(int cardIndex)
@@ -60,6 +62,8 @@ namespace Features.ItemsPack.Cards.Views
             gameObject.SetActive(true);
             cardsButton.interactable = true;
             _canvasGroup.alpha = 1f;
+            infoPanel.alpha = 0f;
+            
             _canvasGroup.blocksRaycasts = true;
 
             var delay = cardIndex * appearDelayStep;
@@ -135,6 +139,7 @@ namespace Features.ItemsPack.Cards.Views
             Initialize();
             StopAnimation();
             _canvasGroup.blocksRaycasts = false;
+            infoPanel.alpha = 0f;
 
             var currentPosition = _rectTransform.anchoredPosition;
             var currentScale = transform.localScale;
@@ -169,6 +174,7 @@ namespace Features.ItemsPack.Cards.Views
 
             _rectTransform = (RectTransform)transform;
             _canvasGroup = GetComponent<CanvasGroup>();
+            infoPanel.alpha = 0f;
             _sprite = image.sprite;
             if (_canvasGroup == null)
             {
@@ -199,6 +205,7 @@ namespace Features.ItemsPack.Cards.Views
             image.sprite = _sprite;
             cardName.text = string.Empty;
             cardDescription.text = string.Empty;
+            infoPanel.alpha = 0f;
             gameObject.SetActive(false);
         }
     }
