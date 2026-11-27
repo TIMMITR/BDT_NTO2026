@@ -4,7 +4,7 @@ using Scellecs.Morpeh;
 
 namespace Features.UnitPack.Requests
 {
-    public struct UnitSpawnRequest : IRequestData // todo надо либо вынести в отдельный лист сооружения, блокирующие проход, либо что-то
+    public struct UnitSpawnRequest : IRequestData
     {
         public CellCoord cellCoord;
         public UnitConfig unitConfig;

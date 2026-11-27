@@ -78,6 +78,10 @@ MonoBehaviour:
     r: 0
     config:
       prefab: {fileID: 9063286301332852021, guid: 29c316478a1a5a24aa80c22e8a5109b5, type: 3}
+  - q: 0
+    r: -2
+    config:
+      prefab: {fileID: 9063286301332852021, guid: 29c316478a1a5a24aa80c22e8a5109b5, type: 3}
   quickTalks:
   - {fileID: 11400000, guid: 0e8183d4d2d24b243aa05c6605c10947, type: 2}
   - {fileID: 11400000, guid: 9cfcca0f0e4ae1d2ba6757578d9869a7, type: 2}

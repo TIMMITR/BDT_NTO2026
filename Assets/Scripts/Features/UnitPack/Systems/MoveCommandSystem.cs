@@ -47,8 +47,10 @@ namespace Features.UnitPack.Systems
                 var unit = request.unit;
                 var path = request.path;
 
-                if (path == null || path.Count < 2) continue;
-                if (_unitAnimationStash.Has(unit)) continue;
+                if (path == null || path.Count < 2) 
+                    continue;
+                if (_unitAnimationStash.Has(unit)) 
+                    continue;
 
                 GridOccupancy.Move(ref gridComp, _tileStash, _positionStash, unit, path[0], path[^1]);
                 _unitAnimationStash.Add(unit, new UnitAnimationComponent(path, false));

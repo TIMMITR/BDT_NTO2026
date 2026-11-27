@@ -120,7 +120,7 @@ namespace Features.CellSelectionPack.Systems
             if (_plannedAttackStash.Has(_selection.Entity))
             {
                 var attack = _plannedAttackStash.Get(selection);
-                _attackDesireStash.Set(unit, new AttackDesireComponent(attack.target, attack.spell));
+                _attackDesireStash.Set(unit, new AttackDesireComponent(target, attack.spell));
             }
             
             if (!_plannedPathStash.Has(selection))

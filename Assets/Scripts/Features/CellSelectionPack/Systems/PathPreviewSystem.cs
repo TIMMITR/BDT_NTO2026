@@ -8,6 +8,7 @@ using Features.FightPack;
 using Features.GridPack;
 using Features.GridPack.Components;
 using Features.GridPack.Data;
+using Features.ManaPack;
 using Features.PathFinderPack;
 using Features.SpeedPack;
 using Features.SpellPack.Components;
@@ -17,12 +18,13 @@ using Scellecs.Morpeh;
 
 namespace Features.CellSelectionPack.Systems
 {
-    public class PathPreviewSystem : ISystem // todo этот скрипт надо зарефакторить, он выполняет несколько действий одновременно
+    public class PathPreviewSystem : ISystem
     {
         public World World { get; set; }
 
         private Singletone<GridComponent> _grid;
         private Singletone<PlayerSelectionTag> _selection;
+        private Singletone<ManaComponent> _mana;
         
         private Stash<SelectedUnitComponent> _selectedUnitStash;
         private Stash<ChosenCellComponent> _chosenCellStash;
@@ -34,6 +36,7 @@ namespace Features.CellSelectionPack.Systems
         private Stash<PlannedAttackComponent> _plannedAttackStash;
         private Stash<UnitComponent> _unitStash;
         private Stash<SpeedComponent> _speedStash;
+        private Stash<ManaComponent> _manaStash;
         
         private Event<CellChooseChangedEvent> _cellChooseChangedEvent;
         
@@ -44,6 +47,7 @@ namespace Features.CellSelectionPack.Systems
         {
             _grid = new Singletone<GridComponent>(World);
             _selection = new Singletone<PlayerSelectionTag>(World);
+            _mana = new Singletone<ManaComponent>(World);
             
             _selectedUnitStash = World.GetStash<SelectedUnitComponent>();
             _chosenCellStash = World.GetStash<ChosenCellComponent>();
@@ -55,6 +59,7 @@ namespace Features.CellSelectionPack.Systems
             _plannedAttackStash = World.GetStash<PlannedAttackComponent>();
             _speedStash = World.GetStash<SpeedComponent>();
             _unitStash = World.GetStash<UnitComponent>();
+            _manaStash = World.GetStash<ManaComponent>();
             
             _cellChooseChangedEvent = World.GetEvent<CellChooseChangedEvent>();
             
@@ -97,11 +102,20 @@ namespace Features.CellSelectionPack.Systems
                 return;
  
             var speed = _speedStash.Get(unit).currentSpeed;
- 
+            
             if (_spellDataStash.Has(unit))
-                BuildAttackPath(_spellDataStash.Get(unit).spellData, from, to, speed);
+            {
+                var spell = _spellDataStash.Get(unit).spellData;
+ 
+                if (_mana.Comp.currentMana >= spell.manaCost)
+                    BuildAttackPath(spell, from, to, speed);
+                else
+                    BuildMovePath(from, to, speed);
+            }
             else
+            {
                 BuildMovePath(from, to, speed);
+            }
         }
 
         private void BuildAttackPath(SpellConfigSo spell, CellCoord from, CellCoord to, int speed)

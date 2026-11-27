@@ -19,7 +19,7 @@ MonoBehaviour:
   icon: {fileID: 0}
   spellType: 0
   damage: 3
-  range: 1
+  range: 2
   rangeType: 0
   areaRadius: 0
   manaCost: 0

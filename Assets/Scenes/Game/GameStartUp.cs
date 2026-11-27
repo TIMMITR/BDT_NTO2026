@@ -28,6 +28,7 @@ using Features.SpeedPack.Systems;
 using Features.SpellPack.Systems;
 using Features.StatePack.Systems;
 using Features.TargetPack;
+using Features.TutorialPack;
 using Features.UnitPack.Systems;
 using Scellecs.Morpeh;
 using UnityEngine;
@@ -102,6 +103,7 @@ namespace Scenes.Game
             _updateGroup.AddSystem(new ClearControlPointSystem());
             
 
+            _updateGroup.AddSystem(new TutorialSystem(_playerInputActions, gameContext.tutorialSteps));
             _updateGroup.AddSystem(new BusyTagSystem());
             
             _updateGroup.AddSystem(new CardsSystem(globalContext.cardsConfig,
