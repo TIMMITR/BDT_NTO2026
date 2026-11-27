@@ -57,8 +57,10 @@ namespace Features.BattlePack.Systems
             {
                 foreach (var unit in _unitFilter)
                 {
-                    _deadStash.Add(unit);
-                    _destroyStash.Add(unit);
+                    if(!_deadStash.Has(unit))
+                        _deadStash.Add(unit);
+                    if(!_destroyStash.Has(unit))
+                        _destroyStash.Add(unit);
                 }
 
                 foreach (var cp in _controlPointFilter)
@@ -68,14 +70,17 @@ namespace Features.BattlePack.Systems
                 }
             
                 _isRestarting = true;
+                return;
             }
 
             if (!_controlPointFilter.IsEmpty() || !_unitFilter.IsEmpty())
                 return;
             
-            _deselectRequest.Publish(new DeselectUnitRequest());
-            _clearColorsRequest.Publish(new ClearColorsRequest());
-            _startPlayerTurnRequest.Publish(new StartPlayerTurnRequest());
+            _isRestarting = false;
+            
+            _deselectRequest.Publish(new DeselectUnitRequest(), allowNextFrame: true);
+            _clearColorsRequest.Publish(new ClearColorsRequest(), allowNextFrame: true);
+            _startPlayerTurnRequest.Publish(new StartPlayerTurnRequest(), allowNextFrame: true);
  
             ref var battle = ref _battleStash.Get(_battleFilter.First());
             _battleRequest.Publish(new BattleRequest { id = battle.currentBattleId }, allowNextFrame: true);
