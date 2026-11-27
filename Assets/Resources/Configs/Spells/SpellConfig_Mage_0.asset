@@ -17,7 +17,7 @@ MonoBehaviour:
     \u0448\u0430\u0440"
   icon: {fileID: 0}
   spellType: 0
-  damage: 1000
+  damage: 3
   range: 1
   rangeType: 1
   areaRadius: 1

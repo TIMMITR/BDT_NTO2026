@@ -3614,8 +3614,8 @@ MonoBehaviour:
   canvasGroup: {fileID: 900000062}
   nameText: {fileID: 900000083}
   hpText: {fileID: 927387166}
-  speedText: {fileID: 1258811703}
-  defenceText: {fileID: 708981938}
+  speedText: {fileID: 708981938}
+  defenceText: {fileID: 1258811703}
   worldOffset: {x: 0, y: 0, z: 0}
   animationDuration: 0.1
 --- !u!1 &900000070

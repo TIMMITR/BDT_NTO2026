@@ -17,11 +17,11 @@ MonoBehaviour:
   teamSide: 1
   prefab: {fileID: 3710387246263817297, guid: 60be97b8e7a4f8144a63b3a61e41fcce, type: 3}
   stats:
-    maxHealth: 10
+    maxHealth: 6
     multiplier: 1
-    defence: 5
-    moveSpeed: 3
+    defence: 1
+    moveSpeed: 2
   posY: 0
   spellList:
-  - {fileID: 11400000, guid: dbb1b68a724ef034483f73fe6929fdb6, type: 2}
+  - {fileID: 11400000, guid: ed420db46f168ea4e92a83cad222a7cb, type: 2}
   spawnRotationY: -180
