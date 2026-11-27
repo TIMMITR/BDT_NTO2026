@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Configs
 {
@@ -9,6 +10,7 @@ namespace Configs
     {
         [SerializeField] private string characterName;
         [SerializeField] private UnitClass unitClass;
+        [SerializeField] private Sprite unitImage;
         [SerializeField] private TeamSide teamSide;
         [SerializeField] private GameObject prefab;
         [SerializeField] private UnitStats stats = new()
@@ -25,6 +27,7 @@ namespace Configs
         
         public string Name => characterName;
         public UnitClass Class => unitClass;
+        public Sprite UnitImage => unitImage;
         public GameObject Prefab => prefab;
         public UnitStats Stats => stats;
         public TeamSide TeamSide => teamSide;

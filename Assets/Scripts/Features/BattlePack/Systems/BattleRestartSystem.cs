@@ -80,7 +80,7 @@ namespace Features.BattlePack.Systems
                 _isRestarting = true;
                 
                 ref var battleComp  = ref _battleStash.Get(_battleFilter.First());
-                _storyTalkShowRequest.Publish(new StoryTalkShowRequest(battleComp.endStoryTalk));
+                _storyTalkShowRequest.Publish(new StoryTalkShowRequest(battleComp.endStoryTalk), allowNextFrame:true);
                 return;
             }
 

@@ -8,7 +8,7 @@ namespace Features.OverlayPack.Views
     {
         [SerializeField] private List<PickUnitView> pickUnitViews;
 
-        public event Action<int> UnitClicked;
+        public event Action<int> unitClicked;
 
         public int Capacity => pickUnitViews.Count;
 
@@ -17,7 +17,7 @@ namespace Features.OverlayPack.Views
             for (var i = 0; i < pickUnitViews.Count; i++)
             {
                 var index = i;
-                pickUnitViews[i].pickUnitButton.onClick.AddListener(() => UnitClicked?.Invoke(index));
+                pickUnitViews[i].pickUnitButton.onClick.AddListener(() => unitClicked?.Invoke(index));
             }
 
             ClearBindings();
@@ -31,6 +31,7 @@ namespace Features.OverlayPack.Views
         }
 
         public void UpdateStats(
+            Sprite sprite,
             int index,
             int currentHealth,
             int maxHealth,
@@ -38,7 +39,7 @@ namespace Features.OverlayPack.Views
             int currentSpeed,
             int maxSpeed)
         {
-            pickUnitViews[index].UpdateStats(currentHealth, maxHealth, defence, currentSpeed, maxSpeed);
+            pickUnitViews[index].UpdateStats(sprite, currentHealth, maxHealth, defence, currentSpeed, maxSpeed);
         }
 
         public void ClearBindings()

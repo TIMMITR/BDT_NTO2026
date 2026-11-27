@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   characterName: Paladin
   unitClass: 0
+  unitImage: {fileID: 21300000, guid: 71c786b72fd9dee4ea9005fa49ee054a, type: 3}
   teamSide: 0
   prefab: {fileID: 3427180298912217044, guid: f047eb44149428a408e29b035bbfdbe8, type: 3}
   stats:

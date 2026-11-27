@@ -105,7 +105,7 @@ namespace Features.UnitPack.Systems
         {
             var stats = config.Stats;
             
-            _unitStash.Add(unit, new UnitComponent(config.Name, config.Class, config.TeamSide, config.PosY));
+            _unitStash.Add(unit, new UnitComponent(config.Name, config.Class, config.TeamSide, config.PosY, config.UnitImage));
             
             _healthStash.Add(unit, new HealthComponent(stats.maxHealth));
             _defenceStash.Add(unit, new DefenceComponent{currentDefence = stats.defence});

@@ -41,7 +41,7 @@ namespace Features.OverlayPack.Systems
             _units = new Entity[_view.Capacity];
             _occupiedSlots = new bool[_view.Capacity];
 
-            _view.UnitClicked += OnUnitClicked;
+            _view.unitClicked += OnUnitClicked;
             _view.ClearBindings();
         }
 
@@ -60,11 +60,12 @@ namespace Features.OverlayPack.Systems
                     continue;
 
                 var unit = _units[i];
+                var unitComp = _unitStash.Get(unit);
                 var health = _healthStash.Get(unit);
                 var defence = _defenceStash.Get(unit);
                 var speed = _speedStash.Get(unit);
-
                 _view.UpdateStats(
+                    unitComp.unitImage,
                     i,
                     health.currentHealth,
                     health.maxHealth,
@@ -137,7 +138,7 @@ namespace Features.OverlayPack.Systems
             var unit = _units[slot];
             if (World.IsDisposed(unit) || !_unitStash.Has(unit))
                 return;
-
+            
             _selectUnitRequest.Publish(new SelectUnitRequest(unit));
         }
 
@@ -146,7 +147,7 @@ namespace Features.OverlayPack.Systems
             if (_view == null)
                 return;
 
-            _view.UnitClicked -= OnUnitClicked;
+            _view.unitClicked -= OnUnitClicked;
             _view.ClearBindings();
         }
     }
