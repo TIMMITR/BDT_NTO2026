@@ -106,7 +106,7 @@ namespace Scenes.Game
 
             _updateGroup.AddSystem(new EnemyWeightsSystem());
             _updateGroup.AddSystem(new ChangeDefenceWeightSystem());
-            
+            _updateGroup.AddSystem(new ChangeAttackWeightSystem());
 
             _updateGroup.AddSystem(new TutorialSystem(_playerInputActions, gameContext.tutorialSteps));
             _updateGroup.AddSystem(new BusyTagSystem());
