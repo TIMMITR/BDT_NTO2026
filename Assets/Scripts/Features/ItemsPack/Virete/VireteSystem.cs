@@ -6,7 +6,9 @@ using Features.ManaPack;
 using Features.QuickTalkPack.Data;
 using Features.QuickTalkPack.Events;
 using Features.RaycastPack;
+using Features.StatePack.Components;
 using Features.UnitPack.Components;
+using Global;
 using Scellecs.Morpeh;
 
 namespace Features.ItemsPack.Virete
@@ -23,6 +25,8 @@ namespace Features.ItemsPack.Virete
         private Stash<HealthComponent>  _healthStash;
         private Stash<UnitComponent> _unitStash;
         private Stash<ManaComponent> _manaStash;
+
+        private Singletone<TurnPhaseComponent> _turnPhase;
         
         private Request<ManaChangeRequest> _manaChangeRequest;
         private Request<HealthChangeRequest> _healthChangeRequest;
@@ -49,6 +53,8 @@ namespace Features.ItemsPack.Virete
             _manaStash = World.GetStash<ManaComponent>();
             _unitStash = World.GetStash<UnitComponent>();
             _healthStash = World.GetStash<HealthComponent>();
+
+            _turnPhase = new Singletone<TurnPhaseComponent>(World);
             
             _manaChangeRequest = World.GetRequest<ManaChangeRequest>();
             _healthChangeRequest = World.GetRequest<HealthChangeRequest>();
@@ -62,6 +68,7 @@ namespace Features.ItemsPack.Virete
         {
             foreach (var _ in _lmbStartEvent.publishedChanges)
             {
+                if (_turnPhase.Comp.phase != TurnPhase.Player) continue;
                 if (_raycastFilter.IsEmpty() && _unitsFilter.IsEmpty()) return;
                 ref var raycastComponent = ref _raycastStash.Get(_raycastFilter.First());
                 if (!raycastComponent.hasHit) continue;
@@ -77,10 +84,10 @@ namespace Features.ItemsPack.Virete
                 //     continue;
                 // }
                 
-                _manaChangeRequest.Publish(new ManaChangeRequest
-                {
-                    amount = _worldSettings.vireteManaCost
-                });
+                // _manaChangeRequest.Publish(new ManaChangeRequest
+                // {
+                //     amount = -_worldSettings.vireteManaCost
+                // });
                 
                 // todo логика выбор и Quick talk
                 int health = 0;

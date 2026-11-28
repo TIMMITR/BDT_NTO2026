@@ -8,7 +8,7 @@ namespace Features.OverlayPack.Views
     {
         public Button pickUnitButton;
         public RectTransform statsPanel;
-
+    
         [SerializeField] private Text healthText;
         [SerializeField] private Text defenceText;
         [SerializeField] private Text speedText;
@@ -42,12 +42,14 @@ namespace Features.OverlayPack.Views
         }
 
         public void UpdateStats(
+            Sprite sprite,
             int currentHealth,
             int maxHealth,
             int defence,
             int currentSpeed,
             int maxSpeed)
         {
+            pickUnitButton.image.sprite = sprite;
             healthText.text = $"{currentHealth}/{maxHealth}";
             defenceText.text = defence.ToString();
             speedText.text = $"{currentSpeed}/{maxSpeed}";

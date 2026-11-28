@@ -1,5 +1,4 @@
 using Features.AudioPack.Systems;
-using Features.BattlePack;
 using Features.BattlePack.Systems;
 using Features.BusyPack;
 using Features.CameraPack.Systems;
@@ -15,6 +14,7 @@ using Features.TypingPack.Systems;
 using Features.HealthPack;
 using Features.InputPack;
 using Features.ItemsPack.Cards;
+using Features.ItemsPack.Hourglass;
 using Features.ItemsPack.Virete;
 using Features.KnockbackPack.Systems;
 using Features.LifetimePack.Systems;
@@ -28,6 +28,7 @@ using Features.SpeedPack.Systems;
 using Features.SpellPack.Systems;
 using Features.StatePack.Systems;
 using Features.TargetPack;
+using Features.TutorialPack;
 using Features.UnitPack.Systems;
 using Scellecs.Morpeh;
 using UnityEngine;
@@ -101,12 +102,19 @@ namespace Scenes.Game
             _updateGroup.AddSystem(new ActivateControlPointSystem());
             _updateGroup.AddSystem(new ClearControlPointSystem());
             
+            // Блок "весов"
 
+            _updateGroup.AddSystem(new EnemyWeightsSystem());
+            _updateGroup.AddSystem(new ChangeDefenceWeightSystem());
+            
+
+            _updateGroup.AddSystem(new TutorialSystem(_playerInputActions, gameContext.tutorialSteps));
             _updateGroup.AddSystem(new BusyTagSystem());
             
             _updateGroup.AddSystem(new CardsSystem(globalContext.cardsConfig,
                 globalContext.worldSettings));
             _updateGroup.AddSystem(new VireteSystem(globalContext.worldSettings));
+            _updateGroup.AddSystem(new HourglassSystem(globalContext.worldSettings));
             _updateGroup.AddSystem(new UnitSpawnSystem());
             _updateGroup.AddSystem(new ChangeAnimationDataSystem(gameContext.moveDataList));
             _updateGroup.AddSystem(new PlayerPositionStateSystem());

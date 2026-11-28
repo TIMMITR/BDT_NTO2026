@@ -10068,7 +10068,7 @@ MonoBehaviour:
       m_Type:
         m_SerializableType: UnityEngine.Vector2, UnityEngine.CoreModule, Version=0.0.0.0,
           Culture=neutral, PublicKeyToken=null
-      m_SerializableObject: '{"x":6.0,"y":-0.5199999809265137}'
+      m_SerializableObject: '{"x":6.0,"y":2.1700000762939455}'
     m_Space: -1
   m_Property:
     name: _Tiling

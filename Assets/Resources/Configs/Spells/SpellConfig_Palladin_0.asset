@@ -21,12 +21,12 @@ MonoBehaviour:
   damage: 3
   range: 1
   rangeType: 0
-  areaRadius: 0
+  areaRadius: 1
   manaCost: 0
   ignoreArmor: 0
   isMultipleHit: 0
   canHitAllies: 1
-  strikeAtTarget: 0
+  strikeAtTarget: 1
   punchDistance: 1
   punchDamage: 2
   punchReturnDistance: 0

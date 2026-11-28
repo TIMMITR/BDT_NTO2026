@@ -64,7 +64,7 @@ namespace Features.UnitPack.Systems
 
         public void OnUpdate(float deltaTime)
         {
-            foreach (var request in _request.Consume()) // todo возможно, стоит убрать blocked или удалять клетку из обычных; добавить отдельную систему
+            foreach (var request in _request.Consume())
             {
                 Entity gridEntity = _gridFilter.First();
                 ref var gridComp = ref _gridStash.Get(gridEntity);
@@ -84,7 +84,7 @@ namespace Features.UnitPack.Systems
 
                 var spells = unitConfig.SpellList;
 
-                if (spells.Count > 0) // todo для сооружений без спелов
+                if (spells.Count > 0) // для сооружений без спелов
                 {
                     _spellListStash.Add(newUnit, new SpellListComponent(spells));
                     
@@ -105,7 +105,7 @@ namespace Features.UnitPack.Systems
         {
             var stats = config.Stats;
             
-            _unitStash.Add(unit, new UnitComponent(config.Name, config.Class, config.TeamSide, config.PosY));
+            _unitStash.Add(unit, new UnitComponent(config.Name, config.Class, config.TeamSide, config.PosY, config.UnitImage));
             
             _healthStash.Add(unit, new HealthComponent(stats.maxHealth));
             _defenceStash.Add(unit, new DefenceComponent{currentDefence = stats.defence});

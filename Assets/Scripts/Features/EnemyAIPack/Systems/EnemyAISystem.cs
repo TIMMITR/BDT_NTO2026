@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using Configs;
-using Features.BattlePack;
 using Features.ControlPointPack.Components;
-using Features.EnemyAIPack.ActionStrategies;
+using Features.EnemyAIPack.Components;
+using Features.EnemyAIPack.Requests;
 using Features.FightPack.Components;
 using Features.GridPack.Components;
 using Features.SpeedPack;
@@ -24,11 +24,11 @@ namespace Features.EnemyAIPack.Systems
 
         private Filter _unitFilter;
         private Filter _controlPointFilter;
-        private Filter _battleFilter;
         private Filter _movingFilter;
         private Filter _baseFilter;
 
         private Singletone<GridComponent> _grid;
+        private Singletone<EnemyWeightsComponent> _weights;
         
         private Stash<CellPositionComponent> _positionStash;
         private Stash<CellTileComponent> _cellTileStash;
@@ -36,23 +36,20 @@ namespace Features.EnemyAIPack.Systems
         private Stash<SpeedComponent> _speedStash;
         private Stash<UnitComponent> _unitStash;
         private Stash<SpellDataComponent> _spellStash;
-        private Stash<BattleComponent> _battleStash;
         private Stash<AttackDesireComponent> _attackDesireStash;
 
         private Stash<BusyTag> _busyTag;
+        private Stash<SkipTag> _skipTagStash;
         
         private Event<PhaseChangedEvent> _phaseChangedEvent;
 
         private Request<EndEnemyTurnRequest> _endTurnRequest;
         private Request<MoveUnitRequest> _moveUnitRequest;
-        
-        private EnemyConfigSo _config;
+        private Request<ChangeWeightRequest> _changeWeightRequest;
 
         private List<Entity> _units = new();
         
         private EnemyContext _context;
-
-        private Dictionary<AIAction, ActionStrategy> _strategies = new();
         
         private bool _isActive;
         private int _currentIndex;
@@ -61,11 +58,11 @@ namespace Features.EnemyAIPack.Systems
         {
             _unitFilter = World.Filter.With<UnitComponent>().Build();
             _controlPointFilter = World.Filter.With<ControlPointComponent>().Build();
-            _battleFilter = World.Filter.With<BattleComponent>().Build();
             _movingFilter = World.Filter.With<BusyTag>().Build();
             _baseFilter = World.Filter.With<BaseTag>().Build();
 
             _grid = new Singletone<GridComponent>(World);
+            _weights = new Singletone<EnemyWeightsComponent>(World);
             
             _positionStash = World.GetStash<CellPositionComponent>();
             _cellTileStash = World.GetStash<CellTileComponent>();
@@ -73,14 +70,15 @@ namespace Features.EnemyAIPack.Systems
             _speedStash = World.GetStash<SpeedComponent>();
             _unitStash = World.GetStash<UnitComponent>();
             _spellStash = World.GetStash<SpellDataComponent>();
-            _battleStash = World.GetStash<BattleComponent>();
             _attackDesireStash = World.GetStash<AttackDesireComponent>();
 
             _busyTag = World.GetStash<BusyTag>();
+            _skipTagStash = World.GetStash<SkipTag>();
             
             _phaseChangedEvent = World.GetEvent<PhaseChangedEvent>();
             _moveUnitRequest = World.GetRequest<MoveUnitRequest>();
             _endTurnRequest = World.GetRequest<EndEnemyTurnRequest>();
+            _changeWeightRequest = World.GetRequest<ChangeWeightRequest>();
 
             InitContext();
         }
@@ -103,6 +101,13 @@ namespace Features.EnemyAIPack.Systems
             }
  
             var unit = _units[_currentIndex];
+
+            if (_skipTagStash.Has(unit))
+            {
+                _skipTagStash.Remove(unit);
+                _currentIndex++;
+                return;
+            }
  
             if (_busyTag.Has(unit))
                 return;
@@ -118,13 +123,15 @@ namespace Features.EnemyAIPack.Systems
         private void Iterate(Entity unit)
         {
             _context.unit = unit;
- 
-            AIAction? chosen = null;
+
+            var strategies = _weights.Comp.weights;
+            
+            EnemyAIAction? chosen = null;
             var bestChance = float.MinValue;
  
-            foreach (var pair in _strategies)
+            foreach (var pair in strategies)
             {
-                var chance = (1f + Random.value) * pair.Value.weight;
+                var chance = (1f + Random.value) * pair.Value;
  
                 if (chance > bestChance)
                 {
@@ -135,13 +142,8 @@ namespace Features.EnemyAIPack.Systems
  
             if (chosen == null)
                 return;
- 
-            var strategy = _strategies[chosen.Value];
- 
-            if (strategy.TryExecute(_context))
-            {
-                strategy.Spend();
-            }
+
+            _changeWeightRequest.Publish(new ChangeWeightRequest(chosen.Value, ChangeWeightType.Decrease));
         }
         
         private void BeginPhase()
@@ -152,15 +154,6 @@ namespace Features.EnemyAIPack.Systems
             foreach (var unit in _unitFilter)
                 if (_unitStash.Get(unit).teamSide == TeamSide.Enemy)
                     _units.Add(unit);
- 
-            var battle = _battleFilter.First();
-            ref var battleComp = ref _battleStash.Get(battle);
- 
-            _config = battleComp.battlePlan.EnemyConfig;
- 
-            _strategies[AIAction.Capture] = new CaptureStrategy(_config.CaptureWeight, _config.CaptureReduceValue);
-            _strategies[AIAction.Attack] = new AttackStrategy(_config.AttackWeight, _config.AttackReduceValue);
-            _strategies[AIAction.Defence] = new DefenceStrategy(_config.DefenceWeight, _config.DefenceReduceValue, _config.DefenceRadius);
  
             _isActive = true;
         }

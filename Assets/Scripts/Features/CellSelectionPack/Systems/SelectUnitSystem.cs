@@ -45,7 +45,7 @@ namespace Features.CellSelectionPack.Systems
                 _selectedUnitStash.Remove(selection);
                 changed = true;
             }
-
+            // todo сделать только в свой ход
             foreach (var selectReq in _selectRequest.Consume())
             {
                 _selectedUnitStash.Set(selection, new SelectedUnitComponent(selectReq.unit));

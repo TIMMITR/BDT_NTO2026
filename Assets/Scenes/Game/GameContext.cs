@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Features.GamePack;
 using Features.OverlayPack.Views;
 using Features.StoryTalkPack.Data;
+using Features.TutorialPack;
 using UnityEngine;
 
 namespace Scenes.Game
@@ -13,6 +14,7 @@ namespace Scenes.Game
 
         [Header("Dialogue Settings")]
         public StoryTalk introTalk;
+        public List<TutorialStep> tutorialSteps;
 
         [Header("Battle Settings")]
         public GamePlan gamePlan;

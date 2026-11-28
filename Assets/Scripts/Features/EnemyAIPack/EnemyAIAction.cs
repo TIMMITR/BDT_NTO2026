@@ -1,6 +1,6 @@
 namespace Features.EnemyAIPack
 {
-    public enum AIAction
+    public enum EnemyAIAction
     {
         Attack,
         Capture,

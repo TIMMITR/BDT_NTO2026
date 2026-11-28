@@ -1,7 +1,10 @@
 using System.Collections.Generic;
+using Configs;
+using Features.CellSelectionPack.Tags;
 using Features.FightPack.Components;
 using Features.FightPack.Requests;
 using Features.GridPack.Components;
+using Features.ManaPack;
 using Features.UnitPack.Components;
 using Global;
 using Scellecs.Morpeh;
@@ -13,17 +16,21 @@ namespace Features.FightPack.Systems
         public World World { get; set; }
 
         private Filter _attackReadyFilter;
+        
         private Singletone<GridComponent> _grid;
+        private Singletone<ManaComponent> _mana;
 
         private Stash<AttackDesireComponent> _attackDesireStash;
         private Stash<UnitComponent> _unitStash;
         private Stash<CellTileComponent> _cellTileStash;
         private Stash<CellPositionComponent> _positionStash;
-
+        private Stash<ManaComponent> _manaStash;
+        
         private List<Entity> _targets = new();
         
         private Request<ProjectileCastRequest> _projectileCastRequest;
-
+        private Request<ManaChangeRequest> _manaChangeRequest;
+        
         public void OnAwake()
         {
             _attackReadyFilter = World.Filter.
@@ -34,13 +41,16 @@ namespace Features.FightPack.Systems
                 Build();
             
             _grid = new Singletone<GridComponent>(World);
+            _mana = new Singletone<ManaComponent>(World);
 
             _attackDesireStash = World.GetStash<AttackDesireComponent>();
             _unitStash = World.GetStash<UnitComponent>();
             _cellTileStash = World.GetStash<CellTileComponent>();
             _positionStash = World.GetStash<CellPositionComponent>();
+            _manaStash = World.GetStash<ManaComponent>();
             
             _projectileCastRequest = World.GetRequest<ProjectileCastRequest>();
+            _manaChangeRequest = World.GetRequest<ManaChangeRequest>();
         }
 
         public void OnUpdate(float deltaTime)
@@ -61,6 +71,14 @@ namespace Features.FightPack.Systems
                 _targets.Clear();
 
                 var team = _unitStash.Get(unit).teamSide;
+                
+                if (team == TeamSide.Player)
+                {
+                    if (_mana.Comp.currentMana < spell.manaCost)
+                        continue;
+                    
+                    _manaChangeRequest.Publish(new ManaChangeRequest(-spell.manaCost));
+                }
                 
                 SpellArea.CollectTargets(_grid.Comp, _unitStash, _cellTileStash, spell, from, to, dir, team, _targets);
 

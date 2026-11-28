@@ -14,12 +14,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   characterName: Wizard
   unitClass: 1
+  unitImage: {fileID: 21300000, guid: 3e926031e9c527445b2a6660cc87bba3, type: 3}
   teamSide: 0
   prefab: {fileID: 7254909309299036303, guid: ba9f549629afbc24fb830b7779a83639, type: 3}
   stats:
     maxHealth: 10
-    multiplier: 2
-    defence: 2
+    multiplier: 1
+    defence: 1
     moveSpeed: 3
   posY: 0.15
   spellList:
