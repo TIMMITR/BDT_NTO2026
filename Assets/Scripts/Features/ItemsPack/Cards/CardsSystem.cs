@@ -8,6 +8,8 @@ using Features.ItemsPack.Cards.Requests;
 using Features.ItemsPack.Cards.Views;
 using Features.ManaPack;
 using Features.RaycastPack;
+using Features.StatePack.Components;
+using Global;
 using Scellecs.Morpeh;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -23,6 +25,8 @@ namespace Features.ItemsPack.Cards
         
         private Stash<RaycastComponent> _raycastStash;
         private Stash<ManaComponent> _manaStash;
+
+        private Singletone<TurnPhaseComponent> _turnPhase;
         
         private Event<LmbStartEvent> _lmbStartEvent;
         private Event<ShowCardsEvent> _showCardsEvent;
@@ -46,6 +50,8 @@ namespace Features.ItemsPack.Cards
             
             _raycastStash = World.GetStash<RaycastComponent>();
             _manaStash = World.GetStash<ManaComponent>();
+
+            _turnPhase = new Singletone<TurnPhaseComponent>(World);
             
             _lmbStartEvent = World.GetEvent<LmbStartEvent>();
             _showCardsEvent  = World.GetEvent<ShowCardsEvent>();
@@ -58,6 +64,7 @@ namespace Features.ItemsPack.Cards
         {
             foreach (var _ in _lmbStartEvent.publishedChanges)
             {
+                if (_turnPhase.Comp.phase != TurnPhase.Player) continue;
                 if (_filter.IsEmpty()) return;
                 ref var raycastComponent = ref _raycastStash.Get(_filter.First());
                 if (!raycastComponent.hasHit) continue;
@@ -72,10 +79,10 @@ namespace Features.ItemsPack.Cards
                 //     continue;
                 // }
                 
-                _manaChangeRequest.Publish(new ManaChangeRequest
-                {
-                    amount =  -_worldSettings.cardsManaCost
-                });
+                // _manaChangeRequest.Publish(new ManaChangeRequest
+                // {
+                //     amount = -_worldSettings.cardsManaCost
+                // });
                 
                 var availableCards = new List<CardsSo>(_cardsConfig.cards);
                 var data = new List<CardsHolderData>();
@@ -93,6 +100,8 @@ namespace Features.ItemsPack.Cards
 
             foreach (var cardPick in _cardPickRequest.Consume())
             {
+                if (_turnPhase.Comp.phase != TurnPhase.Player) continue;
+
                 switch (cardPick.cardType)
                 {
                     case CardType.TheFool: // 

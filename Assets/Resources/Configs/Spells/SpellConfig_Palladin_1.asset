@@ -21,7 +21,7 @@ MonoBehaviour:
   range: 2
   rangeType: 1
   areaRadius: 0
-  manaCost: 3
+  manaCost: 2
   ignoreArmor: 1
   isMultipleHit: 0
   canHitAllies: 0

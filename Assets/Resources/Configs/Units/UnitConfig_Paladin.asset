@@ -20,7 +20,7 @@ MonoBehaviour:
   stats:
     maxHealth: 15
     multiplier: 1
-    defence: 3
+    defence: 2
     moveSpeed: 4
   posY: 0.15
   spellList:

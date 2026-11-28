@@ -34,6 +34,7 @@ namespace Configs
         public ColorData colorData;
 
         public int cardsManaCost = 2;
+        public int hourglassManaCost = 4;
         public int vireteManaCost = 6;
         public int vireteDamage = 2;
         public int vireteHealing = 2;

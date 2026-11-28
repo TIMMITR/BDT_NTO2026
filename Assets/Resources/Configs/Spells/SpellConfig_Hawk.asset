@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d7c0918ab1b1548499c9997a490daa15, type: 3}
+  m_Name: SpellConfig_Hawk
+  m_EditorClassIdentifier: 
+  displayName: "\u0424\u0430\u0435\u0440\u0431\u043E\u043B"
+  description: "\u0422\u043E\u0442 \u0441\u0430\u043C\u044B\u0439 \u043E\u0433\u043D\u0435\u043D\u044B\u0439
+    \u0448\u0430\u0440"
+  icon: {fileID: 0}
+  spellType: 0
+  damage: 5
+  range: 1
+  rangeType: 1
+  areaRadius: 1
+  manaCost: 0
+  ignoreArmor: 0
+  isMultipleHit: 0
+  canHitAllies: 0
+  strikeAtTarget: 0
+  punchDistance: 1
+  punchDamage: 1
+  punchReturnDistance: 0
+  nextSpell: {fileID: 0}
+  nextSpellOrigin: 0
+  nextSpellDelay: 0
+  projectilePrefab: {fileID: 8241781037024382630, guid: 94b682359a1d63c4f83e8b9a4f25d24e, type: 3}
+  explosionPrefab: {fileID: 7718701054235509535, guid: c8ef84ead6bc0a649840ab9ed0f42e0e, type: 3}
+  projectileSpeed: 2
+  projectileHeight: 0.2
+  swayAmplitude: 1
+  explosionLifetime: 10

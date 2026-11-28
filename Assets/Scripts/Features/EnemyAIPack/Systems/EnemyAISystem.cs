@@ -40,6 +40,7 @@ namespace Features.EnemyAIPack.Systems
         private Stash<AttackDesireComponent> _attackDesireStash;
 
         private Stash<BusyTag> _busyTag;
+        private Stash<SkipTag> _skipTagStash;
         
         private Event<PhaseChangedEvent> _phaseChangedEvent;
 
@@ -77,6 +78,7 @@ namespace Features.EnemyAIPack.Systems
             _attackDesireStash = World.GetStash<AttackDesireComponent>();
 
             _busyTag = World.GetStash<BusyTag>();
+            _skipTagStash = World.GetStash<SkipTag>();
             
             _phaseChangedEvent = World.GetEvent<PhaseChangedEvent>();
             _moveUnitRequest = World.GetRequest<MoveUnitRequest>();
@@ -103,6 +105,13 @@ namespace Features.EnemyAIPack.Systems
             }
  
             var unit = _units[_currentIndex];
+
+            if (_skipTagStash.Has(unit))
+            {
+                _skipTagStash.Remove(unit);
+                _currentIndex++;
+                return;
+            }
  
             if (_busyTag.Has(unit))
                 return;

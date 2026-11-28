@@ -15,6 +15,7 @@ using Features.TypingPack.Systems;
 using Features.HealthPack;
 using Features.InputPack;
 using Features.ItemsPack.Cards;
+using Features.ItemsPack.Hourglass;
 using Features.ItemsPack.Virete;
 using Features.KnockbackPack.Systems;
 using Features.LifetimePack.Systems;
@@ -109,6 +110,7 @@ namespace Scenes.Game
             _updateGroup.AddSystem(new CardsSystem(globalContext.cardsConfig,
                 globalContext.worldSettings));
             _updateGroup.AddSystem(new VireteSystem(globalContext.worldSettings));
+            _updateGroup.AddSystem(new HourglassSystem(globalContext.worldSettings));
             _updateGroup.AddSystem(new UnitSpawnSystem());
             _updateGroup.AddSystem(new ChangeAnimationDataSystem(gameContext.moveDataList));
             _updateGroup.AddSystem(new PlayerPositionStateSystem());

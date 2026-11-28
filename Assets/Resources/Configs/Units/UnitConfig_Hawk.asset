@@ -14,14 +14,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   characterName: Hawk
   unitClass: 3
+  unitImage: {fileID: 0}
   teamSide: 1
   prefab: {fileID: 3410797180743398422, guid: 20c06fd9148625c42bc3e7927f828832, type: 3}
   stats:
     maxHealth: 10
-    multiplier: 2
-    defence: 3
+    multiplier: 1
+    defence: 1
     moveSpeed: 3
   posY: 0
   spellList:
-  - {fileID: 11400000, guid: dbb1b68a724ef034483f73fe6929fdb6, type: 2}
+  - {fileID: 11400000, guid: 0cbcddbd07d38e142a64b5fcea02b775, type: 2}
   spawnRotationY: -180
