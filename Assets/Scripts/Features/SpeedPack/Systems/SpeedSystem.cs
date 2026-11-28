@@ -1,5 +1,6 @@
 using Features.SpeedPack.Requests;
 using Scellecs.Morpeh;
+using UnityEngine;
 
 namespace Features.SpeedPack.Systems
 {
@@ -29,7 +30,7 @@ namespace Features.SpeedPack.Systems
                 if (!_speedStash.Has(request.entity)) continue;
 
                 ref var speedComponent = ref _speedStash.Get(request.entity);
-                var newAmount = speedComponent.currentSpeed - request.amount;
+                var newAmount = Mathf.Clamp(0, speedComponent.currentSpeed + request.amount, speedComponent.maxSpeed);
                 var delta = speedComponent.currentSpeed - newAmount;
 
                 speedComponent.currentSpeed = newAmount;

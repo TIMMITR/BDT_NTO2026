@@ -55,7 +55,7 @@ namespace Features.UnitPack.Systems
                 GridOccupancy.Move(ref gridComp, _tileStash, _positionStash, unit, path[0], path[^1]);
                 _unitAnimationStash.Add(unit, new UnitAnimationComponent(path, false));
                 var cost = path.Count - 1;
-                _speedChangeRequest.Publish(new SpeedChangeRequest(cost, unit));
+                _speedChangeRequest.Publish(new SpeedChangeRequest(-cost, unit));
             }
         }
 
