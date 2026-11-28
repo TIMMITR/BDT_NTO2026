@@ -1,5 +1,4 @@
 using Features.AudioPack.Systems;
-using Features.BattlePack;
 using Features.BattlePack.Systems;
 using Features.BusyPack;
 using Features.CameraPack.Systems;
@@ -102,6 +101,11 @@ namespace Scenes.Game
             _updateGroup.AddSystem(new CaptureControlPointSystem());
             _updateGroup.AddSystem(new ActivateControlPointSystem());
             _updateGroup.AddSystem(new ClearControlPointSystem());
+            
+            // Блок "весов"
+
+            _updateGroup.AddSystem(new EnemyWeightsSystem());
+            _updateGroup.AddSystem(new ChangeDefenceWeightSystem());
             
 
             _updateGroup.AddSystem(new TutorialSystem(_playerInputActions, gameContext.tutorialSteps));

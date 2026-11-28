@@ -7,8 +7,8 @@ namespace Features.EnemyAIPack.Components
     public class EnemyTurnComponent : IComponent
     {
         public EnemyConfigSo config;
-        public Dictionary<AIAction, float> weights;
-        public Dictionary<AIAction, float> reduce;
+        public Dictionary<EnemyAIAction, float> weights;
+        public Dictionary<EnemyAIAction, float> reduce;
     }
 }
 
