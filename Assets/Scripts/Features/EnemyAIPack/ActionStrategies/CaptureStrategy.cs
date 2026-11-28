@@ -8,8 +8,6 @@ namespace Features.EnemyAIPack.ActionStrategies
 {
     public class CaptureStrategy : ActionStrategy
     {
-        public CaptureStrategy(float weight, float decrease) : base(weight, decrease) { }
-
         public override bool TryExecute(EnemyContext context)
         {
             var unit = context.unit;

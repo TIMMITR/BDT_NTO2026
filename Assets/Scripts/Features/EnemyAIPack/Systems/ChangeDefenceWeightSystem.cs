@@ -30,7 +30,7 @@ namespace Features.EnemyAIPack.Systems
             foreach (var evt in _healthChangedEvent.publishedChanges)
             {
                 if (!_baseTag.Has(evt.entity))
-                    return;
+                    continue;
                 
                 _changeWeightRequest.Publish(new ChangeWeightRequest(EnemyAIAction.Defence, ChangeWeightType.Increase));
             }

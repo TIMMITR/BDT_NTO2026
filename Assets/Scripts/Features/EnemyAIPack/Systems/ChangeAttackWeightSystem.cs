@@ -30,12 +30,12 @@ namespace Features.EnemyAIPack.Systems
             foreach (var evt in _healthChangedEvent.publishedChanges)
             {
                 if (!_unitStash.Has(evt.entity))
-                    return;
+                    continue;
                 
                 ref var unitComp = ref _unitStash.Get(evt.entity); // пока что логика такая: кто-то атаковал игрока -> больше юнитов пойдут его атаковать
 
                 if (unitComp.teamSide != TeamSide.Player) 
-                    return;
+                    continue;
                 
                 _changeWeightRequest.Publish(new ChangeWeightRequest(EnemyAIAction.Attack, ChangeWeightType.Increase));
             }

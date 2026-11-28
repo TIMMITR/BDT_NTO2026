@@ -44,10 +44,12 @@ namespace Features.EnemyAIPack.Systems
             
             foreach (var request in _changeWeightRequest.Consume())
             {
-                ref var weightsComp = ref _enemyWeightsStash.Get(_weights.Entity);
-                var amount = weightsComp.increaseValues[request.type];
+                ref var weightsComp = ref _weights.Comp;
+                var amount = request.changeWeightType == ChangeWeightType.Increase 
+                    ? weightsComp.increaseValues[request.type]  
+                    : weightsComp.reduceValues[request.type];
                 
-                weightsComp.weights[request.type] += amount;
+                weightsComp.weights[request.type] += request.changeWeightType == ChangeWeightType.Increase ? amount : -amount;
             }
         }
 

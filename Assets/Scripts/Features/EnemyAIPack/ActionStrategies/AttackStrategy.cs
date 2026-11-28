@@ -11,11 +11,6 @@ namespace Features.EnemyAIPack.ActionStrategies
 {
     public class AttackStrategy : ActionStrategy
     {
-        public AttackStrategy(float weight, float decrease) : base(weight, decrease)
-        {
-            
-        }
-
         public override bool TryExecute(EnemyContext context)
         {
             var unit = context.unit;

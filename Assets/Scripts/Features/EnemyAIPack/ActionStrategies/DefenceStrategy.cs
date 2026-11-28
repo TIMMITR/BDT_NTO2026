@@ -11,7 +11,7 @@ namespace Features.EnemyAIPack.ActionStrategies
     {
         private readonly int _radius;
 
-        public DefenceStrategy(float weight, float decrease, int radius) : base(weight, decrease)
+        public DefenceStrategy(int radius)
         {
             _radius = radius;
         }

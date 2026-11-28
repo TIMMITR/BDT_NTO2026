@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Configs;
 using Features.ControlPointPack.Components;
+using Features.EnemyAIPack.ActionStrategies;
 using Features.EnemyAIPack.Components;
 using Features.EnemyAIPack.Requests;
 using Features.FightPack.Components;
@@ -46,6 +47,8 @@ namespace Features.EnemyAIPack.Systems
         private Request<EndEnemyTurnRequest> _endTurnRequest;
         private Request<MoveUnitRequest> _moveUnitRequest;
         private Request<ChangeWeightRequest> _changeWeightRequest;
+
+        private Dictionary<EnemyAIAction, ActionStrategy> _strategies = new();
 
         private List<Entity> _units = new();
         
@@ -124,12 +127,12 @@ namespace Features.EnemyAIPack.Systems
         {
             _context.unit = unit;
 
-            var strategies = _weights.Comp.weights;
+            var weights = _weights.Comp.weights;
             
             EnemyAIAction? chosen = null;
             var bestChance = float.MinValue;
  
-            foreach (var pair in strategies)
+            foreach (var pair in weights)
             {
                 var chance = (1f + Random.value) * pair.Value;
  
@@ -143,7 +146,10 @@ namespace Features.EnemyAIPack.Systems
             if (chosen == null)
                 return;
 
-            _changeWeightRequest.Publish(new ChangeWeightRequest(chosen.Value, ChangeWeightType.Decrease));
+            var strategy = _strategies[chosen.Value];
+
+            if (strategy.TryExecute(_context))
+                _changeWeightRequest.Publish(new ChangeWeightRequest(chosen.Value, ChangeWeightType.Decrease), allowNextFrame: true);
         }
         
         private void BeginPhase()
@@ -154,29 +160,33 @@ namespace Features.EnemyAIPack.Systems
             foreach (var unit in _unitFilter)
                 if (_unitStash.Get(unit).teamSide == TeamSide.Enemy)
                     _units.Add(unit);
- 
+            
+            var radius = _weights.Comp.defenceRadius;
+
+            _strategies[EnemyAIAction.Attack] = new AttackStrategy();
+            _strategies[EnemyAIAction.Capture] = new CaptureStrategy();
+            _strategies[EnemyAIAction.Defence] = new DefenceStrategy(radius);
+            
             _isActive = true;
         }
 
         private void InitContext()
         {
-            _context = new EnemyContext();
-            
-            _context.unitFilter = _unitFilter;
-            _context.controlPointFilter = _controlPointFilter;
-            _context.baseFilter =  _baseFilter;
-            
-            _context.grid = _grid;
-            
-            _context.positionStash = _positionStash;
-            _context.cellTileStash = _cellTileStash;
-            _context.controlPointStash = _controlPointStash;
-            _context.speedStash = _speedStash;
-            _context.unitStash = _unitStash;
-            _context.spellStash = _spellStash;
-            _context.attackDesireStash = _attackDesireStash;
-            
-            _context.moveRequest = _moveUnitRequest;
+            _context = new EnemyContext
+            {
+                unitFilter = _unitFilter,
+                controlPointFilter = _controlPointFilter,
+                baseFilter = _baseFilter,
+                grid = _grid,
+                positionStash = _positionStash,
+                cellTileStash = _cellTileStash,
+                controlPointStash = _controlPointStash,
+                speedStash = _speedStash,
+                unitStash = _unitStash,
+                spellStash = _spellStash,
+                attackDesireStash = _attackDesireStash,
+                moveRequest = _moveUnitRequest
+            };
         }
 
         public void Dispose() { }

@@ -10,6 +10,8 @@ namespace Features.EnemyAIPack.Components
         public Dictionary<EnemyAIAction, float> reduceValues;
         public Dictionary<EnemyAIAction, float> increaseValues;
 
+        public int defenceRadius;
+
         public EnemyWeightsComponent(EnemyConfigSo config)
         {
             weights = new Dictionary<EnemyAIAction, float>
@@ -32,6 +34,8 @@ namespace Features.EnemyAIPack.Components
                 [EnemyAIAction.Capture] = config.CaptureIncreaseValue,
                 [EnemyAIAction.Defence] = config.DefenceIncreaseValue,
             };
+
+            defenceRadius = config.DefenceRadius;
         }
     }
 }
